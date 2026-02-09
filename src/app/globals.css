@@ -1,0 +1,156 @@
+@import 'tailwindcss';
+
+/* ── Custom theme ──────────────────────────────────────────────────────── */
+@theme {
+  --color-bg: #0a0a0b;
+  --color-bg-card: #141416;
+  --color-bg-card-hover: #1a1a1e;
+  --color-bg-secondary: #111113;
+  --color-border: #23232a;
+  --color-border-hover: #33333d;
+
+  --color-text-primary: #f0f0f3;
+  --color-text-secondary: #a0a0ab;
+  --color-text-muted: #65656f;
+
+  --color-accent: #6366f1;
+  --color-accent-hover: #818cf8;
+  --color-accent-muted: rgba(99, 102, 241, 0.15);
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+}
+
+/* ── Base styles ───────────────────────────────────────────────────────── */
+body {
+  @apply bg-bg text-text-primary antialiased;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Focus styles ──────────────────────────────────────────────────────── */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-accent rounded-sm;
+}
+
+::selection {
+  @apply bg-accent/30 text-text-primary;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-bg;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-border rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-border-hover;
+}
+
+/* ── Code blocks (rehype-pretty-code) ──────────────────────────────────── */
+[data-rehype-pretty-code-figure] pre {
+  @apply rounded-lg border border-border p-4 text-sm overflow-x-auto;
+}
+
+[data-rehype-pretty-code-figure] code {
+  @apply text-sm font-mono;
+  counter-reset: line;
+}
+
+[data-rehype-pretty-code-figure] [data-line] {
+  @apply px-4 border-l-2 border-transparent;
+}
+
+[data-rehype-pretty-code-figure] [data-highlighted-line] {
+  @apply bg-accent-muted border-l-accent;
+}
+
+:not(pre) > code {
+  @apply rounded bg-bg-card px-1.5 py-0.5 text-sm font-mono text-accent-hover border border-border;
+}
+
+/* ── MDX Prose ─────────────────────────────────────────────────────────── */
+.prose {
+  @apply text-text-secondary leading-relaxed;
+}
+
+.prose h2 {
+  @apply text-xl font-semibold text-text-primary mt-10 mb-4 scroll-mt-24;
+}
+
+.prose h3 {
+  @apply text-lg font-semibold text-text-primary mt-8 mb-3 scroll-mt-24;
+}
+
+.prose p {
+  @apply mb-4;
+}
+
+.prose ul {
+  @apply list-disc pl-6 mb-4 space-y-1;
+}
+
+.prose ol {
+  @apply list-decimal pl-6 mb-4 space-y-1;
+}
+
+.prose li {
+  @apply text-text-secondary;
+}
+
+.prose a {
+  @apply text-accent hover:text-accent-hover underline underline-offset-4 transition-colors;
+}
+
+.prose strong {
+  @apply text-text-primary font-semibold;
+}
+
+.prose blockquote {
+  @apply border-l-2 border-accent pl-4 italic text-text-muted my-4;
+}
+
+.prose hr {
+  @apply border-border my-8;
+}
+
+.prose img {
+  @apply rounded-lg border border-border;
+}
+
+.prose table {
+  @apply w-full text-sm border-collapse my-6;
+}
+
+.prose thead th {
+  @apply text-left text-text-primary font-medium px-4 py-2 border-b border-border;
+}
+
+.prose tbody td {
+  @apply px-4 py-2 border-b border-border;
+}

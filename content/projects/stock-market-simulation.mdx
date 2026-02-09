@@ -1,0 +1,41 @@
+---
+title: "Stock Market Simulation"
+slug: "stock-market-simulation"
+date: "2022-12-15"
+type: "school"
+featured: false
+summary: "Built a multi-threaded stock market simulator with autonomous trading bots, real-time GUI visualization, and configurable market dynamics."
+tags: ["systems", "concurrency", "visualization"]
+stack: ["Java", "Swing", "Gradle"]
+links:
+  github: ""
+highlights:
+  - "Concurrent architecture with thread-safe order book and matching engine"
+  - "Multiple autonomous trading bot strategies (mean reversion, momentum, market making)"
+  - "Real-time GUI with live price charts, order book depth, and portfolio tracking"
+  - "Configurable market parameters for studying different market microstructure scenarios"
+role: "Individual project"
+teamSize: 1
+organization: "University of Groningen"
+location: "Groningen, Netherlands"
+status: "coursework"
+---
+
+## Overview
+
+A concurrent stock market simulation built in Java, featuring an order-matching engine, multiple autonomous trading bots with different strategies, and a real-time Swing GUI for visualization. The project explored concurrent programming patterns and market microstructure.
+
+## What I Built
+
+- Thread-safe order book with limit and market order support
+- Price-time priority matching engine
+- Autonomous trading bots (mean reversion, momentum, random, market making)
+- Real-time Swing GUI with candlestick charts and order book visualization
+
+## Technical Details
+
+The core challenge was designing a concurrent system where multiple trading bots submit orders simultaneously to a shared order book, requiring careful synchronization to prevent race conditions while maintaining performance.
+
+## What I Learned
+
+This was my first serious concurrent programming project — it taught me the real cost of synchronization, the importance of lock ordering to prevent deadlocks, and how to reason about thread safety.

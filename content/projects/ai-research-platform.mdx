@@ -1,0 +1,83 @@
+---
+title: "AI Research Management Platform"
+slug: "ai-research-platform"
+date: "2024-07-01"
+type: "school"
+featured: true
+summary: "Designed and built a full-stack platform for managing AI research workflows — paper tracking, experiment logging, and collaborative annotation — as my BSc thesis project."
+tags: ["web", "backend", "ml"]
+stack: ["Python", "FastAPI", "React", "TypeScript", "PostgreSQL", "Docker"]
+links:
+  github: ""
+highlights:
+  - "Full-stack application with FastAPI backend, React frontend, and PostgreSQL database"
+  - "Implemented semantic search over research papers using sentence-transformer embeddings"
+  - "Built a collaborative annotation system for dataset labeling with inter-annotator agreement metrics"
+  - "Received highest thesis grade (9/10) and cum laude distinction"
+role: "Solo developer"
+teamSize: 1
+organization: "University of Groningen"
+location: "Groningen, Netherlands"
+status: "shipped"
+---
+
+## Overview
+
+My Bachelor's thesis at the University of Groningen addressed a practical problem I observed in the AI research lab: researchers spend significant time on administrative tasks — tracking papers, managing experiments, coordinating dataset annotations — that could be streamlined with better tooling. I designed and built a comprehensive platform to address these pain points.
+
+## What I Built
+
+A full-stack web application with three core modules:
+
+**1. Paper Management & Semantic Search**
+- Import papers from arXiv, Semantic Scholar, or manual upload
+- Automatic metadata extraction (title, authors, abstract, citations)
+- Semantic search powered by sentence-transformer embeddings (all-MiniLM-L6-v2)
+- Research topic clustering and trend visualization
+- Reading lists with annotation and highlight support
+
+**2. Experiment Tracking**
+- Log experiments with hyperparameters, metrics, and artifacts
+- Comparison dashboards for model selection
+- Integration with MLflow for existing workflows
+- Automatic experiment lineage tracking (which paper → which hypothesis → which experiment)
+
+**3. Collaborative Annotation**
+- Multi-user annotation interface for text, image, and tabular data
+- Configurable label schemas
+- Inter-annotator agreement metrics (Cohen's κ, Fleiss' κ)
+- Active learning suggestions for efficient labeling
+
+## Technical Details
+
+**Architecture:**
+- **Backend:** FastAPI with async SQLAlchemy ORM, background task processing with Celery + Redis
+- **Frontend:** React + TypeScript with TanStack Query for data fetching
+- **Database:** PostgreSQL with pgvector extension for embedding storage and similarity search
+- **Infrastructure:** Docker Compose for local development, CI/CD with GitHub Actions
+
+**Key Technical Decisions:**
+- **pgvector over dedicated vector DB:** Kept the stack simpler by using PostgreSQL's pgvector extension. For the scale of a research group (~10K papers), this performs more than adequately and avoids operational complexity of a separate vector database.
+- **FastAPI over Django:** Chose FastAPI for its async-first design, automatic OpenAPI documentation, and better TypeScript client generation via openapi-typescript-codegen.
+- **Sentence-transformers over OpenAI embeddings:** Self-hosted embeddings for privacy (unpublished research) and cost reasons.
+
+## Challenges & Tradeoffs
+
+- **Embedding search quality:** Generic sentence-transformers don't capture domain-specific nuances well. I fine-tuned on a small dataset of paper similarity judgments, which improved retrieval precision by ~20%.
+- **Real-time collaboration:** The annotation system needed conflict resolution for simultaneous edits. I implemented optimistic locking with version vectors rather than full CRDT, trading theoretical robustness for implementation simplicity.
+- **Scope management:** A thesis has a fixed timeline. I prioritized the paper management + annotation modules and kept experiment tracking as a thinner integration layer with MLflow.
+
+## Results
+
+- Deployed to the University's AI research group (5 researchers, ~2000 papers)
+- **40% reduction** in time spent on paper discovery (user survey)
+- Annotation throughput improved by **2.3x** compared to spreadsheet-based workflows
+- Thesis received **9/10** — contributed to cum laude distinction
+- The platform is still actively used by the research group
+
+## What I Learned
+
+- How to scope, design, and deliver a full-stack application solo under a fixed deadline
+- The value of user research — initial design assumptions changed significantly after observing how researchers actually work
+- Database design for search-heavy workloads (indexing strategies, query optimization)
+- Writing a thesis that bridges technical implementation with academic rigor

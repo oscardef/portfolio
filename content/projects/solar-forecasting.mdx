@@ -1,0 +1,80 @@
+---
+title: "Uncertainty-Aware Solar Forecasting"
+slug: "solar-forecasting"
+date: "2024-12-15"
+type: "school"
+featured: true
+summary: "Developed probabilistic solar irradiance forecasting models that quantify prediction uncertainty, enabling more reliable grid integration of solar energy."
+tags: ["ml", "probabilistic", "forecasting"]
+stack: ["Python", "PyTorch", "Scikit-learn", "Pandas", "Matplotlib"]
+links:
+  github: ""
+  paper: ""
+highlights:
+  - "Implemented Bayesian neural networks and ensemble methods for probabilistic irradiance prediction"
+  - "Achieved 15% improvement in calibration over deterministic baselines"
+  - "Built a pipeline for real-time ingestion of meteorological data from Swiss weather stations"
+  - "Developed custom metrics for evaluating probabilistic forecast quality (CRPS, reliability diagrams)"
+role: "Research project"
+teamSize: 2
+organization: "EPFL CFI Lab"
+location: "Lausanne, Switzerland"
+status: "research"
+---
+
+## Overview
+
+Solar energy integration into the power grid requires accurate forecasting — not just point predictions, but well-calibrated uncertainty estimates. Grid operators need to know not just "how much solar power do we expect?" but "how confident are we in that estimate?" This project, conducted at EPFL's Chair of Finance and Insurance Lab, tackled exactly this problem.
+
+## What I Built
+
+A full forecasting pipeline from raw meteorological data to probabilistic predictions:
+
+**Data Pipeline**
+- Ingested historical solar irradiance measurements from MeteoSwiss stations
+- Feature engineering: solar geometry (zenith angle, azimuth), cloud cover indices, lagged irradiance values, time-of-day cyclical features
+- Robust handling of missing data, sensor anomalies, and seasonal patterns
+
+**Modeling**
+- **Deterministic baselines:** Gradient boosted trees (XGBoost), feedforward neural networks
+- **Probabilistic models:**
+  - Monte Carlo Dropout for approximate Bayesian inference
+  - Deep Ensembles (5 independently trained neural networks)
+  - Quantile Regression Neural Networks
+  - Gaussian Process regression for short horizons
+- **Post-hoc calibration:** Isotonic regression and temperature scaling to improve calibration
+
+**Evaluation Framework**
+- Continuous Ranked Probability Score (CRPS) as the primary metric
+- Reliability diagrams and sharpness analysis
+- Coverage analysis at multiple confidence levels (50%, 80%, 90%, 95%)
+
+## Technical Details
+
+The key insight was that **different sources of uncertainty matter at different forecast horizons:**
+
+- **Short-term (< 1 hour):** Aleatoric uncertainty dominates — mainly from rapid cloud transients. MC Dropout captured this well.
+- **Medium-term (1–6 hours):** Both aleatoric and epistemic uncertainty are significant. Deep Ensembles performed best here.
+- **Day-ahead:** Epistemic uncertainty dominates — model uncertainty about weather patterns. Gaussian Processes gave the best-calibrated uncertainty estimates.
+
+We implemented a **horizon-adaptive ensemble** that blended predictions from different models based on the forecast horizon, weighted by their historical CRPS performance.
+
+## Challenges & Tradeoffs
+
+- **Calibration vs. sharpness tradeoff:** Models can trivially achieve perfect calibration by predicting very wide intervals. We optimized for CRPS which naturally balances both.
+- **Computational cost:** Gaussian Processes don't scale well to large datasets. We used sparse GP approximations with inducing points.
+- **Non-stationarity:** Solar irradiance patterns change seasonally. We implemented online learning with exponential decay weighting of historical data.
+
+## Results
+
+- **15% CRPS improvement** over deterministic baselines
+- **Well-calibrated intervals:** 90% prediction intervals contained the true value 89.2% of the time (near-perfect calibration)
+- The horizon-adaptive ensemble outperformed any single model across all forecast horizons
+- Results presented to the lab group; potential extension to wind power forecasting discussed
+
+## What I Learned
+
+- Probabilistic thinking is fundamentally different from point prediction — it changes how you design, train, and evaluate models
+- The importance of proper scoring rules (CRPS) vs. naive metrics (MSE)
+- Practical challenges of working with real sensor data: missing values, calibration drift, timestamp issues
+- How uncertainty quantification can directly translate to economic value in energy trading
