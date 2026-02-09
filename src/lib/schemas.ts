@@ -44,6 +44,8 @@ export const projectSchema = z.object({
 
 export type Project = z.infer<typeof projectSchema>;
 
+const experienceTypeEnum = z.enum(['internship', 'teaching', 'research', 'fulltime']);
+
 export const experienceSchema = z.object({
   title: z.string(),
   slug: z.string(),
@@ -51,7 +53,10 @@ export const experienceSchema = z.object({
   location: z.string(),
   startDate: z.string(),
   endDate: z.string(),
-  type: z.enum(['internship', 'teaching', 'research', 'fulltime']),
+  type: z.union([
+    experienceTypeEnum.transform((v) => [v]),
+    z.array(experienceTypeEnum),
+  ]),
   summary: z.string(),
   stack: z.array(z.string()),
   highlights: z.array(z.string()).default([]),

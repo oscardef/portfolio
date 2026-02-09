@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { siteConfig } from '@/lib/constants';
 import { AnimatedSection, AnimatedDiv } from '@/components/ui/animated-section';
 import { Button } from '@/components/ui/button';
+import { TravelExplorer } from '@/components/travel-explorer';
 
 export const metadata: Metadata = {
   title: 'About',
@@ -11,51 +12,19 @@ export const metadata: Metadata = {
 
 const timeline = [
   {
-    year: '2003',
-    title: 'Born',
-    location: 'Bangkok, Thailand',
-    flag: '🇹🇭',
-    description: 'Born in Bangkok to a Swedish-American family.',
-    type: 'life' as const,
-  },
-  {
-    year: '2006–07',
-    title: 'Early childhood',
-    location: 'Stockholm, Sweden',
-    flag: '🇸🇪',
-    description: 'First move back to Scandinavia.',
-    type: 'life' as const,
-  },
-  {
-    year: '2007–10',
-    title: 'Growing up abroad',
-    location: 'Al Ain, UAE',
-    flag: '🇦🇪',
-    description: 'Childhood years in the Emirates.',
-    type: 'life' as const,
-  },
-  {
-    year: '2010–12',
-    title: 'Primary school',
-    location: 'Egham, United Kingdom',
+    year: '2026–',
+    title: 'Software Engineer',
+    location: 'London, United Kingdom',
     flag: '🇬🇧',
-    description: 'Living in the English countryside.',
-    type: 'life' as const,
+    description: 'Joining Bloomberg for a software engineering placement.',
+    type: 'work' as const,
   },
   {
-    year: '2012–18',
-    title: 'Middle & early high school',
-    location: 'Dubai, UAE',
-    flag: '🇦🇪',
-    description: 'Longest stretch in one place — formative years in Dubai.',
-    type: 'life' as const,
-  },
-  {
-    year: '2018–21',
-    title: 'IB Diploma, ISSR',
-    location: 'Stockholm, Sweden',
-    flag: '🇸🇪',
-    description: 'Completed the International Baccalaureate at the International School of the Stockholm Region.',
+    year: '2024–26',
+    title: 'MSc Computer Science',
+    location: 'Lausanne, Switzerland',
+    flag: '🇨🇭',
+    description: 'Master\'s at EPFL (5.6/6 average). Systems, security, ML, and a minor in Management, Technology & Entrepreneurship.',
     type: 'education' as const,
   },
   {
@@ -67,29 +36,56 @@ const timeline = [
     type: 'education' as const,
   },
   {
-    year: '2024–26',
-    title: 'MSc Computer Science',
-    location: 'Lausanne, Switzerland',
-    flag: '🇨🇭',
-    description: 'Master\'s at EPFL (5.6/6 average). Systems, security, ML, and a minor in Management, Technology & Entrepreneurship.',
+    year: '2018–21',
+    title: 'IB Diploma, ISSR',
+    location: 'Stockholm, Sweden',
+    flag: '🇸🇪',
+    description: 'Completed the International Baccalaureate at the International School of the Stockholm Region.',
     type: 'education' as const,
   },
   {
-    year: '2026–',
-    title: 'Software Engineer',
-    location: 'London, United Kingdom',
+    year: '2012–18',
+    title: 'Middle & early high school',
+    location: 'Dubai, UAE',
+    flag: '🇦🇪',
+    description: 'Longest stretch in one place — formative years in Dubai.',
+    type: 'life' as const,
+  },
+  {
+    year: '2010–12',
+    title: 'Primary school',
+    location: 'Egham, United Kingdom',
     flag: '🇬🇧',
-    description: 'Joining Bloomberg for a software engineering placement.',
-    type: 'work' as const,
+    description: 'Living in the English countryside.',
+    type: 'life' as const,
+  },
+  {
+    year: '2007–10',
+    title: 'Growing up abroad',
+    location: 'Al Ain, UAE',
+    flag: '🇦🇪',
+    description: 'Childhood years in the Emirates.',
+    type: 'life' as const,
+  },
+  {
+    year: '2006–07',
+    title: 'Early childhood',
+    location: 'Stockholm, Sweden',
+    flag: '🇸🇪',
+    description: 'First move back to Scandinavia.',
+    type: 'life' as const,
+  },
+  {
+    year: '2003',
+    title: 'Born',
+    location: 'Bangkok, Thailand',
+    flag: '🇹🇭',
+    description: 'Born in Bangkok to a Swedish-American family.',
+    type: 'life' as const,
   },
 ];
 
-const interests = [
-  { label: 'Systems & Performance', desc: 'OS internals, concurrency, distributed systems, low-level optimization' },
-  { label: 'Machine Learning', desc: 'LLMs, probabilistic models, forecasting, applied ML for real problems' },
-  { label: 'Security & Cryptography', desc: 'Applied cryptography, secure systems, protocol design' },
-  { label: 'Data Engineering', desc: 'Pipelines, databases, stream processing, data-intensive applications' },
-];
+
 
 export default function AboutPage() {
   return (
@@ -146,23 +142,21 @@ export default function AboutPage() {
 
       {/* Life Timeline */}
       <AnimatedSection className="mb-16">
-        <h2 className="text-xl font-bold text-text-primary mb-2">Where I&apos;ve Been</h2>
+        <h2 className="text-xl font-bold text-text-primary mb-2">Where I&apos;ve Lived</h2>
         <p className="text-sm text-text-muted mb-10">
           9 cities, 6 countries, 3 continents — and counting.
         </p>
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-5 sm:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-border via-accent/30 to-accent" />
+          <div className="absolute left-5 sm:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-accent via-accent/30 to-border" />
 
           <div className="space-y-0">
             {timeline.map((item, i) => {
+              const isFirst = i === 0;
               const isLast = i === timeline.length - 1;
-              const typeColor =
-                item.type === 'work'
-                  ? 'border-accent bg-accent shadow-lg shadow-accent/20'
-                  : item.type === 'education'
-                    ? 'border-accent/60 bg-accent/80'
-                    : 'border-border bg-bg-card';
+              const dotStyle = isFirst
+                ? 'border-accent bg-accent shadow-lg shadow-accent/20'
+                : 'border-border bg-bg-card';
 
               return (
                 <div
@@ -172,7 +166,7 @@ export default function AboutPage() {
                   {/* Node */}
                   <div className="relative z-10 flex flex-col items-center pt-1">
                     <div
-                      className={`w-[10px] h-[10px] sm:w-3 sm:h-3 rounded-full border-2 ${typeColor} transition-all duration-300 group-hover:scale-125`}
+                      className={`w-[10px] h-[10px] sm:w-3 sm:h-3 rounded-full border-2 ${dotStyle} transition-all duration-300 group-hover:scale-125`}
                     />
                   </div>
 
@@ -218,17 +212,13 @@ export default function AboutPage() {
         </div>
       </AnimatedSection>
 
-      {/* Interests & Focus Areas */}
+      {/* Where I've Been — 3D Globe */}
       <AnimatedSection className="mb-16">
-        <h2 className="text-xl font-bold text-text-primary mb-6">Focus Areas</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {interests.map(({ label, desc }) => (
-            <div key={label} className="rounded-xl border border-border bg-bg-card p-5 transition-all hover:border-border-hover">
-              <h3 className="font-semibold text-text-primary text-sm">{label}</h3>
-              <p className="text-sm text-text-secondary mt-2 leading-relaxed">{desc}</p>
-            </div>
-          ))}
-        </div>
+        <h2 className="text-xl font-bold text-text-primary mb-2">Where I&apos;ve Been</h2>
+        <p className="text-sm text-text-muted mb-8">
+          Cities and countries I&apos;ve visited, worked, and lived in — select a place to explore.
+        </p>
+        <TravelExplorer />
       </AnimatedSection>
 
       {/* Contact CTA */}

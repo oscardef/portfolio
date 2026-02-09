@@ -17,7 +17,7 @@ interface ExperienceCardProps {
 }
 
 export function ExperienceCard({ experience, index = 0 }: ExperienceCardProps) {
-  const Icon = typeIcons[experience.type];
+  const Icon = typeIcons[experience.type[0]];
 
   return (
     <AnimatedDiv delay={index * 0.1}>

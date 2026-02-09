@@ -9,12 +9,12 @@ import { Tag } from '@/components/ui/tag';
 import { formatDate, formatDateRange } from '@/lib/utils';
 
 const organizations = [
-  { name: 'Bloomberg', logo: '/images/logos/bloomberg.svg' },
-  { name: 'EPFL', logo: '/images/logos/epfl.svg' },
-  { name: 'ASML', logo: '/images/logos/asml.svg' },
-  { name: 'University of Groningen', logo: '/images/logos/ugroningen.svg' },
-  { name: 'Researchable', logo: '/images/logos/researchable.svg' },
-  { name: 'Securrency', logo: '/images/logos/securrency.svg' },
+  { name: 'Bloomberg', logo: '/images/logos/bloomberg.svg', width: 130, height: 28 },
+  { name: 'EPFL', logo: '/images/logos/epfl.svg', width: 80, height: 28 },
+  { name: 'ASML', logo: '/images/logos/asml.svg', width: 100, height: 28 },
+  { name: 'University of Groningen', logo: '/images/logos/ugroningen.svg', width: 160, height: 36 },
+  { name: 'Researchable', logo: '/images/logos/researchable.svg', width: 130, height: 28 },
+  { name: 'Securrency', logo: '/images/logos/securrency.png', width: 130, height: 32 },
 ];
 
 export default async function HomePage() {
@@ -100,15 +100,18 @@ export default async function HomePage() {
           {organizations.map((org) => (
             <div
               key={org.name}
-              className="relative h-7 w-auto opacity-40 hover:opacity-70 transition-opacity grayscale hover:grayscale-0"
+              className="group relative h-auto w-auto transition-all duration-300"
               title={org.name}
             >
+              {/* White glow behind logo on hover for readability */}
+              <div className="absolute inset-0 -m-6 rounded-2xl bg-white/0 group-hover:bg-white/15 transition-all duration-300 blur-2xl" />
               <Image
                 src={org.logo}
                 alt={org.name}
-                width={120}
-                height={28}
-                className="h-7 w-auto object-contain invert"
+                width={org.width}
+                height={org.height}
+                className="relative object-contain brightness-0 invert opacity-40 group-hover:brightness-100 group-hover:invert-0 group-hover:opacity-100 transition-all duration-300"
+                style={{ height: org.height, width: 'auto' }}
               />
             </div>
           ))}
@@ -214,7 +217,7 @@ export default async function HomePage() {
           <h2 className="text-xl font-bold text-text-primary">Education</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="rounded-xl border border-border bg-bg-card p-5">
+          <div className="rounded-xl border border-border bg-bg-card p-5 transition-all hover:border-border-hover hover:bg-bg-card-hover">
             <h3 className="font-semibold text-text-primary text-sm">MSc Computer Science</h3>
             <p className="text-xs text-text-muted mt-1">EPFL · 2024 — 2026</p>
             <p className="text-sm text-text-secondary mt-3">
@@ -222,7 +225,7 @@ export default async function HomePage() {
               Focus on systems, security, and machine learning.
             </p>
           </div>
-          <div className="rounded-xl border border-border bg-bg-card p-5">
+          <div className="rounded-xl border border-border bg-bg-card p-5 transition-all hover:border-border-hover hover:bg-bg-card-hover">
             <h3 className="font-semibold text-text-primary text-sm">BSc Computer Science</h3>
             <p className="text-xs text-text-muted mt-1">University of Groningen · 2021 — 2024</p>
             <p className="text-sm text-text-secondary mt-3">
@@ -249,7 +252,7 @@ export default async function HomePage() {
                 {items.map((item) => (
                   <span
                     key={item}
-                    className="text-xs text-text-secondary bg-bg-card border border-border px-2 py-1 rounded"
+                    className="text-xs text-text-secondary bg-bg-card border border-border px-2 py-1 rounded transition-colors hover:border-border-hover hover:text-text-primary"
                   >
                     {item}
                   </span>

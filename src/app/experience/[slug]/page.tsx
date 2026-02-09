@@ -67,13 +67,13 @@ export default async function ExperienceDetailPage({ params }: PageProps) {
       <header className="mb-8">
         <div className="flex items-start gap-4 mb-4">
           {frontmatter.logo && (
-            <div className="shrink-0 w-14 h-14 rounded-xl bg-bg-secondary border border-border flex items-center justify-center overflow-hidden">
+            <div className="shrink-0 w-14 h-14 rounded-xl bg-white/90 border border-border flex items-center justify-center overflow-hidden p-1.5">
               <Image
                 src={frontmatter.logo}
                 alt={frontmatter.organization}
-                width={36}
-                height={36}
-                className="w-9 h-9 object-contain"
+                width={48}
+                height={48}
+                className="w-full h-full object-contain"
               />
             </div>
           )}
@@ -95,7 +95,7 @@ export default async function ExperienceDetailPage({ params }: PageProps) {
           <Calendar size={14} />
           <time>{formatDateRange(frontmatter.startDate, frontmatter.endDate)}</time>
           <span>·</span>
-          <span className="capitalize">{frontmatter.type}</span>
+          <span className="capitalize">{frontmatter.type.join(' + ')}</span>
         </div>
 
         <p className="text-lg text-text-secondary mt-4 leading-relaxed">

@@ -1,0 +1,52 @@
+---
+title: "OptiFlow — Decathlon Supply Chain Optimization"
+slug: "optiflow"
+date: "2025-03-01"
+type: "company"
+featured: true
+summary: "Designed and built an optimization engine for Decathlon's supply chain logistics, improving warehouse-to-store distribution efficiency through constraint-based algorithms."
+tags: ["systems", "performance", "data-systems"]
+stack: ["Python", "OR-Tools", "FastAPI", "PostgreSQL", "Docker", "React"]
+links:
+  github: ""
+heroImage:
+  src: "/images/projects/optiflow/hero.png"
+  alt: "OptiFlow supply chain optimization dashboard"
+highlights:
+  - "Built constraint-based optimization engine for warehouse-to-store distribution"
+  - "Reduced average delivery routing costs through intelligent allocation algorithms"
+  - "Designed scalable architecture handling thousands of SKUs across multiple warehouses"
+  - "Delivered production-ready solution integrated into Decathlon's logistics workflow"
+role: "Lead developer"
+organization: "Decathlon"
+status: "shipped"
+relatedExperience: []
+---
+
+## Overview
+
+OptiFlow is a supply chain optimization platform built for Decathlon, one of the world's largest sporting goods retailers. The project tackled the complex problem of optimally distributing products from regional warehouses to retail stores, considering constraints like inventory levels, demand forecasts, transportation costs, and delivery windows.
+
+## What I Built
+
+- **Optimization engine:** Constraint-based solver using Google OR-Tools for multi-objective optimization of distribution routes and quantities
+- **Data pipeline:** ETL system processing inventory, demand, and logistics data from Decathlon's systems
+- **API layer:** FastAPI backend exposing optimization results and configuration endpoints
+- **Dashboard:** React-based interface for logistics managers to visualize distribution plans, compare scenarios, and track KPIs
+
+## Technical Approach
+
+The core challenge was modeling the distribution problem as a mixed-integer linear program (MILP) that could handle:
+
+- Multiple warehouses with varying stock levels and capacities
+- Hundreds of retail stores with different demand patterns
+- Transportation costs that vary by route, volume, and timing
+- Service level constraints ensuring minimum stock availability
+- Time window constraints for deliveries
+
+## Impact
+
+- Delivered a working optimization engine that improved distribution efficiency
+- Solution handled real-world scale: thousands of SKUs, dozens of warehouses, hundreds of stores
+- Dashboard provided actionable insights for logistics decision-makers
+- Architecture designed for extensibility — easy to add new constraints or objectives

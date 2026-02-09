@@ -42,7 +42,7 @@ export function ExperienceListClient({ experiences }: ExperienceListClientProps)
     let result = [...experiences];
 
     if (activeType !== 'all') {
-      result = result.filter((e) => e.type === activeType);
+      result = result.filter((e) => (e.type as string[]).includes(activeType));
     }
 
     if (search) {
@@ -103,7 +103,7 @@ export function ExperienceListClient({ experiences }: ExperienceListClientProps)
       {filtered.length > 0 ? (
         <div className="space-y-4">
           {filtered.map((exp) => {
-            const Icon = typeIcons[exp.type];
+            const Icon = typeIcons[exp.type[0]];
             return (
               <Link
                 key={exp.slug}
@@ -113,14 +113,14 @@ export function ExperienceListClient({ experiences }: ExperienceListClientProps)
                 <div className="p-5 sm:p-6">
                   <div className="flex items-start gap-4">
                     {/* Logo or Icon */}
-                    <div className="shrink-0 w-12 h-12 rounded-xl bg-bg-secondary border border-border flex items-center justify-center overflow-hidden">
+                    <div className="shrink-0 w-14 h-14 rounded-xl bg-white/90 border border-border flex items-center justify-center overflow-hidden p-2">
                       {exp.logo ? (
                         <Image
                           src={exp.logo}
                           alt={exp.organization}
-                          width={32}
-                          height={32}
-                          className="w-8 h-8 object-contain"
+                          width={40}
+                          height={40}
+                          className="w-full h-full object-contain"
                         />
                       ) : (
                         <Icon size={20} className="text-accent" />
@@ -137,9 +137,11 @@ export function ExperienceListClient({ experiences }: ExperienceListClientProps)
                           <p className="text-sm text-text-secondary mt-0.5">{exp.organization}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className="hidden sm:inline-block text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-accent/10 text-accent/80">
-                            {typeLabels[exp.type]}
-                          </span>
+                          {exp.type.map((t) => (
+                            <span key={t} className="hidden sm:inline-block text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-accent/10 text-accent/80">
+                              {typeLabels[t]}
+                            </span>
+                          ))}
                           <ArrowRight
                             size={14}
                             className="text-text-muted group-hover:text-accent transition-all group-hover:translate-x-0.5"

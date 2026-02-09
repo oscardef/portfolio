@@ -35,13 +35,16 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm transition-colors ${
+              className={`relative text-sm transition-colors py-1 ${
                 isActive(link.href)
                   ? 'text-text-primary font-medium'
                   : 'text-text-muted hover:text-text-primary'
               }`}
             >
               {link.label}
+              {isActive(link.href) && (
+                <span className="absolute -bottom-0.5 left-0 right-0 h-[2px] bg-accent rounded-full" />
+              )}
             </Link>
           ))}
         </div>

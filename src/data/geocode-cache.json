@@ -1,0 +1,52 @@
+{
+  "Abu Dhabi, UAE": {
+    "lat": 24.4539,
+    "lng": 54.3773,
+    "cc": "AE"
+  },
+  "Al Ain, UAE": {
+    "lat": 24.2075,
+    "lng": 55.7447,
+    "cc": "AE"
+  },
+  "Bangkok, Thailand": {
+    "lat": 13.7563,
+    "lng": 100.5018,
+    "cc": "TH"
+  },
+  "Dubai, UAE": {
+    "lat": 25.2048,
+    "lng": 55.2708,
+    "cc": "AE"
+  },
+  "Egham, United Kingdom": {
+    "lat": 51.4316,
+    "lng": -0.5446,
+    "cc": "GB"
+  },
+  "Groningen, Netherlands": {
+    "lat": 53.2194,
+    "lng": 6.5665,
+    "cc": "NL"
+  },
+  "Lausanne, Switzerland": {
+    "lat": 46.5197,
+    "lng": 6.6323,
+    "cc": "CH"
+  },
+  "London, United Kingdom": {
+    "lat": 51.5074,
+    "lng": -0.1278,
+    "cc": "GB"
+  },
+  "Stockholm, Sweden": {
+    "lat": 59.3293,
+    "lng": 18.0686,
+    "cc": "SE"
+  },
+  "Veldhoven, Netherlands": {
+    "lat": 51.4201,
+    "lng": 5.4052,
+    "cc": "NL"
+  }
+}

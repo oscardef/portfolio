@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
+    "cobe": "^0.6.5",
     "framer-motion": "^12.33.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.563.0",
