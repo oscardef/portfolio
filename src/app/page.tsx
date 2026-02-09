@@ -1,33 +1,40 @@
 import Image from 'next/image';
-import { Github, Linkedin, Mail, MapPin } from 'lucide-react';
+import Link from 'next/link';
+import { Github, Linkedin, Mail, MapPin, ArrowRight, Briefcase, FolderOpen } from 'lucide-react';
 import { getAllProjects, getAllExperiences } from '@/lib/content';
 import { siteConfig } from '@/lib/constants';
 import { AnimatedSection, AnimatedDiv } from '@/components/ui/animated-section';
-import { SectionHeader } from '@/components/ui/section-header';
 import { Button } from '@/components/ui/button';
-import { ProjectCard } from '@/components/project-card';
-import { ExperienceCard } from '@/components/experience-card';
+import { Tag } from '@/components/ui/tag';
+import { formatDate, formatDateRange } from '@/lib/utils';
+
+const organizations = [
+  { name: 'Bloomberg', logo: '/images/logos/bloomberg.svg' },
+  { name: 'EPFL', logo: '/images/logos/epfl.svg' },
+  { name: 'ASML', logo: '/images/logos/asml.svg' },
+  { name: 'University of Groningen', logo: '/images/logos/ugroningen.svg' },
+  { name: 'Researchable', logo: '/images/logos/researchable.svg' },
+  { name: 'Securrency', logo: '/images/logos/securrency.svg' },
+];
 
 export default async function HomePage() {
   const projects = await getAllProjects();
   const experiences = await getAllExperiences();
-  const featuredProjects = projects.filter((p) => p.featured).slice(0, 6);
+  const featuredProjects = projects.filter((p) => p.featured).slice(0, 4);
 
   return (
     <div className="relative">
-      {/* ────────── HERO ────────── */}
-      <section className="relative min-h-[90vh] flex items-center pt-16">
-        {/* Subtle gradient background */}
+      {/* ── Hero ── */}
+      <section className="relative min-h-[85vh] flex items-center pt-16">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-transparent to-transparent" />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-accent/[0.04] rounded-full blur-3xl" />
 
-        <div className="relative mx-auto max-w-6xl px-6 py-20 w-full">
+        <div className="relative mx-auto max-w-6xl px-6 py-16 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left: Text */}
             <AnimatedDiv>
               <p className="text-accent font-medium text-sm mb-4 flex items-center gap-2">
                 <MapPin size={14} />
-                Lausanne, Switzerland
+                London, United Kingdom
               </p>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-text-primary tracking-tight leading-[1.1]">
                 Oscar
@@ -36,21 +43,15 @@ export default async function HomePage() {
               </h1>
               <p className="mt-6 text-lg text-text-secondary max-w-lg leading-relaxed">
                 Systems-oriented software engineer with a focus on performance,
-                reliability, and data systems. CS Master&apos;s student at EPFL,
-                starting at Bloomberg.
+                reliability, and data systems. MSc in Computer Science from EPFL,
+                currently at Bloomberg in London.
               </p>
 
-              {/* CTAs */}
               <div className="flex flex-wrap items-center gap-3 mt-8">
-                <Button href="/projects" icon="arrow">
-                  View Projects
-                </Button>
-                <Button href="#experience" variant="secondary">
-                  Experience
-                </Button>
+                <Button href="/projects" icon="arrow">View Projects</Button>
+                <Button href="/about" variant="secondary">About Me</Button>
               </div>
 
-              {/* Social links */}
               <div className="flex items-center gap-4 mt-8">
                 {[
                   { href: siteConfig.links.github, icon: Github, label: 'GitHub' },
@@ -71,7 +72,6 @@ export default async function HomePage() {
               </div>
             </AnimatedDiv>
 
-            {/* Right: Portrait */}
             <AnimatedDiv delay={0.2} className="flex justify-center lg:justify-end">
               <div className="relative">
                 <div className="relative w-72 h-96 sm:w-80 sm:h-[28rem] rounded-2xl overflow-hidden border border-border">
@@ -84,7 +84,6 @@ export default async function HomePage() {
                     sizes="(max-width: 768px) 288px, 320px"
                   />
                 </div>
-                {/* Decorative element */}
                 <div className="absolute -bottom-3 -right-3 w-72 h-96 sm:w-80 sm:h-[28rem] rounded-2xl border border-accent/20 -z-10" />
               </div>
             </AnimatedDiv>
@@ -92,94 +91,141 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ────────── ABOUT ────────── */}
-      <AnimatedSection className="mx-auto max-w-6xl px-6 py-20">
-        <SectionHeader title="About" />
-        <div className="max-w-3xl">
-          <p className="text-text-secondary leading-relaxed text-base">
-            I&apos;m a Computer Science Master&apos;s student at EPFL (Swiss Federal Institute of Technology)
-            with a focus on systems, security, and data-intensive applications. I hold a BSc in CS
-            from the University of Groningen (cum laude, 8.6/10 average). I care deeply about writing
-            reliable, performant software and building systems that scale.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-            {[
-              { label: 'Systems & Performance', desc: 'OS, concurrency, distributed systems' },
-              { label: 'Machine Learning', desc: 'LLMs, probabilistic models, forecasting' },
-              { label: 'Security & Data', desc: 'Applied cryptography, data pipelines' },
-            ].map(({ label, desc }) => (
-              <div key={label} className="rounded-lg border border-border bg-bg-card p-4">
-                <p className="font-medium text-text-primary text-sm">{label}</p>
-                <p className="text-xs text-text-muted mt-1">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* ────────── EXPERIENCE ────────── */}
-      <AnimatedSection id="experience" className="mx-auto max-w-6xl px-6 py-20">
-        <SectionHeader
-          title="Experience"
-          subtitle="Professional roles and positions — click any card for details."
-        />
-        <div className="grid grid-cols-1 gap-4 max-w-3xl">
-          {experiences.map((exp, i) => (
-            <ExperienceCard key={exp.slug} experience={exp} index={i} />
-          ))}
-        </div>
-      </AnimatedSection>
-
-      {/* ────────── FEATURED PROJECTS ────────── */}
-      <AnimatedSection className="mx-auto max-w-6xl px-6 py-20">
-        <div className="flex items-end justify-between mb-10">
-          <SectionHeader
-            title="Featured Projects"
-            subtitle="Selected work across research, coursework, and personal projects."
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredProjects.map((project, i) => (
-            <ProjectCard key={project.slug} project={project} index={i} />
-          ))}
-        </div>
-        <div className="mt-8 flex justify-center">
-          <Button href="/projects" variant="secondary" icon="arrow">
-            View All Projects
-          </Button>
-        </div>
-      </AnimatedSection>
-
-      {/* ────────── EDUCATION ────────── */}
-      <AnimatedSection className="mx-auto max-w-6xl px-6 py-20">
-        <SectionHeader title="Education" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl">
-          <div className="rounded-xl border border-border bg-bg-card p-6">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                <GraduationCapIcon />
-              </div>
-              <div>
-                <h3 className="font-semibold text-text-primary text-sm">MSc Computer Science</h3>
-                <p className="text-xs text-text-muted">EPFL · 2024 — 2026</p>
-              </div>
+      {/* ── Organization Logos ── */}
+      <AnimatedSection className="mx-auto max-w-6xl px-6 py-8">
+        <p className="text-xs text-text-muted uppercase tracking-widest text-center mb-6">
+          Worked &amp; Studied With
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+          {organizations.map((org) => (
+            <div
+              key={org.name}
+              className="relative h-7 w-auto opacity-40 hover:opacity-70 transition-opacity grayscale hover:grayscale-0"
+              title={org.name}
+            >
+              <Image
+                src={org.logo}
+                alt={org.name}
+                width={120}
+                height={28}
+                className="h-7 w-auto object-contain invert"
+              />
             </div>
-            <p className="text-sm text-text-secondary">
+          ))}
+        </div>
+      </AnimatedSection>
+
+      {/* ── Experience ── */}
+      <AnimatedSection className="mx-auto max-w-6xl px-6 py-12">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Briefcase size={20} className="text-accent" />
+            <h2 className="text-xl font-bold text-text-primary">Experience</h2>
+          </div>
+          <Link
+            href="/experience"
+            className="text-sm text-text-muted hover:text-accent transition-colors flex items-center gap-1"
+          >
+            View all <ArrowRight size={14} />
+          </Link>
+        </div>
+        <div className="space-y-3">
+          {experiences.map((exp) => (
+            <Link
+              key={exp.slug}
+              href={`/experience/${exp.slug}`}
+              className="group flex items-center gap-4 rounded-xl border border-border bg-bg-card p-4 transition-all hover:border-border-hover hover:bg-bg-card-hover"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-semibold text-text-primary text-sm group-hover:text-accent transition-colors">
+                    {exp.title}
+                  </h3>
+                  <span className="text-text-muted text-xs">·</span>
+                  <span className="text-text-secondary text-sm">{exp.organization}</span>
+                </div>
+                <p className="text-xs text-text-muted mt-1">
+                  {formatDateRange(exp.startDate, exp.endDate)} · {exp.location}
+                </p>
+              </div>
+              <ArrowRight
+                size={14}
+                className="shrink-0 text-text-muted group-hover:text-accent transition-all group-hover:translate-x-0.5"
+              />
+            </Link>
+          ))}
+        </div>
+      </AnimatedSection>
+
+      {/* ── Featured Projects ── */}
+      <AnimatedSection className="mx-auto max-w-6xl px-6 py-12">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <FolderOpen size={20} className="text-accent" />
+            <h2 className="text-xl font-bold text-text-primary">Featured Projects</h2>
+          </div>
+          <Link
+            href="/projects"
+            className="text-sm text-text-muted hover:text-accent transition-colors flex items-center gap-1"
+          >
+            View all <ArrowRight size={14} />
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {featuredProjects.map((project) => (
+            <Link
+              key={project.slug}
+              href={`/projects/${project.slug}`}
+              className="group rounded-xl border border-border bg-bg-card p-5 transition-all hover:border-border-hover hover:bg-bg-card-hover"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-text-primary text-sm group-hover:text-accent transition-colors line-clamp-1">
+                    {project.title}
+                  </h3>
+                  <p className="text-xs text-text-muted mt-1">
+                    {formatDate(project.date)}
+                    {project.organization && ` · ${project.organization}`}
+                  </p>
+                </div>
+                <ArrowRight
+                  size={14}
+                  className="shrink-0 text-text-muted group-hover:text-accent transition-all group-hover:translate-x-0.5 mt-1"
+                />
+              </div>
+              <p className="text-sm text-text-secondary mt-3 line-clamp-2">{project.summary}</p>
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {project.tags.slice(0, 3).map((tag) => (
+                  <Tag key={tag} label={tag} />
+                ))}
+                {project.tags.length > 3 && (
+                  <span className="text-xs text-text-muted self-center">+{project.tags.length - 3}</span>
+                )}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </AnimatedSection>
+
+      {/* ── Education ── */}
+      <AnimatedSection className="mx-auto max-w-6xl px-6 py-12">
+        <div className="flex items-center gap-3 mb-6">
+          <GraduationCapIcon />
+          <h2 className="text-xl font-bold text-text-primary">Education</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-border bg-bg-card p-5">
+            <h3 className="font-semibold text-text-primary text-sm">MSc Computer Science</h3>
+            <p className="text-xs text-text-muted mt-1">EPFL · 2024 — 2026</p>
+            <p className="text-sm text-text-secondary mt-3">
               Average 5.6/6. Minor in Management, Technology &amp; Entrepreneurship.
               Focus on systems, security, and machine learning.
             </p>
           </div>
-          <div className="rounded-xl border border-border bg-bg-card p-6">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                <GraduationCapIcon />
-              </div>
-              <div>
-                <h3 className="font-semibold text-text-primary text-sm">BSc Computer Science</h3>
-                <p className="text-xs text-text-muted">University of Groningen · 2021 — 2024</p>
-              </div>
-            </div>
-            <p className="text-sm text-text-secondary">
+          <div className="rounded-xl border border-border bg-bg-card p-5">
+            <h3 className="font-semibold text-text-primary text-sm">BSc Computer Science</h3>
+            <p className="text-xs text-text-muted mt-1">University of Groningen · 2021 — 2024</p>
+            <p className="text-sm text-text-secondary mt-3">
               Cum Laude, average 8.6/10. Coursework in algorithms, operating systems,
               concurrent programming, and data systems.
             </p>
@@ -187,10 +233,10 @@ export default async function HomePage() {
         </div>
       </AnimatedSection>
 
-      {/* ────────── SKILLS ────────── */}
-      <AnimatedSection className="mx-auto max-w-6xl px-6 py-20">
-        <SectionHeader title="Skills & Tools" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl">
+      {/* ── Skills ── */}
+      <AnimatedSection className="mx-auto max-w-6xl px-6 py-12">
+        <h2 className="text-xl font-bold text-text-primary mb-6">Skills &amp; Tools</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {[
             { category: 'Languages', items: ['Python', 'C/C++', 'Java', 'TypeScript', 'Rust', 'SQL'] },
             { category: 'ML & Data', items: ['PyTorch', 'TensorFlow', 'Pandas', 'NumPy', 'Scikit-learn'] },
@@ -214,24 +260,32 @@ export default async function HomePage() {
         </div>
       </AnimatedSection>
 
-      {/* ────────── CONTACT ────────── */}
-      <AnimatedSection className="mx-auto max-w-6xl px-6 py-20">
-        <div className="rounded-2xl border border-border bg-bg-card p-8 sm:p-12 text-center max-w-2xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">Let&apos;s Connect</h2>
-          <p className="text-text-secondary mt-3 max-w-md mx-auto">
-            I&apos;m always open to interesting conversations about systems, research, or potential
-            collaborations.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3 mt-6">
-            <Button href={siteConfig.links.email} variant="primary" icon="arrow">
-              Email Me
-            </Button>
-            <Button href={siteConfig.links.linkedin} external variant="secondary" icon="external">
-              LinkedIn
-            </Button>
-            <Button href={siteConfig.links.github} external variant="secondary" icon="external">
-              GitHub
-            </Button>
+      {/* ── Let's Connect ── */}
+      <AnimatedSection className="mx-auto max-w-6xl px-6 py-12 pb-20">
+        <div className="relative rounded-2xl border border-border bg-gradient-to-br from-bg-card via-bg-card to-accent/[0.06] p-10 sm:p-14 overflow-hidden">
+          <div className="absolute top-0 right-0 w-72 h-72 bg-accent/[0.05] rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+          <div className="relative max-w-xl mx-auto text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">
+              Let&apos;s Connect
+            </h2>
+            <p className="text-text-secondary mt-4 leading-relaxed">
+              Always open to interesting conversations about systems, research, or
+              potential collaborations. Feel free to reach out.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3 mt-8">
+              <Button href={siteConfig.links.email} variant="primary" icon="arrow">
+                Email Me
+              </Button>
+              <Button href={siteConfig.links.linkedin} external variant="secondary" icon="external">
+                LinkedIn
+              </Button>
+              <Button href={siteConfig.links.github} external variant="secondary" icon="external">
+                GitHub
+              </Button>
+            </div>
+            <p className="text-xs text-text-muted mt-6">
+              oscar.defrancesca@gmail.com
+            </p>
           </div>
         </div>
       </AnimatedSection>
@@ -239,13 +293,12 @@ export default async function HomePage() {
   );
 }
 
-// Small inline icon component
 function GraduationCapIcon() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="18"
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

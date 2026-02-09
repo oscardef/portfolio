@@ -3,6 +3,8 @@ import { Callout } from './callout';
 import { Gallery } from './gallery';
 import { VideoEmbed } from './video-embed';
 import { MetricRow } from './metric-row';
+import { FloatingImage } from './floating-image';
+import { DiagramBlock } from './diagram-block';
 import Image from 'next/image';
 
 export const mdxComponents: MDXComponents = {
@@ -11,6 +13,8 @@ export const mdxComponents: MDXComponents = {
   Gallery,
   VideoEmbed,
   MetricRow,
+  FloatingImage,
+  DiagramBlock,
 
   // Override default HTML elements
   img: (props) => (

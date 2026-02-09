@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowLeft, Calendar, MapPin, Building2 } from 'lucide-react';
-import { getExperienceBySlug, getExperienceSlugs, getAllExperiences } from '@/lib/content';
+import Image from 'next/image';
+import { ArrowLeft, ArrowRight, Calendar, MapPin, Building2, FolderOpen } from 'lucide-react';
+import { getExperienceBySlug, getExperienceSlugs, getAllExperiences, getAllProjects } from '@/lib/content';
 import { Button } from '@/components/ui/button';
+import { Tag } from '@/components/ui/tag';
 import { formatDateRange } from '@/lib/utils';
 import { siteConfig } from '@/lib/constants';
 
@@ -34,43 +36,60 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function ExperiencePage({ params }: PageProps) {
+export default async function ExperienceDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const data = await getExperienceBySlug(slug);
   if (!data) notFound();
 
   const { frontmatter, content } = data;
 
-  // Get prev/next experiences for navigation
   const allExperiences = await getAllExperiences();
   const currentIndex = allExperiences.findIndex((e) => e.slug === slug);
   const prevExp = currentIndex < allExperiences.length - 1 ? allExperiences[currentIndex + 1] : null;
   const nextExp = currentIndex > 0 ? allExperiences[currentIndex - 1] : null;
 
+  // Cross-linked projects
+  const allProjects = await getAllProjects();
+  const relatedProjects = frontmatter.relatedProjects
+    .map((s) => allProjects.find((p) => p.slug === s))
+    .filter(Boolean);
+
   return (
     <article className="mx-auto max-w-4xl px-6 pt-28 pb-20">
-      {/* Back link */}
       <Link
-        href="/#experience"
+        href="/experience"
         className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors mb-8"
       >
         <ArrowLeft size={14} />
-        Back
+        All Experience
       </Link>
 
-      {/* Header */}
       <header className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-text-muted mb-3">
-          <Building2 size={14} />
-          <span>{frontmatter.organization}</span>
-          <span>·</span>
-          <MapPin size={14} />
-          <span>{frontmatter.location}</span>
+        <div className="flex items-start gap-4 mb-4">
+          {frontmatter.logo && (
+            <div className="shrink-0 w-14 h-14 rounded-xl bg-bg-secondary border border-border flex items-center justify-center overflow-hidden">
+              <Image
+                src={frontmatter.logo}
+                alt={frontmatter.organization}
+                width={36}
+                height={36}
+                className="w-9 h-9 object-contain"
+              />
+            </div>
+          )}
+          <div>
+            <div className="flex items-center gap-2 text-sm text-text-muted mb-1">
+              <Building2 size={14} />
+              <span>{frontmatter.organization}</span>
+              <span>·</span>
+              <MapPin size={14} />
+              <span>{frontmatter.location}</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
+              {frontmatter.title}
+            </h1>
+          </div>
         </div>
-
-        <h1 className="text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
-          {frontmatter.title}
-        </h1>
 
         <div className="flex items-center gap-2 mt-3 text-sm text-text-muted">
           <Calendar size={14} />
@@ -83,7 +102,6 @@ export default async function ExperiencePage({ params }: PageProps) {
           {frontmatter.summary}
         </p>
 
-        {/* Highlights */}
         {frontmatter.highlights.length > 0 && (
           <ul className="mt-6 space-y-2">
             {frontmatter.highlights.map((h, i) => (
@@ -95,7 +113,6 @@ export default async function ExperiencePage({ params }: PageProps) {
           </ul>
         )}
 
-        {/* Stack */}
         {frontmatter.stack.length > 0 && (
           <div className="mt-6 pt-6 border-t border-border">
             <span className="text-xs text-text-muted block mb-2">Technologies</span>
@@ -112,27 +129,44 @@ export default async function ExperiencePage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Links */}
-        {(frontmatter.links.company || frontmatter.links.relatedProject) && (
+        {frontmatter.links.company && (
           <div className="flex flex-wrap gap-3 mt-4">
-            {frontmatter.links.company && (
-              <Button href={frontmatter.links.company} external variant="secondary" size="sm" icon="external">
-                Company
-              </Button>
-            )}
-            {frontmatter.links.relatedProject && (
-              <Button href={frontmatter.links.relatedProject} variant="secondary" size="sm" icon="arrow">
-                Related Project
-              </Button>
-            )}
+            <Button href={frontmatter.links.company} external variant="secondary" size="sm" icon="external">
+              Company Website
+            </Button>
           </div>
         )}
       </header>
 
-      {/* MDX Content */}
       <div className="prose max-w-none">{content}</div>
 
-      {/* Prev/Next navigation */}
+      {/* Related Projects */}
+      {relatedProjects.length > 0 && (
+        <div className="mt-12 pt-8 border-t border-border">
+          <div className="flex items-center gap-2 mb-4">
+            <FolderOpen size={16} className="text-accent" />
+            <h3 className="font-semibold text-text-primary text-sm">Related Projects</h3>
+          </div>
+          <div className="space-y-2">
+            {relatedProjects.map((project) => (
+              <Link
+                key={project!.slug}
+                href={`/projects/${project!.slug}`}
+                className="group flex items-center justify-between gap-3 rounded-lg border border-border bg-bg-card p-4 transition-all hover:border-border-hover hover:bg-bg-card-hover"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-text-primary group-hover:text-accent transition-colors">
+                    {project!.title}
+                  </p>
+                  <p className="text-xs text-text-muted mt-0.5 line-clamp-1">{project!.summary}</p>
+                </div>
+                <ArrowRight size={14} className="shrink-0 text-text-muted group-hover:text-accent transition-all group-hover:translate-x-0.5" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       <nav className="mt-16 pt-8 border-t border-border" aria-label="Experience navigation">
         <div className="flex justify-between gap-4">
           {prevExp ? (

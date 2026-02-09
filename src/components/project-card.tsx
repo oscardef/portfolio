@@ -16,19 +16,27 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
   return (
     <AnimatedDiv delay={index * 0.1}>
       <CardLink href={`/projects/${project.slug}`}>
-        {/* Hero image */}
-        {project.heroImage && (
-          <div className="relative -mx-6 -mt-6 mb-4 h-48 overflow-hidden rounded-t-xl">
-            <Image
-              src={project.heroImage.src}
-              alt={project.heroImage.alt}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-bg-card/80 to-transparent" />
-          </div>
-        )}
+        {/* Hero image or gradient placeholder */}
+        <div className="relative -mx-6 -mt-6 mb-4 h-44 overflow-hidden rounded-t-xl">
+          {project.heroImage ? (
+            <>
+              <Image
+                src={project.heroImage.src}
+                alt={project.heroImage.alt}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-bg-card/80 to-transparent" />
+            </>
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-accent/[0.08] via-bg-secondary to-bg-card flex items-center justify-center">
+              <span className="text-4xl font-bold text-accent/20 select-none">
+                {project.title.charAt(0)}
+              </span>
+            </div>
+          )}
+        </div>
 
         {/* Header */}
         <div className="flex items-start justify-between gap-3">

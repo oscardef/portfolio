@@ -2,11 +2,11 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, Github, ExternalLink, FileText, Play, Calendar, Building2 } from 'lucide-react';
-import { getProjectBySlug, getProjectSlugs, getAllProjects } from '@/lib/content';
+import { ArrowLeft, ArrowRight, Github, ExternalLink, FileText, Play, Calendar, Building2, Briefcase } from 'lucide-react';
+import { getProjectBySlug, getProjectSlugs, getAllProjects, getAllExperiences } from '@/lib/content';
 import { Tag } from '@/components/ui/tag';
 import { Button } from '@/components/ui/button';
-import { formatDateFull } from '@/lib/utils';
+import { formatDateFull, formatDateRange } from '@/lib/utils';
 import { siteConfig } from '@/lib/constants';
 
 interface PageProps {
@@ -63,6 +63,12 @@ export default async function ProjectPage({ params }: PageProps) {
   const activeLinks = Object.entries(frontmatter.links).filter(
     ([, url]) => url && url.length > 0
   ) as [keyof typeof linkIcons, string][];
+
+  // Cross-linked experiences
+  const allExperiences = await getAllExperiences();
+  const relatedExperiences = frontmatter.relatedExperience
+    .map((s) => allExperiences.find((e) => e.slug === s))
+    .filter(Boolean);
 
   return (
     <article className="mx-auto max-w-4xl px-6 pt-28 pb-20">
@@ -196,6 +202,35 @@ export default async function ProjectPage({ params }: PageProps) {
 
       {/* MDX Content */}
       <div className="prose max-w-none">{content}</div>
+
+      {/* Related Experiences */}
+      {relatedExperiences.length > 0 && (
+        <div className="mt-12 pt-8 border-t border-border">
+          <div className="flex items-center gap-2 mb-4">
+            <Briefcase size={16} className="text-accent" />
+            <h3 className="font-semibold text-text-primary text-sm">Related Experience</h3>
+          </div>
+          <div className="space-y-2">
+            {relatedExperiences.map((exp) => (
+              <Link
+                key={exp!.slug}
+                href={`/experience/${exp!.slug}`}
+                className="group flex items-center justify-between gap-3 rounded-lg border border-border bg-bg-card p-4 transition-all hover:border-border-hover hover:bg-bg-card-hover"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-text-primary group-hover:text-accent transition-colors">
+                    {exp!.title} at {exp!.organization}
+                  </p>
+                  <p className="text-xs text-text-muted mt-0.5">
+                    {formatDateRange(exp!.startDate, exp!.endDate)}
+                  </p>
+                </div>
+                <ArrowRight size={14} className="shrink-0 text-text-muted group-hover:text-accent transition-all group-hover:translate-x-0.5" />
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Prev/Next navigation */}
       <nav className="mt-16 pt-8 border-t border-border" aria-label="Project navigation">
