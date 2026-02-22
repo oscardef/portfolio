@@ -14,7 +14,7 @@ const organizations = [
   { name: 'ASML', logo: '/images/logos/asml.svg', width: 100, height: 28 },
   { name: 'University of Groningen', logo: '/images/logos/ugroningen.svg', width: 160, height: 36 },
   { name: 'Researchable', logo: '/images/logos/researchable.svg', width: 130, height: 28 },
-  { name: 'Securrency', logo: '/images/logos/securrency.png', width: 130, height: 32 },
+  { name: 'Securrency', logo: '/images/logos/securrency.png', width: 150, height: 52 },
 ];
 
 export default async function HomePage() {
@@ -274,12 +274,12 @@ export default async function HomePage() {
               Let&apos;s connect!
             </h2>
             <p className="text-text-secondary mt-4 leading-relaxed">
-              Got an interesting idea, a question about systems engineering, or just want to say hi?
-              I&apos;m always up for a good conversation — don&apos;t be a stranger!
+              Always open to interesting conversations about systems, research, or
+              potential collaborations. Feel free to reach out!
             </p>
             <div className="flex flex-wrap justify-center gap-3 mt-8">
               <Button href={siteConfig.links.email} variant="primary" icon="arrow">
-                Drop me an email
+                Email Me
               </Button>
               <Button href={siteConfig.links.linkedin} external variant="secondary" icon="external">
                 LinkedIn

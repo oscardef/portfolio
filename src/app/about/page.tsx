@@ -158,6 +158,13 @@ export default function AboutPage() {
                 ? 'border-accent bg-accent shadow-lg shadow-accent/20'
                 : 'border-border bg-bg-card';
 
+              const typeLabel = item.type === 'work' ? 'Work' : item.type === 'education' ? 'Education' : 'Life';
+              const typeStyle = item.type === 'work'
+                ? 'bg-accent/15 text-accent'
+                : item.type === 'education'
+                  ? 'bg-accent/10 text-accent/80'
+                  : 'bg-emerald-500/10 text-emerald-400/80';
+
               return (
                 <div
                   key={i}
@@ -188,17 +195,11 @@ export default function AboutPage() {
                           </h3>
                           <p className="text-[11px] text-text-muted mt-0.5">{item.location}</p>
                         </div>
-                        {item.type !== 'life' && (
-                          <span
-                            className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0 ${
-                              item.type === 'work'
-                                ? 'bg-accent/15 text-accent'
-                                : 'bg-accent/10 text-accent/80'
-                            }`}
-                          >
-                            {item.type === 'work' ? 'Work' : 'Education'}
-                          </span>
-                        )}
+                        <span
+                          className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0 ${typeStyle}`}
+                        >
+                          {typeLabel}
+                        </span>
                       </div>
                       <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed">
                         {item.description}
@@ -230,13 +231,16 @@ export default function AboutPage() {
             <p className="text-2xl mb-2">👋</p>
             <h2 className="text-xl font-bold text-text-primary">Let&apos;s connect!</h2>
             <p className="text-text-secondary mt-2 text-sm max-w-md mx-auto">
-              Have a cool idea or just want to chat? I&apos;d love to hear from you — reach out anytime!
+              Always open to interesting conversations about systems, research, or potential collaborations. Feel free to reach out!
             </p>
             <div className="flex flex-wrap justify-center gap-3 mt-5">
-              <Button href={siteConfig.links.email} variant="primary" size="sm" icon="arrow">Drop me an email</Button>
+              <Button href={siteConfig.links.email} variant="primary" size="sm" icon="arrow">Email Me</Button>
               <Button href={siteConfig.links.linkedin} external variant="secondary" size="sm" icon="external">LinkedIn</Button>
               <Button href={siteConfig.links.github} external variant="secondary" size="sm" icon="external">GitHub</Button>
             </div>
+            <p className="text-xs text-text-muted mt-4">
+              oscar.defrancesca@gmail.com
+            </p>
           </div>
         </div>
       </AnimatedSection>
