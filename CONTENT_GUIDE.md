@@ -220,6 +220,110 @@ These render as linked cards at the bottom of detail pages.
 
 ---
 
+## Travel Data
+
+Travel entries appear as markers on the 3D globe and in the searchable travel list.  
+Data lives in `src/data/travel.ts`.
+
+### Adding a place manually
+
+Add an entry to the `rawTravelData` array:
+
+```ts
+{ place: 'Kyoto', country: 'Japan', startDate: '2025-03-20', purpose: 'travel', notes: 'Cherry blossom season' },
+```
+
+Then resolve coordinates:
+
+```bash
+npx tsx scripts/geocode.ts
+```
+
+This queries OpenStreetMap Nominatim (free, no key) and caches results in `src/data/geocode-cache.json`. Commit both files.
+
+**Fields:**
+
+| Field | Required | Format |
+|-------|----------|--------|
+| `place` | ✓ | City, island, region — whatever you'd call it |
+| `country` | ✓ | Country name |
+| `state` | | US states only — shown alongside country |
+| `startDate` | ✓ | `YYYY`, `YYYY-MM`, or `YYYY-MM-DD` |
+| `endDate` | | Omit for day trips or ongoing stays |
+| `purpose` | ✓ | `lived` · `travel` · `work` · `conference` · `study` |
+| `notes` | | Short note (e.g. "Trip with Alina") |
+
+### Bulk import from macOS Photos
+
+The photo import pipeline reads GPS coordinates from your macOS Photos library (including iCloud-synced photos from your iPhone), clusters them into places, reverse-geocodes them, and generates travel entries — all with one command.
+
+#### Quick start
+
+```bash
+# Import all photos
+./scripts/import-photo-locations.sh
+
+# Import only recent photos (e.g. after a trip)
+./scripts/import-photo-locations.sh --after 2025-06-01
+
+# Preview without modifying anything
+./scripts/import-photo-locations.sh --after 2025-06-01 --dry-run
+```
+
+#### How it works
+
+1. **Extract** — A Swift app (PhotoKit) reads GPS + date from every photo in your library. It runs as a signed `.app` bundle so macOS shows the standard "Allow access to Photos" permission dialog (no Full Disk Access needed).
+
+2. **Cluster** — DBSCAN groups nearby photos (within 30 km) into spatial clusters. Clusters are then split into separate visits when there's a gap of 60+ days between photos.
+
+3. **Geocode** — Each cluster center is reverse-geocoded via Nominatim (free, 1 req/sec rate limit). Place names are cleaned up automatically (e.g. "Sakhu" → "Phuket", municipality suffixes stripped).
+
+4. **Deduplicate** — New locations within 30 km of any existing entry in `geocode-cache.json` are skipped, so you won't get duplicates when re-running.
+
+5. **Review & append** — The script shows you the new entries and asks for confirmation before modifying `travel.ts`. It then runs `geocode.ts` to resolve coordinates.
+
+#### All options
+
+```
+--after  YYYY-MM-DD    Only include photos after this date
+--before YYYY-MM-DD    Only include photos before this date
+--dry-run              Preview results without modifying travel.ts
+--skip-extract         Skip photo extraction (reuse previous photo-records.json)
+--radius-km N          Cluster radius in km (default: 30)
+--gap-days N           Days gap to split visits (default: 60)
+--min-samples N        Minimum photos to form a cluster (default: 2)
+```
+
+#### Prerequisites
+
+- macOS with Photos app (iCloud photo library synced)
+- Xcode Command Line Tools: `xcode-select --install`
+- Python 3 with: `pip3 install scikit-learn numpy requests`
+
+#### Pipeline files
+
+| File | Purpose |
+|------|---------|
+| `scripts/import-photo-locations.sh` | One-command wrapper — run this |
+| `scripts/extract-photos.swift` | Swift photo extractor (PhotoKit) |
+| `scripts/process-photo-locations.py` | Python clustering + geocoding |
+| `scripts/geocode.ts` | Coordinate resolver (runs after import) |
+
+#### Customizing place name mappings
+
+Edit the `PLACE_RENAMES` dict in `scripts/process-photo-locations.py` to:
+- Rename places: `"Sakhu": "Phuket"` (local admin name → tourist name)
+- Skip transits: `"Schiphol": None` (airport layovers you don't want)
+
+#### Troubleshooting
+
+- **"Photos access not authorized"** — Go to System Settings → Privacy & Security → Photos and grant access to PhotoExtractor. Or reset permissions: `tccutil reset Photos com.oscar.photo-extractor`
+- **No new entries** — All detected locations already exist in your travel data. Try a narrower date range or lower `--radius-km`.
+- **Wrong place names** — Add corrections to `PLACE_RENAMES` in `process-photo-locations.py` and re-run with `--skip-extract`.
+- **Build artifacts** — The pipeline creates `scripts/.build/` with the app bundle and intermediate files. Clean with `rm -rf scripts/.build/`.
+
+---
+
 ## AI Content Workflow
 
 When using an AI agent to create content from an existing repository or project:

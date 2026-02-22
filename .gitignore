@@ -3,3 +3,6 @@ node_modules
 out
 .DS_Store
 *.tsbuildinfo
+
+# Photo import pipeline build artifacts
+scripts/.build/

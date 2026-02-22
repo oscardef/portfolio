@@ -19,16 +19,20 @@
  * PURPOSE:       'lived' | 'travel' | 'work' | 'conference' | 'study'
  *
  * ─────────────────────────────────────────────────────────────────────
- * BULK IMPORT FROM PHOTOS (extract GPS locations from your camera roll):
+ * BULK IMPORT FROM PHOTOS (automated pipeline):
  *
- *   • Google Takeout → export Google Photos → each JSON sidecar has lat/lng
- *   • ExifTool CLI:  `exiftool -csv -gpslatitude -gpslongitude -createdate *.jpg > trips.csv`
- *   • Photo Exif Editor (iOS) — browse & export EXIF GPS data
- *   • Geotag Photos Pro (iOS/Android) — map view + CSV/GPX export
- *   • Immich (self-hosted) — open-source photo manager with a map/places view
+ *   Run the import script to extract GPS locations from your macOS Photos
+ *   library, cluster them into places, and add them here automatically:
  *
- *   Once you have a CSV with place names + dates, convert rows into entries below,
- *   then run `npx tsx scripts/geocode.ts` to resolve coordinates.
+ *     ./scripts/import-photo-locations.sh
+ *
+ *   Options:
+ *     --after  2025-01-01   Only photos after this date
+ *     --before 2025-12-31   Only photos before this date
+ *     --dry-run             Preview without modifying files
+ *     --skip-extract        Reuse previous photo extraction
+ *
+ *   See CONTENT_GUIDE.md § "Travel Data" for full documentation.
  * ─────────────────────────────────────────────────────────────────────
  */
 
