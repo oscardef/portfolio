@@ -9,6 +9,36 @@
     "lng": 55.7447,
     "cc": "AE"
   },
+  "Almere, Netherlands": {
+    "lat": 52.3705038,
+    "lng": 5.2185859,
+    "cc": "NL"
+  },
+  "Ameland, Netherlands": {
+    "lat": 53.4063472,
+    "lng": 5.74825,
+    "cc": "NL"
+  },
+  "Amstelveen, Netherlands": {
+    "lat": 52.3028209,
+    "lng": 4.8596844,
+    "cc": "NL"
+  },
+  "Amsterdam, Netherlands": {
+    "lat": 52.3730796,
+    "lng": 4.8924534,
+    "cc": "NL"
+  },
+  "Arnhem, Netherlands": {
+    "lat": 52.0056642,
+    "lng": 5.8762345,
+    "cc": "NL"
+  },
+  "Athens, Greece": {
+    "lat": 37.9755648,
+    "lng": 23.7348324,
+    "cc": "GR"
+  },
   "Austin, USA": {
     "lat": 30.2672,
     "lng": -97.7431,
@@ -19,30 +49,145 @@
     "lng": 100.5018,
     "cc": "TH"
   },
+  "Bern, Switzerland": {
+    "lat": 46.9484742,
+    "lng": 7.4521749,
+    "cc": "CH"
+  },
+  "Bratislava, Slovakia": {
+    "lat": 48.1559178,
+    "lng": 17.1313541,
+    "cc": "SK"
+  },
+  "Budapest, Hungary": {
+    "lat": 47.4813896,
+    "lng": 19.1460941,
+    "cc": "HU"
+  },
+  "Burgerveen, Netherlands": {
+    "lat": 52.240088,
+    "lng": 4.6809717,
+    "cc": "NL"
+  },
   "Carmel-By-The-Sea, USA": {
     "lat": 36.5554,
     "lng": -121.9233,
     "cc": "US"
+  },
+  "Copenhagen, Denmark": {
+    "lat": 55.6867243,
+    "lng": 12.5700724,
+    "cc": "DK"
+  },
+  "Cressier, Switzerland": {
+    "lat": 47.0508386,
+    "lng": 7.0357396,
+    "cc": "CH"
+  },
+  "Disneyland Paris, France": {
+    "lat": 48.8700934,
+    "lng": 2.7740499,
+    "cc": "FR"
+  },
+  "Dronten, Netherlands": {
+    "lat": 52.5236608,
+    "lng": 5.7160381,
+    "cc": "NL"
   },
   "Dubai, UAE": {
     "lat": 25.2048,
     "lng": 55.2708,
     "cc": "AE"
   },
+  "Eckartsau, Austria": {
+    "lat": 48.1459812,
+    "lng": 16.7966149,
+    "cc": "AT"
+  },
   "Egham, United Kingdom": {
     "lat": 51.4316,
     "lng": -0.5446,
     "cc": "GB"
+  },
+  "Eskilstuna, Sweden": {
+    "lat": 59.3717379,
+    "lng": 16.5051474,
+    "cc": "SE"
+  },
+  "Falun, Sweden": {
+    "lat": 60.6070068,
+    "lng": 15.6323059,
+    "cc": "SE"
+  },
+  "Freiburg, Germany": {
+    "lat": 47.9960901,
+    "lng": 7.8494005,
+    "cc": "DE"
+  },
+  "Gilroy, USA": {
+    "lat": 37.0065078,
+    "lng": -121.5631723,
+    "cc": "US"
+  },
+  "Grainau, Germany": {
+    "lat": 47.4753212,
+    "lng": 11.0259498,
+    "cc": "DE"
   },
   "Groningen, Netherlands": {
     "lat": 53.2194,
     "lng": 6.5665,
     "cc": "NL"
   },
+  "Hallstatt, Austria": {
+    "lat": 47.5621698,
+    "lng": 13.6486697,
+    "cc": "AT"
+  },
+  "Halmstad, Sweden": {
+    "lat": 56.6739826,
+    "lng": 12.8574827,
+    "cc": "SE"
+  },
+  "Haringsee, Austria": {
+    "lat": 48.1933853,
+    "lng": 16.7841394,
+    "cc": "AT"
+  },
+  "Hatta, UAE": {
+    "lat": 24.7975573,
+    "lng": 56.1206383,
+    "cc": "AE"
+  },
   "Houston, USA": {
     "lat": 29.7604,
     "lng": -95.3698,
     "cc": "US"
+  },
+  "Istanbul, Turkey": {
+    "lat": 41.006381,
+    "lng": 28.9758715,
+    "cc": "TR"
+  },
+  "Khao Lak, Thailand": {
+    "lat": 8.6125282,
+    "lng": 98.2419172,
+    "cc": "TH"
+  },
+  "Kigali, Rwanda": {
+    "lat": -1.9534357,
+    "lng": 30.1140089,
+    "cc": "RW"
+  },
+  "Krabi, Thailand": {
+    "lat": 8.1111653,
+    "lng": 99.1097298,
+    "cc": "TH"
+  },
+  "K\u00f6nigssee, Germany": {
+    "lat": 47.5551052,
+    "lng": 12.9765672,
+    "cc": "DE"
   },
   "Las Vegas, USA": {
     "lat": 36.1699,
@@ -54,20 +199,105 @@
     "lng": 6.6323,
     "cc": "CH"
   },
+  "Lelystad, Netherlands": {
+    "lat": 52.5150949,
+    "lng": 5.4768915,
+    "cc": "NL"
+  },
   "London, United Kingdom": {
     "lat": 51.5074,
     "lng": -0.1278,
     "cc": "GB"
+  },
+  "Loosdrecht, Netherlands": {
+    "lat": 52.2025993,
+    "lng": 5.0905629,
+    "cc": "NL"
   },
   "Los Angeles, USA": {
     "lat": 34.0522,
     "lng": -118.2437,
     "cc": "US"
   },
+  "Lysekil, Sweden": {
+    "lat": 58.3965726,
+    "lng": 11.4196339,
+    "cc": "SE"
+  },
+  "Mariestad, Sweden": {
+    "lat": 58.7093225,
+    "lng": 13.8228754,
+    "cc": "SE"
+  },
+  "Milan, Italy": {
+    "lat": 45.4641943,
+    "lng": 9.1896346,
+    "cc": "IT"
+  },
+  "Mondsee, Austria": {
+    "lat": 47.8560014,
+    "lng": 13.3500658,
+    "cc": "AT"
+  },
   "Monterey, USA": {
     "lat": 36.6002,
     "lng": -121.8947,
     "cc": "US"
+  },
+  "Munich, Germany": {
+    "lat": 48.1371079,
+    "lng": 11.5753822,
+    "cc": "DE"
+  },
+  "M\u00e1laga, Spain": {
+    "lat": 36.7213028,
+    "lng": -4.4216366,
+    "cc": "ES"
+  },
+  "Naxos, Greece": {
+    "lat": 37.0600105,
+    "lng": 25.4707567,
+    "cc": "GR"
+  },
+  "Nyn\u00e4shamn, Sweden": {
+    "lat": 58.9056457,
+    "lng": 17.9470987,
+    "cc": "SE"
+  },
+  "Palma, Spain": {
+    "lat": 39.5695818,
+    "lng": 2.6500745,
+    "cc": "ES"
+  },
+  "Paris, France": {
+    "lat": 48.8588897,
+    "lng": 2.320041,
+    "cc": "FR"
+  },
+  "Phuket, Thailand": {
+    "lat": 7.9366015,
+    "lng": 98.3529292,
+    "cc": "TH"
+  },
+  "Prague, Czechia": {
+    "lat": 50.0874654,
+    "lng": 14.4212535,
+    "cc": "CZ"
+  },
+  "Ras Al Khaimah, UAE": {
+    "lat": 25.7737705,
+    "lng": 55.938232,
+    "cc": "AE"
+  },
+  "Rome, Italy": {
+    "lat": 41.8933203,
+    "lng": 12.4829321,
+    "cc": "IT"
+  },
+  "Rust, Germany": {
+    "lat": 48.2659347,
+    "lng": 7.7263213,
+    "cc": "DE"
   },
   "San Francisco, USA": {
     "lat": 37.7749,
@@ -79,14 +309,79 @@
     "lng": -121.1897,
     "cc": "US"
   },
+  "Santa Barbara, USA": {
+    "lat": 34.4221319,
+    "lng": -119.702667,
+    "cc": "US"
+  },
+  "Singapore, Singapore": {
+    "lat": 1.357107,
+    "lng": 103.8194992,
+    "cc": "SG"
+  },
+  "Sins, Switzerland": {
+    "lat": 47.1910321,
+    "lng": 8.3946059,
+    "cc": "CH"
+  },
+  "Split, Croatia": {
+    "lat": 43.5116383,
+    "lng": 16.4399659,
+    "cc": "HR"
+  },
   "Stockholm, Sweden": {
     "lat": 59.3293,
     "lng": 18.0686,
     "cc": "SE"
   },
+  "Str\u00e4ngn\u00e4s, Sweden": {
+    "lat": 59.3763155,
+    "lng": 17.0268194,
+    "cc": "SE"
+  },
+  "S\u00f6derk\u00f6ping, Sweden": {
+    "lat": 58.4823802,
+    "lng": 16.3216224,
+    "cc": "SE"
+  },
+  "Tenerife, Spain": {
+    "lat": 28.2935785,
+    "lng": -16.6214471,
+    "cc": "ES"
+  },
+  "Tren\u010d\u00edn, Slovakia": {
+    "lat": 48.8922719,
+    "lng": 18.0387465,
+    "cc": "SK"
+  },
+  "Uithoorn, Netherlands": {
+    "lat": 52.2440029,
+    "lng": 4.8281605,
+    "cc": "NL"
+  },
+  "Vela Luka, Croatia": {
+    "lat": 42.9609767,
+    "lng": 16.7180177,
+    "cc": "HR"
+  },
   "Veldhoven, Netherlands": {
     "lat": 51.4201,
     "lng": 5.4052,
     "cc": "NL"
+  },
+  "Vienna, Austria": {
+    "lat": 48.2083537,
+    "lng": 16.3725042,
+    "cc": "AT"
+  },
+  "Yosemite, USA": {
+    "lat": 37.8651,
+    "lng": -119.5383,
+    "cc": "US"
+  },
+  "Zurich, Switzerland": {
+    "lat": 47.3744489,
+    "lng": 8.5410422,
+    "cc": "CH"
   }
 }
