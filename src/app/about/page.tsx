@@ -143,12 +143,12 @@ export default function AboutPage() {
       {/* Life Timeline */}
       <AnimatedSection className="mb-16">
         <h2 className="text-xl font-bold text-text-primary mb-2">Where I&apos;ve Lived</h2>
-        <p className="text-sm text-text-muted mb-10">
+        <p className="text-sm text-text-muted mb-6">
           9 cities, 6 countries, 3 continents — and counting.
         </p>
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-5 sm:left-8 top-0 bottom-0 w-px bg-gradient-to-b from-accent via-accent/30 to-border" />
+          <div className="absolute left-[15px] sm:left-[19px] top-0 bottom-0 w-px bg-gradient-to-b from-accent via-accent/30 to-border" />
 
           <div className="space-y-0">
             {timeline.map((item, i) => {
@@ -161,36 +161,36 @@ export default function AboutPage() {
               return (
                 <div
                   key={i}
-                  className="relative flex gap-5 sm:gap-7 pl-0 group"
+                  className="relative flex gap-3 sm:gap-5 pl-0 group"
                 >
                   {/* Node */}
-                  <div className="relative z-10 flex flex-col items-center pt-1">
+                  <div className="relative z-10 flex flex-col items-center pt-1.5">
                     <div
-                      className={`w-[10px] h-[10px] sm:w-3 sm:h-3 rounded-full border-2 ${dotStyle} transition-all duration-300 group-hover:scale-125`}
+                      className={`w-[8px] h-[8px] sm:w-[10px] sm:h-[10px] rounded-full border-2 ${dotStyle} transition-all duration-300 group-hover:scale-125`}
                     />
                   </div>
 
                   {/* Card */}
                   <div
-                    className={`flex-1 pb-8 ${isLast ? 'pb-0' : ''}`}
+                    className={`flex-1 ${isLast ? 'pb-0' : 'pb-3'}`}
                   >
-                    <div className="rounded-xl border border-border bg-bg-card p-4 sm:p-5 transition-all hover:border-border-hover hover:bg-bg-card-hover">
-                      <div className="flex items-start justify-between gap-3">
+                    <div className="rounded-lg border border-border bg-bg-card px-3.5 py-3 sm:px-4 sm:py-3.5 transition-all hover:border-border-hover hover:bg-bg-card-hover">
+                      <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs font-mono text-accent font-medium">
+                            <span className="text-[11px] font-mono text-accent font-medium">
                               {item.year}
                             </span>
-                            <span className="text-lg leading-none">{item.flag}</span>
+                            <span className="text-sm leading-none">{item.flag}</span>
                           </div>
-                          <h3 className="font-semibold text-text-primary text-sm mt-1.5">
+                          <h3 className="font-semibold text-text-primary text-[13px] mt-1">
                             {item.title}
                           </h3>
-                          <p className="text-xs text-text-muted mt-0.5">{item.location}</p>
+                          <p className="text-[11px] text-text-muted mt-0.5">{item.location}</p>
                         </div>
                         {item.type !== 'life' && (
                           <span
-                            className={`text-[10px] font-medium px-2 py-0.5 rounded-full shrink-0 ${
+                            className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0 ${
                               item.type === 'work'
                                 ? 'bg-accent/15 text-accent'
                                 : 'bg-accent/10 text-accent/80'
@@ -200,7 +200,7 @@ export default function AboutPage() {
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-text-secondary mt-2 leading-relaxed">
+                      <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed">
                         {item.description}
                       </p>
                     </div>
@@ -223,15 +223,17 @@ export default function AboutPage() {
 
       {/* Contact CTA */}
       <AnimatedSection>
-        <div className="relative rounded-2xl border border-border bg-gradient-to-br from-bg-card via-bg-card to-accent/[0.06] p-8 text-center overflow-hidden">
+        <div className="relative rounded-2xl border border-border bg-gradient-to-br from-bg-card via-bg-card to-accent/[0.06] p-8 sm:p-10 text-center overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-accent/[0.04] rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-accent/[0.03] rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
           <div className="relative">
-            <h2 className="text-xl font-bold text-text-primary">Let&apos;s Connect</h2>
+            <p className="text-2xl mb-2">👋</p>
+            <h2 className="text-xl font-bold text-text-primary">Let&apos;s connect!</h2>
             <p className="text-text-secondary mt-2 text-sm max-w-md mx-auto">
-              Always open to interesting conversations about systems, research, or potential collaborations.
+              Have a cool idea or just want to chat? I&apos;d love to hear from you — reach out anytime!
             </p>
             <div className="flex flex-wrap justify-center gap-3 mt-5">
-              <Button href={siteConfig.links.email} variant="primary" size="sm" icon="arrow">Email Me</Button>
+              <Button href={siteConfig.links.email} variant="primary" size="sm" icon="arrow">Drop me an email</Button>
               <Button href={siteConfig.links.linkedin} external variant="secondary" size="sm" icon="external">LinkedIn</Button>
               <Button href={siteConfig.links.github} external variant="secondary" size="sm" icon="external">GitHub</Button>
             </div>

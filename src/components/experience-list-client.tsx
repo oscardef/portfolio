@@ -110,7 +110,7 @@ export function ExperienceListClient({ experiences }: ExperienceListClientProps)
                 href={`/experience/${exp.slug}`}
                 className="group block rounded-xl border border-border bg-bg-card transition-all hover:border-border-hover hover:bg-bg-card-hover hover:shadow-lg hover:shadow-accent/5"
               >
-                <div className="p-5 sm:p-6">
+                <div className="p-4 sm:p-5">
                   <div className="flex items-start gap-4">
                     {/* Logo or Icon */}
                     <div className="shrink-0 w-14 h-14 rounded-xl bg-white/90 border border-border flex items-center justify-center overflow-hidden p-2">

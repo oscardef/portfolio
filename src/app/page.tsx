@@ -267,17 +267,19 @@ export default async function HomePage() {
       <AnimatedSection className="mx-auto max-w-6xl px-6 py-12 pb-20">
         <div className="relative rounded-2xl border border-border bg-gradient-to-br from-bg-card via-bg-card to-accent/[0.06] p-10 sm:p-14 overflow-hidden">
           <div className="absolute top-0 right-0 w-72 h-72 bg-accent/[0.05] rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/[0.03] rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
           <div className="relative max-w-xl mx-auto text-center">
+            <p className="text-3xl mb-3">👋</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">
-              Let&apos;s Connect
+              Let&apos;s connect!
             </h2>
             <p className="text-text-secondary mt-4 leading-relaxed">
-              Always open to interesting conversations about systems, research, or
-              potential collaborations. Feel free to reach out.
+              Got an interesting idea, a question about systems engineering, or just want to say hi?
+              I&apos;m always up for a good conversation — don&apos;t be a stranger!
             </p>
             <div className="flex flex-wrap justify-center gap-3 mt-8">
               <Button href={siteConfig.links.email} variant="primary" icon="arrow">
-                Email Me
+                Drop me an email
               </Button>
               <Button href={siteConfig.links.linkedin} external variant="secondary" icon="external">
                 LinkedIn

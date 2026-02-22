@@ -9,10 +9,20 @@
     "lng": 55.7447,
     "cc": "AE"
   },
+  "Austin, USA": {
+    "lat": 30.2672,
+    "lng": -97.7431,
+    "cc": "US"
+  },
   "Bangkok, Thailand": {
     "lat": 13.7563,
     "lng": 100.5018,
     "cc": "TH"
+  },
+  "Carmel-By-The-Sea, USA": {
+    "lat": 36.5554,
+    "lng": -121.9233,
+    "cc": "US"
   },
   "Dubai, UAE": {
     "lat": 25.2048,
@@ -29,6 +39,16 @@
     "lng": 6.5665,
     "cc": "NL"
   },
+  "Houston, USA": {
+    "lat": 29.7604,
+    "lng": -95.3698,
+    "cc": "US"
+  },
+  "Las Vegas, USA": {
+    "lat": 36.1699,
+    "lng": -115.1398,
+    "cc": "US"
+  },
   "Lausanne, Switzerland": {
     "lat": 46.5197,
     "lng": 6.6323,
@@ -38,6 +58,26 @@
     "lat": 51.5074,
     "lng": -0.1278,
     "cc": "GB"
+  },
+  "Los Angeles, USA": {
+    "lat": 34.0522,
+    "lng": -118.2437,
+    "cc": "US"
+  },
+  "Monterey, USA": {
+    "lat": 36.6002,
+    "lng": -121.8947,
+    "cc": "US"
+  },
+  "San Francisco, USA": {
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "cc": "US"
+  },
+  "San Simeon, USA": {
+    "lat": 35.6436,
+    "lng": -121.1897,
+    "cc": "US"
   },
   "Stockholm, Sweden": {
     "lat": 59.3293,

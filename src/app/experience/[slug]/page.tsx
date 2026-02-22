@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { ArrowLeft, ArrowRight, Calendar, MapPin, Building2, FolderOpen } from 'lucide-react';
 import { getExperienceBySlug, getExperienceSlugs, getAllExperiences, getAllProjects } from '@/lib/content';
 import { Button } from '@/components/ui/button';
-import { Tag } from '@/components/ui/tag';
 import { formatDateRange } from '@/lib/utils';
 import { siteConfig } from '@/lib/constants';
 

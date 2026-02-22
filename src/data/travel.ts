@@ -40,6 +40,8 @@ export interface TravelEntry {
   place: string;
   /** Country name */
   country: string;
+  /** State or region (e.g. US states) — shown alongside country */
+  state?: string;
   /** 'YYYY', 'YYYY-MM', or 'YYYY-MM-DD' */
   startDate: string;
   /** Omit for one-off trips or ongoing stays */
@@ -54,6 +56,7 @@ export interface ResolvedTravelEntry extends TravelEntry {
   lat: number;
   lng: number;
   countryCode: string;
+  state?: string;
 }
 
 // ── Coordinate resolver (reads from geocode-cache.json) ────────────
@@ -102,16 +105,28 @@ const rawTravelData: TravelEntry[] = [
   { place: 'Abu Dhabi',  country: 'UAE',              startDate: '2022-07', endDate: '2022-08', purpose: 'work',  notes: 'Securrency internship' },
 
   // ── Travel — add trips here! ──
-  // { place: 'Santorini', country: 'Greece', startDate: '2025-06-14', endDate: '2025-06-18', purpose: 'travel' },
-  // { place: 'Tokyo',     country: 'Japan',  startDate: '2025-03-20', endDate: '2025-03-28', purpose: 'travel', notes: 'Cherry blossom season' },
+  // Feb 2026 — US Road Trip (Trip with Alina)
+  { place: 'San Francisco',       country: 'USA', state: 'California', startDate: '2026-02-11', endDate: '2026-02-13', purpose: 'travel', notes: 'Trip with Alina' },
+  { place: 'Carmel-By-The-Sea',   country: 'USA', state: 'California', startDate: '2026-02-13', endDate: '2026-02-13', purpose: 'travel', notes: 'Trip with Alina' },
+  { place: 'Monterey',            country: 'USA', state: 'California', startDate: '2026-02-13', endDate: '2026-02-13', purpose: 'travel', notes: 'Trip with Alina' },
+  { place: 'San Simeon',          country: 'USA', state: 'California', startDate: '2026-02-13', endDate: '2026-02-13', purpose: 'travel', notes: 'Trip with Alina' },
+  { place: 'Los Angeles',         country: 'USA', state: 'California', startDate: '2026-02-14', endDate: '2026-02-16', purpose: 'travel', notes: 'Trip with Alina' },
+  { place: 'Las Vegas',           country: 'USA', state: 'Nevada',     startDate: '2026-02-16', endDate: '2026-02-20', purpose: 'travel', notes: 'Trip with Alina' },
+  { place: 'Austin',              country: 'USA', state: 'Texas',      startDate: '2026-02-20', endDate: '2026-02-23', purpose: 'travel', notes: 'Trip with Alina' },
+  { place: 'Houston',             country: 'USA', state: 'Texas',      startDate: '2026-02-23', endDate: '2026-02-25', purpose: 'travel', notes: 'Trip with Alina' },
 ];
 
 // Resolve all entries (add lat/lng/countryCode)
 export const travelData: ResolvedTravelEntry[] = rawTravelData.map(resolveEntry);
 
-/** Get unique countries */
+/** Get unique countries (US entries show state-level detail) */
 export function getUniqueCountries(): string[] {
   return [...new Set(travelData.map((t) => t.country))].sort();
+}
+
+/** Get unique regions (countries + US states) */
+export function getUniqueRegions(): string[] {
+  return [...new Set(travelData.map((t) => t.state ? `${t.state}, ${t.country}` : t.country))].sort();
 }
 
 /** Get unique places */

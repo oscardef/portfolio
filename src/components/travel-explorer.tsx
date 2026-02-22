@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, X, MapPin, Calendar } from 'lucide-react';
+import { Search, X, Calendar } from 'lucide-react';
 import { Globe } from '@/components/globe';
 import { travelData, getFlagEmoji, type ResolvedTravelEntry } from '@/data/travel';
 
@@ -29,6 +29,10 @@ export function TravelExplorer() {
     () => [...new Set(travelData.map((t) => t.country))].length,
     []
   );
+  const uniqueRegions = useMemo(
+    () => [...new Set(travelData.map((t) => t.state ? `${t.state}, ${t.country}` : t.country))].length,
+    []
+  );
   const uniquePlaces = useMemo(
     () => [...new Set(travelData.map((t) => t.place))].length,
     []
@@ -42,6 +46,7 @@ export function TravelExplorer() {
         t.place.toLowerCase().includes(q) ||
         t.country.toLowerCase().includes(q) ||
         t.purpose.toLowerCase().includes(q) ||
+        (t.state && t.state.toLowerCase().includes(q)) ||
         (t.notes && t.notes.toLowerCase().includes(q))
     );
   }, [search]);
@@ -103,6 +108,12 @@ export function TravelExplorer() {
           <span>{uniqueCountries} countries</span>
           <span>·</span>
           <span>{uniquePlaces} places</span>
+          {uniqueRegions > uniqueCountries && (
+            <>
+              <span>·</span>
+              <span>{uniqueRegions - uniqueCountries} US states</span>
+            </>
+          )}
         </div>
       </div>
 
@@ -155,7 +166,7 @@ export function TravelExplorer() {
                     <p className="text-sm font-medium text-text-primary truncate">
                       {group.place}
                     </p>
-                    <p className="text-xs text-text-muted">{group.country}</p>
+                    <p className="text-xs text-text-muted">{group.entries[0].state ? `${group.entries[0].state}, ${group.country}` : group.country}</p>
                   </div>
                 </div>
                 {group.entries.length > 1 && (

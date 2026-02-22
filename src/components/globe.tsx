@@ -116,7 +116,6 @@ export function Globe({ markers = [], className = '', focusLng, focusLat }: Glob
       globe.destroy();
       window.removeEventListener('resize', onResize);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markers]);
 
   return (
