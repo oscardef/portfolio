@@ -4,7 +4,9 @@ import { ProjectsClient } from '@/components/projects-client';
 
 export const metadata: Metadata = {
   title: 'Projects',
-  description: 'A collection of research, coursework, and personal projects in systems, ML, security, and more.',
+  description:
+    'Oscar de Francesca\'s projects — research, coursework, and personal work in systems engineering, machine learning, security, and more.',
+  alternates: { canonical: 'https://oscar.defrancesca.com/projects' },
 };
 
 export default async function ProjectsPage() {

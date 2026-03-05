@@ -25,11 +25,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { frontmatter } = data;
   return {
     title: `${frontmatter.title} at ${frontmatter.organization}`,
-    description: frontmatter.summary,
+    description: `${frontmatter.summary} — Oscar de Francesca's experience at ${frontmatter.organization}.`,
+    alternates: { canonical: `${siteConfig.url}/experience/${slug}` },
     openGraph: {
-      title: `${frontmatter.title} at ${frontmatter.organization}`,
+      title: `${frontmatter.title} at ${frontmatter.organization} — Oscar de Francesca`,
       description: frontmatter.summary,
       type: 'article',
+      authors: ['Oscar de Francesca'],
       images: [{ url: siteConfig.ogImage }],
     },
   };

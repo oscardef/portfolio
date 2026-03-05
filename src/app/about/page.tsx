@@ -7,7 +7,9 @@ import { TravelExplorer } from '@/components/travel-explorer';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'About Oscar de Francesca — background, life journey, and interests.',
+  description:
+    'About Oscar de Francesca — software engineer at Bloomberg, EPFL MSc graduate. Background, life journey, education, and interests.',
+  alternates: { canonical: 'https://oscar.defrancesca.com/about' },
 };
 
 const timeline = [

@@ -2,7 +2,7 @@ export const siteConfig = {
   name: 'Oscar de Francesca',
   title: 'Oscar de Francesca — Software Engineer',
   description:
-    'Systems-oriented software engineer specializing in performance, reliability, and data systems. MSc from EPFL, currently at Bloomberg.',
+    'Oscar de Francesca is a systems-oriented software engineer specializing in performance, reliability, and data systems. MSc in Computer Science from EPFL, currently at Bloomberg in London.',
   url: 'https://oscar.defrancesca.com',
   links: {
     github: 'https://github.com/oscardef',
@@ -10,6 +10,18 @@ export const siteConfig = {
     email: 'mailto:oscar.defrancesca@gmail.com',
   },
   ogImage: '/images/og-default.png',
+  keywords: [
+    'Oscar de Francesca',
+    'software engineer',
+    'Oscar de Francesca portfolio',
+    'Oscar de Francesca Bloomberg',
+    'Oscar de Francesca EPFL',
+    'systems engineer',
+    'machine learning engineer',
+    'full-stack developer',
+    'EPFL computer science',
+    'Bloomberg engineer London',
+  ],
 } as const;
 
 export const navLinks = [

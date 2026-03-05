@@ -26,12 +26,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { frontmatter } = data;
   return {
     title: frontmatter.title,
-    description: frontmatter.summary,
+    description: `${frontmatter.summary} — A project by Oscar de Francesca.`,
+    alternates: { canonical: `${siteConfig.url}/projects/${slug}` },
     openGraph: {
-      title: frontmatter.title,
+      title: `${frontmatter.title} — Oscar de Francesca`,
       description: frontmatter.summary,
       type: 'article',
       publishedTime: frontmatter.date,
+      authors: ['Oscar de Francesca'],
       images: frontmatter.heroImage
         ? [{ url: frontmatter.heroImage.src }]
         : [{ url: siteConfig.ogImage }],
