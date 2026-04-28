@@ -8,7 +8,7 @@ summary: "Built a multi-threaded stock market simulator with autonomous trading 
 tags: ["systems", "concurrency", "visualization"]
 stack: ["Java", "Swing", "Gradle"]
 links:
-  github: ""
+  github: "https://github.com/oscar-konstantinos/stock-market-simulation"
 heroImage:
   src: "/images/projects/stock-market/hero.png"
   alt: "Stock market simulation trading interface"
@@ -26,19 +26,20 @@ status: "coursework"
 
 ## Overview
 
-A concurrent stock market simulation built in Java, featuring an order-matching engine, multiple autonomous trading bots with different strategies, and a real-time Swing GUI for visualization. The project explored concurrent programming patterns and market microstructure.
+A multi-threaded stock market simulator in Java — an order-matching engine, autonomous trading bots with different strategies, and a real-time Swing GUI showing everything as it happens. Built to explore concurrent programming patterns while also being a fun way to learn about market microstructure.
 
 ## What I Built
 
-- Thread-safe order book with limit and market order support
+- Thread-safe order book supporting both limit and market orders
 - Price-time priority matching engine
-- Autonomous trading bots (mean reversion, momentum, random, market making)
-- Real-time Swing GUI with candlestick charts and order book visualization
+- Autonomous trading bots (mean reversion, momentum, random walk, market making)
+- Real-time Swing GUI with candlestick charts and order book depth visualization
+- Configurable market parameters for experimenting with different scenarios
 
 ## Technical Details
 
-The core challenge was designing a concurrent system where multiple trading bots submit orders simultaneously to a shared order book, requiring careful synchronization to prevent race conditions while maintaining performance.
+The interesting part was the concurrency: multiple trading bots submitting orders to a shared order book simultaneously, each running in its own thread. Getting the synchronization right without killing performance was the main challenge — you need locks to prevent race conditions, but too much locking and the whole thing grinds to a halt.
 
 ## What I Learned
 
-This was my first serious concurrent programming project — it taught me the real cost of synchronization, the importance of lock ordering to prevent deadlocks, and how to reason about thread safety.
+This was my first real encounter with concurrent programming beyond textbook exercises. Lock ordering to prevent deadlocks, the actual cost of synchronization, and learning to reason about what can go wrong when multiple threads touch shared state — all of that clicked during this project.

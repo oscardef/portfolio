@@ -4,7 +4,7 @@ slug: "robotic-swarms"
 date: "2024-03-01"
 type: "school"
 featured: true
-summary: "Developed coordination algorithms for miniaturized robot swarms in collaboration with MIT, focusing on decentralized decision-making and emergent collective behavior."
+summary: "Source localization and inspection with miniaturized robotic swarms, using gradient descent and variable niching strategies. Part of the Honours Programme at the University of Groningen."
 tags: ["systems", "robotics", "concurrency"]
 stack: ["C++", "Python", "ROS2", "Arduino"]
 links:
@@ -13,10 +13,10 @@ heroImage:
   src: "/images/projects/robotic-swarms/hero.png"
   alt: "Miniaturized robotic swarm formation"
 highlights:
-  - "Implemented decentralized consensus algorithms for swarm coordination without central controller"
-  - "Designed communication protocols for bandwidth-constrained inter-robot messaging"
-  - "Simulated and validated with physical robots — 50-unit swarm achieving target formations"
-  - "Collaboration with MIT's Distributed Robotics Lab"
+  - "Implemented source localization using gradient descent and Particle Swarm Optimization"
+  - "Extended Niche-PSO algorithm to support variable numbers of robots in niches"
+  - "Integrated vibration simulation directly into the Webots robotic simulator"
+  - "Part of the Honours Programme, building on prior work in spacecraft hull inspection"
 role: "Research engineer"
 teamSize: 4
 organization: "University of Groningen"
@@ -26,23 +26,37 @@ status: "research"
 
 ## Overview
 
-This project explored decentralized coordination algorithms for swarms of miniaturized robots, developed in collaboration with MIT's Distributed Robotics Lab. The core challenge: how can dozens of simple, resource-constrained robots achieve complex collective behaviors without any central controller?
+This project was part of my Honours Programme at the University of Groningen, exploring how swarms of miniaturized robots can handle sensing and inspection tasks. The core question: can you get a bunch of tiny, simple robots to collectively find and localize sources (like vibrations on a surface) without any central controller telling them what to do?
+
+The work builds on previous research that used Particle Swarm Optimization (PSO) for inspecting spacecraft hulls — using miniaturized robots to localize vibration sources on curved surfaces.
 
 ## What I Built
 
-- Decentralized consensus algorithms for formation control
-- Lightweight communication protocol for bandwidth-constrained radios
-- Simulation environment for validating algorithms before physical deployment
-- Integration with physical robot platform (custom Arduino-based bots)
+The project had two main contributions:
 
-## Technical Details
+**1. Direct Vibration Simulation Integration**
 
-Key challenges included handling unreliable wireless communication, limited computational resources on each robot, and ensuring the system degrades gracefully when individual robots fail.
+Previous work used separate simulation environments for the vibration data and the robot behavior. I integrated the vibration simulation data directly into the Webots robotic simulator, so the robots could sense and respond to vibration fields in the same environment they were navigating. This made the simulation much more realistic and revealed behaviors that the decoupled approach missed.
+
+**2. Variable Niching in the Search Algorithm**
+
+The existing Niche-PSO algorithm used a fixed number of robots per niche (a group of robots converging on a potential source). I extended this to allow a variable number of robots to participate in each niche, which improved source detection accuracy — especially when multiple sources were present at different intensities.
+
+Beyond these, I also implemented source localization strategies using gradient descent methods, giving the swarm an alternative to pure PSO for following signal gradients to their source.
+
+## Technical Challenges
+
+Working with miniaturized robots means everything is constrained — limited compute, unreliable wireless, imprecise sensors. Algorithms that work cleanly in simulation behave differently when you're dealing with:
+- Noisy sensor readings that vary with battery level
+- Wireless messages that get dropped or delayed
+- Actuators that don't do exactly what you tell them to
+
+The system needed to degrade gracefully when individual robots failed — which they did, regularly.
 
 ## Results
 
-Successfully demonstrated 50-unit swarm achieving target formations with >90% accuracy in simulation and 10-unit physical validation.
+The extended Niche-PSO with variable niching showed improved source detection accuracy in simulation, particularly for multi-source scenarios. The Webots integration provided a more faithful test environment that caught issues the previous setup didn't.
 
 ## What I Learned
 
-Working at the intersection of distributed systems and physical hardware taught me that theory and practice diverge significantly — algorithms that work perfectly in simulation face unexpected challenges with real sensors and actuators.
+The gap between simulation and reality in robotics is real. Algorithms that converge beautifully in simulation struggle with real sensor noise, actuator imprecision, and communication failures. This project gave me a much deeper appreciation for robust, fault-tolerant system design.

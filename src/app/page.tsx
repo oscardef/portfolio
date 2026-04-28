@@ -4,6 +4,7 @@ import { Github, Linkedin, Mail, MapPin, ArrowRight, Briefcase, FolderOpen } fro
 import { getAllProjects, getAllExperiences } from '@/lib/content';
 import { siteConfig } from '@/lib/constants';
 import { AnimatedSection, AnimatedDiv } from '@/components/ui/animated-section';
+import { WipBanner } from '@/components/wip-banner';
 import { Button } from '@/components/ui/button';
 import { Tag } from '@/components/ui/tag';
 import { formatDate, formatDateRange } from '@/lib/utils';
@@ -24,6 +25,7 @@ export default async function HomePage() {
 
   return (
     <div className="relative">
+      <WipBanner />
       {/* ── Hero ── */}
       <section className="relative min-h-[85vh] flex items-center pt-16">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-transparent to-transparent" />
@@ -110,7 +112,7 @@ export default async function HomePage() {
                 alt={org.name}
                 width={org.width}
                 height={org.height}
-                className="relative object-contain brightness-0 invert opacity-40 group-hover:brightness-100 group-hover:invert-0 group-hover:opacity-100 transition-all duration-300"
+                className="relative object-contain brightness-0 invert opacity-60 group-hover:brightness-100 group-hover:invert-0 group-hover:opacity-100 transition-all duration-300"
                 style={{ height: org.height, width: 'auto' }}
               />
             </div>

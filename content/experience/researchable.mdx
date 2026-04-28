@@ -6,13 +6,13 @@ location: "Groningen, Netherlands"
 startDate: "2023-06"
 endDate: "2023-09"
 type: "internship"
-summary: "Built data pipelines and ML models for an academic analytics platform, working on research impact metrics and trend analysis."
-stack: ["Python", "Pandas", "Scikit-learn", "PostgreSQL", "Docker"]
+summary: "Built an interactive visualization dashboard for the 'Network Medicine Residues from Water' project, visualizing GP prescription data and pharmaceutical residues in sewage water across two neighborhoods in Drachten."
+stack: ["Python", "Pandas", "Data Visualization", "PostgreSQL"]
 highlights:
-  - "Designed and implemented ETL pipelines processing academic publication data"
-  - "Built ML models for research impact prediction and topic trend analysis"
-  - "Worked with large-scale bibliometric datasets (millions of publications)"
-  - "Delivered production-ready data processing components integrated into the platform"
+  - "Built interactive dashboard visualizing prescribing behavior of general practitioners"
+  - "Visualized ~30 pharmaceutical residues detected in sewage water samples"
+  - "Part of a network with 46 stakeholders from healthcare, water, government, and research"
+  - "Compared two Drachten neighborhoods to study the link between prescriptions and water contamination"
 logo: "/images/logos/researchable.svg"
 links:
   company: "https://researchable.nl"
@@ -20,21 +20,23 @@ links:
 
 ## Context
 
-Researchable is a Groningen-based company building analytics tools for the academic research sector. I interned as a data scientist, working on their core data processing and analysis infrastructure.
+Researchable is a Groningen-based data company. I interned there working on a project called "Network Medicine Residues from Water" — part of the Northern Dutch Network run by the Healthy Aging Network Northern Netherlands (HANNN), which brings together 46 stakeholders from healthcare, the water sector, government, research institutions, and tech.
 
-## What I Did
+The problem: every year, over 190 tons of pharmaceutical residues end up in Dutch water systems, harming the environment and drinking water quality. With climate change and an aging population, it's only getting worse.
 
-- Built ETL pipelines for ingesting and processing academic publication metadata
-- Developed ML models for predicting research impact and identifying trending topics
-- Worked with PostgreSQL databases containing millions of publication records
-- Created data visualization dashboards for internal stakeholders
+## What I Built
+
+I built an interactive visualization dashboard that let stakeholders explore two things side by side:
+
+1. **Prescribing behavior** — how often general practitioners in two Drachten neighborhoods prescribed different types of medication, broken down by year, age group, and gender
+2. **Medicine residues in sewage water** — the concentration of around 30 pharmaceutical residues measured in sewage samples from those same neighborhoods
+
+The two neighborhoods were chosen deliberately: one was a "bloeizone" (a community with a strong focus on healthy living), and the other was a control area without that emphasis. By comparing them, the project aimed to understand whether lifestyle-focused interventions actually affect what ends up in the water.
 
 ## Impact
 
-Delivered production-ready pipeline components and ML models integrated into the platform.
+The dashboard made it possible for non-technical stakeholders — healthcare providers, water authorities, policymakers — to explore complex prescription and water quality data interactively. It was designed to be reusable for other neighborhoods and healthcare providers as the network expands.
 
 ## What I Learned
 
-- Practical data engineering skills — handling messy, real-world data at scale
-- The gap between Jupyter notebook prototypes and production-ready code
-- Working with domain experts (bibliometrics researchers) to translate business needs into technical solutions
+Working on this project showed me how data visualization can make a real difference when you're dealing with stakeholders from completely different domains. Making something that a water authority engineer and a GP can both understand and use — that's a different kind of challenge from just building a dashboard.

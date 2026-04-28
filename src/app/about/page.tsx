@@ -101,21 +101,20 @@ export default function AboutPage() {
             </h1>
             <div className="mt-6 space-y-4 text-text-secondary leading-relaxed">
               <p>
-                I&apos;m a Swedish-American software engineer who grew up internationally — born
-                in Bangkok and raised across six countries on three continents before settling
-                into tech. That global upbringing gave me a natural adaptability and a broad
-                perspective that shapes how I approach both engineering and collaboration.
+                I&apos;m a Swedish-American software engineer who grew up moving around — born
+                in Bangkok and raised across six countries on three continents. I got used to
+                being the new kid, picking things up quickly, and figuring out how things work
+                in unfamiliar places. That carried over into how I work as an engineer.
               </p>
               <p>
-                I hold an MSc in Computer Science from EPFL (Swiss Federal Institute of
-                Technology) and a BSc from the University of Groningen, graduating cum laude.
-                My focus is on building reliable, performant software — from systems-level work
-                to data-intensive applications.
+                I did my MSc in Computer Science at EPFL and my BSc at the University of
+                Groningen, where I graduated cum laude. I like building things that are fast
+                and don&apos;t break — whether that&apos;s low-level systems code or data-heavy
+                backends.
               </p>
               <p>
-                Outside of engineering, I&apos;m drawn to entrepreneurship, exploring new places,
-                and understanding how technology intersects with real-world impact. I&apos;m
-                currently at Bloomberg in London.
+                Outside of work, I&apos;m into startups, traveling, and thinking about how tech
+                actually affects people&apos;s lives. Currently at Bloomberg in London.
               </p>
             </div>
             <div className="flex items-center gap-4 mt-6">

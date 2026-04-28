@@ -1,22 +1,22 @@
 ---
-title: "OptiFlow — Decathlon Supply Chain Optimization"
+title: "OptiFlow — AI-Enhanced Retail Inventory Monitoring"
 slug: "optiflow"
 date: "2025-03-01"
 type: "company"
 featured: true
-summary: "Designed and built an optimization engine for Decathlon's supply chain logistics, improving warehouse-to-store distribution efficiency through constraint-based algorithms."
-tags: ["systems", "performance", "data-systems"]
-stack: ["Python", "OR-Tools", "FastAPI", "PostgreSQL", "Docker", "React"]
+summary: "Built an AI-enhanced system combining wearable RFID scanning with UWB indoor positioning for Decathlon, enabling real-time shelf-level inventory monitoring and store flow optimization."
+tags: ["systems", "ml", "embedded", "web"]
+stack: ["Python", "TypeScript", "C++", "FastAPI", "Next.js", "PostgreSQL", "Docker", "MQTT"]
 links:
-  github: ""
+  github: "https://github.com/oscardef/optiflow"
 heroImage:
   src: "/images/projects/optiflow/hero.png"
-  alt: "OptiFlow supply chain optimization dashboard"
+  alt: "OptiFlow inventory monitoring dashboard"
 highlights:
-  - "Built constraint-based optimization engine for warehouse-to-store distribution"
-  - "Reduced average delivery routing costs through intelligent allocation algorithms"
-  - "Designed scalable architecture handling thousands of SKUs across multiple warehouses"
-  - "Delivered production-ready solution integrated into Decathlon's logistics workflow"
+  - "Custom wearable hardware: ESP32-S3 microcontroller + UHF RFID reader + UWB positioning module"
+  - "Real-time web dashboard with store maps, employee trajectories, and stock heatmaps"
+  - "ML pipeline for product clustering, demand forecasting, anomaly detection, and ABC classification"
+  - "Best in class — top marks, client was extremely happy with the solution"
 role: "Lead developer"
 organization: "Decathlon"
 status: "shipped"
@@ -25,28 +25,36 @@ relatedExperience: []
 
 ## Overview
 
-OptiFlow is a supply chain optimization platform built for Decathlon, one of the world's largest sporting goods retailers. The project tackled the complex problem of optimally distributing products from regional warehouses to retail stores, considering constraints like inventory levels, demand forecasts, transportation costs, and delivery windows.
+From small retailers to companies like Decathlon, everyone deals with the same problem: what's supposed to be on the shelf often isn't, and figuring out where your inventory actually is in real-time is harder than it sounds. Existing solutions either don't scale, aren't real-time, or raise privacy concerns.
 
-## What I Built
+OptiFlow tackles this with a system that turns routine employee movement into a continuous sensing layer — no cameras, no manual scanning.
 
-- **Optimization engine:** Constraint-based solver using Google OR-Tools for multi-objective optimization of distribution routes and quantities
-- **Data pipeline:** ETL system processing inventory, demand, and logistics data from Decathlon's systems
-- **API layer:** FastAPI backend exposing optimization results and configuration endpoints
-- **Dashboard:** React-based interface for logistics managers to visualize distribution plans, compare scenarios, and track KPIs
+## How It Works
 
-## Technical Approach
+The core idea: sales associates wear a small custom device while doing their normal tasks. As they walk around the store, the device passively scans RFID-tagged products and tracks its own position using UWB, building a real-time picture of what's on which shelf.
 
-The core challenge was modeling the distribution problem as a mixed-integer linear program (MILP) that could handle:
+### Hardware
 
-- Multiple warehouses with varying stock levels and capacities
-- Hundreds of retail stores with different demand patterns
-- Transportation costs that vary by route, volume, and timing
-- Service level constraints ensuring minimum stock availability
-- Time window constraints for deliveries
+We built a custom wearable platform combining:
+- **ESP32-S3** microcontroller running multi-tasking firmware
+- **JRD-100** UHF RFID reader for scanning product tags
+- **DWM3001CDK** UWB module for centimeter-level indoor positioning
+- A network of stationary UWB anchors deployed throughout the store
 
-## Impact
+The firmware handles concurrent sensor polling, data collection, and wireless communication via MQTT — all running in real-time on a resource-constrained device.
 
-- Delivered a working optimization engine that improved distribution efficiency
-- Solution handled real-world scale: thousands of SKUs, dozens of warehouses, hundreds of stores
-- Dashboard provided actionable insights for logistics decision-makers
-- Architecture designed for extensibility — easy to add new constraints or objectives
+### Software
+
+A containerized microservice architecture processes the incoming telemetry:
+- **Real-time trilateration** from UWB distance measurements
+- **Dual-mode missing item detection** — comparing expected vs. observed inventory
+- **ML analytics pipeline** — product clustering, demand forecasting, anomaly detection, and ABC classification
+- **Next.js dashboard** showing live store maps, employee trajectories, stock heatmaps, and admin controls
+
+### Business Viability
+
+We also did financial modeling across three deployment scenarios — pilot store, full store, and scalable UL-TDOA architecture — showing that the system is commercially viable through a hybrid hardware + SaaS revenue model.
+
+## Results
+
+Decathlon was extremely happy with what we delivered. The project was rated best in class and received top marks. We demonstrated that continuous, real-time shelf monitoring is both technically feasible and financially sustainable — without compromising privacy or requiring heavy infrastructure.

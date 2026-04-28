@@ -8,7 +8,7 @@ summary: "Built a large language model from first principles and fine-tuned it o
 tags: ["ml", "llm", "nlp"]
 stack: ["Python", "PyTorch", "Hugging Face", "Weights & Biases"]
 links:
-  github: ""
+  github: "https://github.com/oscardef/llm-medical-finetune"
   paper: ""
 heroImage:
   src: "/images/projects/llm/hero.png"
@@ -27,11 +27,13 @@ status: "coursework"
 
 ## Overview
 
-This project was part of an advanced NLP course at EPFL where the goal was to build a language model entirely from scratch — no pre-trained weights, no existing model architectures — and apply it to a practical domain. I chose the medical domain because of its high stakes and the unique challenges it presents for language models: factual accuracy, clinical reasoning, and patient safety.
+This was part of an advanced NLP course at EPFL — build a language model from scratch (no pre-trained weights, no existing architectures) and apply it to something real. I picked the medical domain because it's one of the hardest applications for LLMs: you need factual accuracy, clinical reasoning, and you really can't afford to hallucinate.
+
+The code is split across two repos: [the base LLM implementation](https://github.com/oscardef/my-llm) and [the medical fine-tuning pipeline](https://github.com/oscardef/llm-medical-finetune).
 
 ## What I Built
 
-The project consisted of three major phases:
+Three main phases:
 
 **1. Transformer Architecture Implementation**
 
@@ -88,7 +90,7 @@ The biggest challenge was working within limited compute constraints (single A10
 
 ## What I Learned
 
-- Deep understanding of transformer internals — implementing attention from scratch forces understanding of every gradient flow
-- The importance of data quality over quantity, especially in specialized domains
-- How RLHF and instruction tuning fundamentally change model behavior beyond just loss reduction
-- Practical experience with distributed training patterns, even at smaller scale
+- Implementing attention from scratch gives you an understanding of transformers that you just don't get from using a library
+- Data quality beats quantity — especially in specialized domains where bad examples actively teach the model wrong things
+- RLHF and instruction tuning don't just improve loss numbers, they genuinely change how the model behaves in ways that are hard to predict
+- Got hands-on with distributed training patterns, even if the scale was modest

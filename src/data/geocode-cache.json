@@ -1,4 +1,9 @@
 {
+  "Addis Ababa, Ethiopia": {
+    "lat": 9.0192,
+    "lng": 38.7525,
+    "cc": "ET"
+  },
   "Abu Dhabi, UAE": {
     "lat": 24.4539,
     "lng": 54.3773,
@@ -18,6 +23,11 @@
     "lat": 53.4063472,
     "lng": 5.74825,
     "cc": "NL"
+  },
+  "Angkor Wat, Cambodia": {
+    "lat": 13.4125,
+    "lng": 103.8670,
+    "cc": "KH"
   },
   "Amstelveen, Netherlands": {
     "lat": 52.3028209,
@@ -139,6 +149,11 @@
     "lng": 6.5665,
     "cc": "NL"
   },
+  "Helsinki, Finland": {
+    "lat": 60.1699,
+    "lng": 24.9384,
+    "cc": "FI"
+  },
   "Hallstatt, Austria": {
     "lat": 47.5621698,
     "lng": 13.6486697,
@@ -183,6 +198,11 @@
     "lat": 8.1111653,
     "lng": 99.1097298,
     "cc": "TH"
+  },
+  "Kyiv, Ukraine": {
+    "lat": 50.4501,
+    "lng": 30.5234,
+    "cc": "UA"
   },
   "K\u00f6nigssee, Germany": {
     "lat": 47.5551052,
@@ -244,6 +264,11 @@
     "lng": -121.8947,
     "cc": "US"
   },
+  "Muscat, Oman": {
+    "lat": 23.5880,
+    "lng": 58.3829,
+    "cc": "OM"
+  },
   "Munich, Germany": {
     "lat": 48.1371079,
     "lng": 11.5753822,
@@ -254,9 +279,19 @@
     "lng": -4.4216366,
     "cc": "ES"
   },
+  "New Delhi, India": {
+    "lat": 28.6139,
+    "lng": 77.2090,
+    "cc": "IN"
+  },
   "Naxos, Greece": {
     "lat": 37.0600105,
     "lng": 25.4707567,
+    "cc": "GR"
+  },
+  "Olympia, Greece": {
+    "lat": 37.6388,
+    "lng": 21.6300,
     "cc": "GR"
   },
   "Nyn\u00e4shamn, Sweden": {
@@ -273,6 +308,11 @@
     "lat": 48.8588897,
     "lng": 2.320041,
     "cc": "FR"
+  },
+  "Phnom Penh, Cambodia": {
+    "lat": 11.5564,
+    "lng": 104.9282,
+    "cc": "KH"
   },
   "Phuket, Thailand": {
     "lat": 7.9366015,
@@ -298,6 +338,11 @@
     "lat": 48.2659347,
     "lng": 7.7263213,
     "cc": "DE"
+  },
+  "Seaside, USA": {
+    "lat": 30.3210,
+    "lng": -86.1343,
+    "cc": "US"
   },
   "San Francisco, USA": {
     "lat": 37.7749,
@@ -363,6 +408,11 @@
     "lat": 42.9609767,
     "lng": 16.7180177,
     "cc": "HR"
+  },
+  "Venice, Italy": {
+    "lat": 45.4408,
+    "lng": 12.3155,
+    "cc": "IT"
   },
   "Veldhoven, Netherlands": {
     "lat": 51.4201,

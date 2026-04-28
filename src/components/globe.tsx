@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import createGlobe from 'cobe';
 
 interface GlobeMarker {
@@ -19,6 +19,7 @@ interface GlobeProps {
 const DEFAULT_THETA = 0.25;
 const FOCUSED_SCALE = 2.5;
 const DEFAULT_SCALE = 1;
+const AUTO_ROTATE_DELAY = 3000;
 
 export function Globe({ markers = [], className = '', focusLng, focusLat }: GlobeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -29,7 +30,11 @@ export function Globe({ markers = [], className = '', focusLng, focusLat }: Glob
   const focusLatRef = useRef<number | undefined>(undefined);
   const isFocusingRef = useRef(false);
 
-  // Update focus target when props change
+  const pointerInteracting = useRef<number | null>(null);
+  const pointerInteractionMovement = useRef(0);
+  const lastInteractionTime = useRef(0);
+  const velocityRef = useRef(0);
+
   useEffect(() => {
     if (focusLng !== undefined) {
       focusLngRef.current = focusLng;
@@ -41,6 +46,32 @@ export function Globe({ markers = [], className = '', focusLng, focusLat }: Glob
       isFocusingRef.current = false;
     }
   }, [focusLng, focusLat]);
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    pointerInteracting.current = e.clientX - pointerInteractionMovement.current;
+    if (canvasRef.current) canvasRef.current.style.cursor = 'grabbing';
+  }, []);
+
+  const onPointerUp = useCallback(() => {
+    pointerInteracting.current = null;
+    lastInteractionTime.current = Date.now();
+    if (canvasRef.current) canvasRef.current.style.cursor = 'grab';
+  }, []);
+
+  const onPointerOut = useCallback(() => {
+    pointerInteracting.current = null;
+    lastInteractionTime.current = Date.now();
+    if (canvasRef.current) canvasRef.current.style.cursor = 'grab';
+  }, []);
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (pointerInteracting.current !== null) {
+      const delta = e.clientX - pointerInteracting.current;
+      pointerInteractionMovement.current = delta;
+      velocityRef.current = (delta - (phiRef.current * 200)) * 0.01;
+      phiRef.current = delta / 200;
+    }
+  }, []);
 
   useEffect(() => {
     let width = 0;
@@ -64,41 +95,53 @@ export function Globe({ markers = [], className = '', focusLng, focusLat }: Glob
       dark: 1,
       diffuse: 1.2,
       mapSamples: 16000,
-      mapBrightness: 4,
+      mapBrightness: 5,
       baseColor: [0.15, 0.15, 0.17],
       markerColor: [0.39, 0.4, 0.95],
-      glowColor: [0.08, 0.08, 0.1],
+      glowColor: [0.12, 0.12, 0.18],
       markers: markers.map((m) => ({
         location: [m.lat, m.lng] as [number, number],
         size: m.size ?? 0.06,
       })),
       onRender: (state) => {
-        if (focusLngRef.current !== undefined && isFocusingRef.current) {
-          // Smoothly rotate horizontally to center the selected location.
-          // In cobe, phi=0 faces ~prime meridian; to show a longitude at the
-          // center we need phi = -lng converted to radians.
+        const now = Date.now();
+        const isDragging = pointerInteracting.current !== null;
+        const timeSinceInteraction = now - lastInteractionTime.current;
+        const shouldAutoRotate = !isDragging && timeSinceInteraction > AUTO_ROTATE_DELAY;
+
+        if (isFocusingRef.current && focusLngRef.current !== undefined) {
           const targetPhi = (-focusLngRef.current * Math.PI) / 180 + 3 * Math.PI / 2;
 
-          // Handle wrap-around: pick the shortest rotation direction
           let diff = targetPhi - phiRef.current;
-          // Normalize diff to [-PI, PI]
           diff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
           if (diff < -Math.PI) diff += 2 * Math.PI;
 
           phiRef.current += diff * 0.06;
 
-          // Smoothly tilt towards the focused latitude
           const targetTheta = focusLatRef.current !== undefined
             ? (focusLatRef.current * Math.PI) / 180 * 0.4 + DEFAULT_THETA
             : DEFAULT_THETA;
           thetaRef.current += (targetTheta - thetaRef.current) * 0.06;
 
-          // Smoothly zoom in
           scaleRef.current += (FOCUSED_SCALE - scaleRef.current) * 0.06;
+        } else if (isDragging) {
+          // User is dragging — phi is updated via onPointerMove
+          scaleRef.current += (DEFAULT_SCALE - scaleRef.current) * 0.06;
+          thetaRef.current += (DEFAULT_THETA - thetaRef.current) * 0.06;
+        } else if (shouldAutoRotate) {
+          // Decay any remaining velocity
+          velocityRef.current *= 0.95;
+          phiRef.current += 0.003 + velocityRef.current * 0.001;
+          if (Math.abs(velocityRef.current) < 0.01) velocityRef.current = 0;
+
+          scaleRef.current += (DEFAULT_SCALE - scaleRef.current) * 0.06;
+          thetaRef.current += (DEFAULT_THETA - thetaRef.current) * 0.06;
         } else {
-          // Normal slow auto-rotation
-          phiRef.current += 0.003;
-          // Smoothly zoom back out
+          // Between drag end and auto-rotate resume: momentum decay
+          velocityRef.current *= 0.92;
+          phiRef.current += velocityRef.current * 0.002;
+          if (Math.abs(velocityRef.current) < 0.01) velocityRef.current = 0;
+
           scaleRef.current += (DEFAULT_SCALE - scaleRef.current) * 0.06;
           thetaRef.current += (DEFAULT_THETA - thetaRef.current) * 0.06;
         }
@@ -107,7 +150,6 @@ export function Globe({ markers = [], className = '', focusLng, focusLat }: Glob
         state.theta = thetaRef.current;
         state.width = width * 2;
         state.height = width * 2;
-        // Apply zoom via the scale property
         (state as Record<string, unknown>).scale = scaleRef.current;
       },
     });
@@ -122,7 +164,11 @@ export function Globe({ markers = [], className = '', focusLng, focusLat }: Glob
     <canvas
       ref={canvasRef}
       className={`w-full aspect-square ${className}`}
-      style={{ contain: 'layout paint size', pointerEvents: 'none' }}
+      style={{ contain: 'layout paint size', cursor: 'grab' }}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerOut={onPointerOut}
+      onPointerMove={onPointerMove}
     />
   );
 }

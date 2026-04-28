@@ -119,6 +119,19 @@ const rawTravelData: TravelEntry[] = [
   { place: 'Austin',              country: 'USA', state: 'Texas',      startDate: '2026-02-20', endDate: '2026-02-23', purpose: 'travel', notes: 'Trip with Alina' },
   { place: 'Houston',             country: 'USA', state: 'Texas',      startDate: '2026-02-23', endDate: '2026-02-25', purpose: 'travel', notes: 'Trip with Alina' },
 
+  // ── Earlier trips ──
+  { place: 'Venice',        country: 'Italy',       startDate: '2008',                        purpose: 'travel' },
+  { place: 'Kyiv',          country: 'Ukraine',     startDate: '2011',                        purpose: 'travel' },
+  { place: 'Athens',        country: 'Greece',      startDate: '2015-02',                     purpose: 'travel', notes: 'School trip' },
+  { place: 'Olympia',       country: 'Greece',      startDate: '2015-02',                     purpose: 'travel', notes: 'School trip' },
+  { place: 'Addis Ababa',   country: 'Ethiopia',    startDate: '2016',                        purpose: 'travel', notes: 'School trip' },
+  { place: 'New Delhi',     country: 'India',       startDate: '2017',                        purpose: 'travel', notes: 'School trip' },
+  { place: 'Angkor Wat',    country: 'Cambodia',    startDate: '2017',                        purpose: 'travel', notes: 'School trip' },
+  { place: 'Phnom Penh',    country: 'Cambodia',    startDate: '2017',                        purpose: 'travel', notes: 'School trip' },
+  { place: 'Muscat',        country: 'Oman',        startDate: '2017',                        purpose: 'travel', notes: 'School trip' },
+  { place: 'Seaside',       country: 'USA',         state: 'Florida', startDate: '2018',      purpose: 'travel' },
+  { place: 'Helsinki',      country: 'Finland',     startDate: '2020',                        purpose: 'travel' },
+
   // ── Extracted from Photos ──
   { place: 'Phuket',          country: 'Thailand',     startDate: '2014-07-27',                          purpose: 'travel' },
   { place: 'Phuket',          country: 'Thailand',     startDate: '2015-04-01', endDate: '2015-04-06',   purpose: 'travel' },
