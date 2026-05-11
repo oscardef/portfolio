@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://oscar.defrancesca.com/sitemap.xml
+Host: https://oscar.defrancesca.com
