@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const BASE_URL = process.env.BASE_URL || 'https://oscar.defrancesca.com';
 const outPath = path.join(process.cwd(), 'public', 'sitemap.xml');
@@ -19,11 +19,9 @@ function getFiles(dir, prefix = '') {
   return entries;
 }
 
-// Collect content files under /content
 const contentDir = path.join(process.cwd(), 'content');
 const contentFiles = getFiles(contentDir);
 
-// Start with known static routes
 const urls = new Set([
   '/',
   '/about',
@@ -33,15 +31,12 @@ const urls = new Set([
 
 for (const f of contentFiles) {
   const parts = f.split(path.sep);
-  // remove leading '.' or 'content' segments
   if (parts[0] === 'content') parts.shift();
   const filename = parts.pop();
   const name = filename.replace(/\.(mdx?|tsx?|html?)$/, '');
   const route = '/' + [...parts, name].join('/');
   urls.add(route.replace(/\/index$/, '/'));
 }
-
-// Add any image or asset directories you want indexed (optional)
 
 const now = new Date().toISOString();
 const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...urls]

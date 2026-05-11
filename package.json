@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/generate-sitemap.js",
+    "prebuild": "node scripts/generate-sitemap.mjs",
     "build": "next build",
     "start": "next start",
-    "generate-sitemap": "node scripts/generate-sitemap.js",
+    "generate-sitemap": "node scripts/generate-sitemap.mjs",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write ."
