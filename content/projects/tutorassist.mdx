@@ -1,0 +1,73 @@
+---
+title: "TutorAssist — AI-Enhanced Tutoring Platform"
+slug: "tutorassist"
+date: "2025-06-01"
+type: "personal"
+featured: true
+summary: "A full-stack tutoring platform with AI-generated questions tailored to each student's syllabus and weak areas, progress tracking for tutors, and adaptive practice with spaced repetition."
+tags: ["web", "ml", "education"]
+stack: ["Next.js", "TypeScript", "Supabase", "OpenAI", "Tailwind CSS", "Cloudflare R2"]
+links:
+  github: "https://github.com/oscardef/TutorAssist"
+heroImage:
+  src: "/images/projects/tutorassist/hero.png"
+  alt: "TutorAssist platform interface"
+highlights:
+  - "AI-powered question generation via GPT-4o-mini, tailored to each student's syllabus, grade level, and identified weak areas"
+  - "Dual-interface platform: tutors track student progress and manage content; students practice with adaptive questions and progressive hints"
+  - "Supports 12+ mathematical answer formats (expressions, matrices, coordinates, vectors) with MathLive input and KaTeX rendering"
+  - "Spaced repetition scheduling, streak tracking, and similarity search via pgvector for intelligent question bank management"
+role: "Solo developer"
+teamSize: 1
+organization: ""
+location: ""
+status: "prototype"
+---
+
+## Overview
+
+I tutor students in mathematics, and I built this platform to make my own tutoring more effective. The core idea: instead of manually creating practice questions or assigning from a textbook, the platform generates questions tailored to each student's specific syllabus, grade level, and identified weak areas — then tracks their progress so I can see exactly where they need help before our next session.
+
+It serves both sides of the tutoring relationship — students get adaptive practice with immediate feedback, and I get visibility into what's actually working.
+
+## For Students
+
+- **Adaptive practice** — AI generates questions based on their specific curriculum (IB, NSW HSC, etc.), current topic, and difficulty level
+- **Progressive hints** — stuck students can request hints before seeing the full solution
+- **MathLive input** — proper mathematical expression entry (fractions, matrices, coordinates, vectors — not just typing text)
+- **Spaced repetition** — questions they struggled with resurface at optimal intervals
+- **Progress tracking** — visual charts showing improvement over time, streak tracking for motivation
+- **Question flagging** — students can flag confusing questions for me to review
+
+## For Tutors
+
+- **Student progress dashboard** — see each student's weak areas, practice frequency, and improvement trends
+- **AI question generation** — generate questions with GPT-4o-mini, specifying topic, difficulty, and answer format
+- **Question bank** — manage questions with LaTeX support and similarity search (pgvector) to avoid duplicates
+- **Assignments** — create assignments with due dates, track completion
+- **PDF worksheet export** — generate printable worksheets with optional answer keys
+- **Material uploads** — attach PDFs, images, and reference materials to topics
+- **Google Calendar integration** — schedule tutoring sessions directly from the platform
+
+## Technical Details
+
+**Stack:** Next.js 15 with App Router, React 19, TypeScript, Tailwind CSS
+
+**Backend:** Supabase (PostgreSQL with pgvector extension, Row Level Security for data isolation between tutors' workspaces), Supabase Auth
+
+**AI:** OpenAI API — GPT-4o-mini for question generation, text-embedding-3-small for similarity search across the question bank
+
+**Math rendering:** MathLive for input, KaTeX for display — supports numeric, expressions, multiple choice, fractions, coordinates, matrices, sets, ranges, complex numbers, vectors, equations, inequalities, intervals, and values with units
+
+**Storage:** Cloudflare R2 for uploaded materials (PDFs, images)
+
+**Background jobs:** Job queue pattern for long-running operations (AI generation, PDF creation, embedding computation)
+
+**Security:** Row Level Security ensures complete data isolation between tutor workspaces — students only see their own data, tutors only see their own students
+
+## What I Learned
+
+- Building for yourself as the user gives you an unfair advantage in product decisions — I know exactly which features matter because I use them weekly
+- Supabase's Row Level Security is excellent for multi-tenant isolation without application-level complexity
+- Mathematical input is a surprisingly hard UX problem — MathLive handles it well but integrating it with validation across 12+ answer formats took significant effort
+- GPT-4o-mini is good enough for question generation when you give it proper curriculum context, and significantly cheaper than GPT-4 for this use case

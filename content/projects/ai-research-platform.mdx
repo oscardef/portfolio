@@ -4,83 +4,113 @@ slug: "ai-research-platform"
 date: "2024-07-01"
 type: "school"
 featured: true
-summary: "Designed and built a full-stack platform for managing AI research workflows — paper tracking, experiment logging, and collaborative annotation — as my BSc thesis project."
-tags: ["web", "backend", "ml"]
-stack: ["Python", "FastAPI", "React", "TypeScript", "PostgreSQL", "Docker"]
+summary: "Designed and built LLACE, a full-stack platform for managing the lifecycle of AI models in healthcare research — from project organization and model versioning to deployment — built in collaboration with UMCG."
+tags: ["web", "backend", "systems"]
+stack: ["React", "Python", "Flask", "PocketBase", "UbiOps"]
 links:
   github: "https://github.com/oscardef/AI-Research-Management-Platform"
+  paper: "https://fse.studenttheses.ub.rug.nl/33796/13/bCS_2024_deFrancescaOM.pdf"
 heroImage:
   src: "/images/projects/ai-research-platform/hero.png"
-  alt: "AI Research Management Platform dashboard"
+  alt: "LLACE AI Research Management Platform dashboard"
 highlights:
-  - "Full-stack application with FastAPI backend, React frontend, and PostgreSQL database"
-  - "Implemented semantic search over research papers using sentence-transformer embeddings"
-  - "Built a collaborative annotation system for dataset labeling with inter-annotator agreement metrics"
-  - "Received highest thesis grade (9/10) and cum laude distinction"
+  - "Full-stack platform with React frontend, PocketBase backend, and Flask proxy for model deployment via UbiOps"
+  - "Requirements gathered through interviews with UMCG researchers — user-driven design addressing real healthcare AI workflow gaps"
+  - "Modular architecture with advanced search across projects, models, publications, and researcher profiles"
+  - "Designed both ideal production architecture (NGINX, Django, PostgreSQL, Kubernetes) and feasible MVP within thesis scope"
 role: "Solo developer"
 teamSize: 1
 organization: "University of Groningen"
 location: "Groningen, Netherlands"
-status: "shipped"
+status: "prototype"
 ---
 
 ## Overview
 
-My Bachelor's thesis at the University of Groningen. The problem was pretty straightforward: researchers in the AI lab spent too much time on administrative tasks — tracking papers, managing experiments, coordinating dataset annotations — when better tooling could handle most of it. So I built that tooling.
+**Grade: 8.5 / 10** | BSc Thesis in Computing Science | Supervised by Prof. Dimka Karastoyanova and Michel Medema, MSc.
+
+My Bachelor's thesis at the University of Groningen, built in collaboration with the University Medical Center Groningen (UMCG). Researchers at UMCG were working in isolation — AI models stored locally, no shared infrastructure for collaboration, and no convenient way to discover or deploy each other's work despite using the Habrok HPC cluster for computation.
+
+LLACE (named after Ada Lovelace) addresses this by providing a centralized platform for the entire AI model lifecycle in healthcare research: project organization, model versioning and metadata, deployment, and cross-team discovery.
+
+## Requirements & Process
+
+The design was driven by direct interviews with UMCG researchers to understand their actual workflows and pain points. I used MoSCoW prioritization to scope requirements into must-have, should-have, could-have, and won't-have categories — essential given the fixed thesis timeline.
+
+Key requirements that emerged:
+- Researchers needed to **discover** what others were working on (models, datasets, publications)
+- Models needed proper **versioning and metadata** tracking through their lifecycle
+- **Deployment** should be accessible without deep DevOps knowledge
+- The platform must comply with healthcare data security and privacy standards
+- Integration with existing infrastructure (Habrok HPC, institutional repositories like Pure)
 
 ## What I Built
 
-A full-stack web application with three core modules:
+<FloatingImage src="/images/projects/ai-research-platform/dashboard.png" alt="LLACE dashboard showing research projects and AI models" caption="Dashboard: researchers manage their projects and AI models from a single interface" side="right" width={450} height={280} />
 
-**1. Paper Management & Semantic Search**
-- Import papers from arXiv, Semantic Scholar, or manual upload
-- Automatic metadata extraction (title, authors, abstract, citations)
-- Semantic search powered by sentence-transformer embeddings (all-MiniLM-L6-v2)
-- Research topic clustering and trend visualization
-- Reading lists with annotation and highlight support
+**User & Project Management**
+- Account creation with role-based permissions (researchers, administrators)
+- Research project organization with collaborators, descriptions, and linked resources
+- Profile management for researcher discovery
 
-**2. Experiment Tracking**
-- Log experiments with hyperparameters, metrics, and artifacts
-- Comparison dashboards for model selection
-- Integration with MLflow for existing workflows
-- Automatic experiment lineage tracking (which paper → which hypothesis → which experiment)
+**AI Model Management**
+- Version control and metadata tracking for AI models
+- Model upload and configuration interface
+- Deployment to UbiOps directly from the platform — researchers can deploy models without managing infrastructure themselves
 
-**3. Collaborative Annotation**
-- Multi-user annotation interface for text, image, and tabular data
-- Configurable label schemas
-- Inter-annotator agreement metrics (Cohen's κ, Fleiss' κ)
-- Active learning suggestions for efficient labeling
+<FloatingImage src="/images/projects/ai-research-platform/model-deployment.png" alt="Model deployment interface with UbiOps integration" caption="One-click model deployment to UbiOps with version selection" side="left" width={450} height={300} />
 
-## Technical Details
+**Advanced Search**
+- Multi-faceted search across projects, models, researcher profiles, and publications
+- Filter by type (models, projects, profiles, publications) with tag-based categorization
+- Enables cross-team discovery of relevant work within the institution
 
-**Architecture:**
-- **Backend:** FastAPI with async SQLAlchemy ORM, background task processing with Celery + Redis
-- **Frontend:** React + TypeScript with TanStack Query for data fetching
-- **Database:** PostgreSQL with pgvector extension for embedding storage and similarity search
-- **Infrastructure:** Docker Compose for local development, CI/CD with GitHub Actions
+<FloatingImage src="/images/projects/ai-research-platform/search.png" alt="Advanced search interface with filtering" caption="Search across all platform entities with tag and type filtering" side="right" width={450} height={280} />
 
-**Key Technical Decisions:**
-- **pgvector over dedicated vector DB:** Kept the stack simpler by using PostgreSQL's pgvector extension. For the scale of a research group (~10K papers), this performs more than adequately and avoids operational complexity of a separate vector database.
-- **FastAPI over Django:** Chose FastAPI for its async-first design, automatic OpenAPI documentation, and better TypeScript client generation via openapi-typescript-codegen.
-- **Sentence-transformers over OpenAI embeddings:** Self-hosted embeddings for privacy (unpublished research) and cost reasons.
+**Project Pages**
+- Detailed project views with description, metadata, collaborators, and linked models/publications
+- Related projects and models surfaced automatically for cross-team discovery
+
+<FloatingImage src="/images/projects/ai-research-platform/project-page.png" alt="Project page showing collaborators and related models" caption="Project page: collaborators, related models, publications, and linked projects" side="left" width={450} height={300} />
+
+## Architecture
+
+I designed two architectures: an **ideal production system** and a **feasible MVP** for the thesis scope.
+
+<FloatingImage src="/images/projects/ai-research-platform/ideal-architecture.png" alt="Ideal production architecture with NGINX, Django, PostgreSQL, and Kubernetes" caption="Ideal architecture: full production system with NGINX gateway, Django, PostgreSQL, and UMCG integrations" side="right" width={350} height={450} />
+
+**Ideal architecture** (documented as a blueprint for future development):
+- React frontend → NGINX API gateway → Django business layer with multiple service modules
+- Redis caching, PostgreSQL database via Django ORM
+- Integration with UMCG systems, LDAP/OAuth authentication
+- Kubernetes for orchestration and scaling
+
+<FloatingImage src="/images/projects/ai-research-platform/mvp-architecture.png" alt="MVP architecture with React, PocketBase, Flask proxy, and UbiOps" caption="MVP architecture: streamlined stack with PocketBase, Flask proxy, and UbiOps for model deployment" side="left" width={400} height={450} />
+
+**MVP architecture** (what I implemented):
+- **Frontend:** React with standard component/page/hook structure, communicating via Axios
+- **Backend:** PocketBase (embedded database, built-in auth, REST API) handling most data operations
+- **Flask proxy:** Dedicated backend for deployment requests to UbiOps
+- **UbiOps:** External platform providing computational resources for model execution
+
+This separation keeps the MVP lean while the ideal architecture serves as a roadmap for production scaling.
 
 ## Challenges & Tradeoffs
 
-- **Embedding search quality:** Generic sentence-transformers don't capture domain-specific nuances well. I fine-tuned on a small dataset of paper similarity judgments, which improved retrieval precision by ~20%.
-- **Real-time collaboration:** The annotation system needed conflict resolution for simultaneous edits. I implemented optimistic locking with version vectors rather than full CRDT, trading theoretical robustness for implementation simplicity.
-- **Scope management:** A thesis has a fixed timeline. I prioritized the paper management + annotation modules and kept experiment tracking as a thinner integration layer with MLflow.
+- **Scope vs. ambition:** The ideal architecture is significantly more complex than what's feasible in a thesis. Choosing PocketBase over Django + PostgreSQL meant sacrificing some flexibility but enabled a working prototype within the timeline
+- **Healthcare compliance:** Even for an MVP, data security considerations had to be baked in from the start — not bolted on later
+- **User interviews vs. assumptions:** My initial assumptions about what researchers needed were wrong in several places. The interviews reshaped the feature priorities significantly
+- **Modularity for handoff:** Since UMCG might continue development, I prioritized clean separation of concerns and extensibility over feature completeness
 
 ## Results
 
-- Deployed to the University's AI research group (5 researchers, ~2000 papers)
-- **40% reduction** in time spent on paper discovery (user survey)
-- Annotation throughput improved by **2.3x** compared to spreadsheet-based workflows
-- Thesis received **9/10** — contributed to cum laude distinction
-- The platform is still actively used by the research group
+The MVP delivers a functional platform covering user management, project and model lifecycle management, search/discovery, and model deployment. The modular architecture ensures it can evolve toward the ideal production system as resources allow.
+
+The thesis documents both the platform implementation and the full ideal architecture as a blueprint — positioning LLACE as a foundation that UMCG can build upon.
 
 ## What I Learned
 
-- Scoping a full-stack app solo under a thesis deadline teaches you to cut ruthlessly — and to know what's actually important
-- My initial design assumptions were wrong in several places. Watching researchers actually use the prototype changed the direction significantly
-- Got a lot better at database design for search-heavy workloads
-- Learned to write a thesis that satisfies both the technical implementation and the academic writing requirements
+- Interviewing actual users before building anything is invaluable — the gap between what you assume researchers need and what they actually need is significant
+- Designing both an ideal and constrained architecture forces you to understand which abstractions actually matter vs. which are premature
+- PocketBase is remarkably effective for prototyping — embedded DB + auth + REST API in a single binary eliminates a lot of setup friction
+- Writing a thesis that satisfies both technical implementation and academic writing requirements is its own skill — balancing depth of detail with readability

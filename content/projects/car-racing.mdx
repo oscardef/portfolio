@@ -1,0 +1,56 @@
+---
+title: "RL Car Racing — DQN Agent"
+slug: "car-racing"
+date: "2023-12-01"
+type: "school"
+featured: false
+summary: "Implemented a Deep Q-Network agent that learns to drive autonomously in OpenAI's CarRacing-v2 environment, combining deep learning with reinforcement learning for continuous visual control."
+tags: ["ml", "rl"]
+stack: ["Python", "PyTorch", "OpenAI Gym", "NumPy"]
+links:
+  github: "https://github.com/oscar-konstantinos/car-racing"
+heroImage:
+  src: "/images/projects/car-racing/hero.png"
+  alt: "DQN agent navigating the CarRacing-v2 environment"
+highlights:
+  - "Deep Q-Network learning autonomous driving from raw pixel observations in a continuous control environment"
+  - "Hyperparameter tuning across batch sizes, learning rates, and network architectures with systematic analysis"
+  - "Agent achieves stable track navigation after training, demonstrating effective state representation learning"
+role: "Team member"
+teamSize: 2
+organization: "University of Groningen"
+location: "Groningen, Netherlands"
+status: "coursework"
+---
+
+## Overview
+
+Final project for the Reinforcement Learning Practical course at the University of Groningen, supervised by Prof. Matthia Sabatelli. Built with my partner Konstantinos Chasiotis.
+
+The challenge: teach an agent to drive a car around a procedurally generated track using only pixel observations — no access to car physics, no hand-crafted features. The agent must learn to steer, accelerate, and brake purely from visual input through trial and error.
+
+## Approach
+
+We implemented a **Deep Q-Network (DQN)** for the [CarRacing-v2](https://gymnasium.farama.org/environments/box2d/car_racing/) environment. The key challenge is that the observation space is high-dimensional (96x96 RGB pixels) and the environment requires precise continuous control — making it significantly harder than classic RL benchmarks like CartPole or Atari games with discrete, low-dimensional states.
+
+The DQN discretizes the action space and uses a convolutional neural network to map raw pixel frames to Q-values for each possible action. The agent learns which actions maximize cumulative reward (staying on track, maintaining speed) through experience replay and temporal difference learning.
+
+## Technical Details
+
+- **State representation:** Raw pixel observations from the environment (96x96 RGB), preprocessed and stacked for temporal context
+- **Network architecture:** CNN processing visual input → fully connected layers mapping to discrete action Q-values
+- **Training:** Experience replay buffer for sample decorrelation, target network for training stability, epsilon-greedy exploration
+- **Hyperparameter tuning:** Systematic exploration of batch sizes, learning rates, replay buffer sizes, and network depth documented in analysis notebooks
+
+## Results
+
+The trained agent successfully navigates the procedurally generated track, handling curves, maintaining speed on straights, and recovering from minor deviations:
+
+![Trained DQN agent autonomously navigating the CarRacing-v2 track](/images/projects/car-racing/agent-demo.gif)
+
+## What I Learned
+
+- Visual RL is a fundamentally different challenge from state-based RL — the representation learning problem dominates
+- Experience replay and target networks aren't just theoretical improvements; without them the agent completely fails to converge
+- Hyperparameter sensitivity in DQN is extreme — small changes in batch size or learning rate can mean the difference between a competent driver and an agent that drives in circles
+- The gap between "agent sometimes completes a lap" and "agent reliably drives well" requires careful reward shaping and training stability

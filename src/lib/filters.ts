@@ -9,6 +9,7 @@ export function filterProjects(
     tags?: string[];
     search?: string;
     sort?: 'featured' | 'newest';
+    status?: string;
   }
 ): Project[] {
   let result = [...projects];
@@ -16,6 +17,11 @@ export function filterProjects(
   // Filter by type
   if (filters.type && filters.type !== 'all') {
     result = result.filter((p) => p.type === filters.type);
+  }
+
+  // Filter by status
+  if (filters.status && filters.status !== 'all') {
+    result = result.filter((p) => p.status === filters.status);
   }
 
   // Filter by tags (AND logic: project must have ALL selected tags)
@@ -31,7 +37,8 @@ export function filterProjects(
         p.title.toLowerCase().includes(q) ||
         p.summary.toLowerCase().includes(q) ||
         p.tags.some((t) => t.toLowerCase().includes(q)) ||
-        p.stack.some((s) => s.toLowerCase().includes(q))
+        p.stack.some((s) => s.toLowerCase().includes(q)) ||
+        (p.organization && p.organization.toLowerCase().includes(q))
     );
   }
 

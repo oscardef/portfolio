@@ -18,7 +18,7 @@ const timeline = [
     title: 'Software Engineer',
     location: 'London, United Kingdom',
     flag: '🇬🇧',
-    description: 'Joining Bloomberg for a software engineering placement.',
+    description: 'Software Engineer at Bloomberg.',
     type: 'work' as const,
   },
   {
@@ -113,8 +113,9 @@ export default function AboutPage() {
                 backends.
               </p>
               <p>
-                Outside of work, I&apos;m into startups, traveling, and thinking about how tech
-                actually affects people&apos;s lives. Currently at Bloomberg in London.
+                Outside of work, I tutor students in maths, enjoy hackathons (3rd place
+                at LauzHack 2025), and I&apos;m into startups, travel, and thinking about how
+                tech actually affects people&apos;s lives. Currently at Bloomberg in London.
               </p>
             </div>
             <div className="flex items-center gap-4 mt-6">

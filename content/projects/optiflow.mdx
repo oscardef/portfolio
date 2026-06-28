@@ -1,8 +1,8 @@
 ---
 title: "OptiFlow — AI-Enhanced Retail Inventory Monitoring"
 slug: "optiflow"
-date: "2025-03-01"
-type: "company"
+date: "2025-11-01"
+type: "school"
 featured: true
 summary: "Built an AI-enhanced system combining wearable RFID scanning with UWB indoor positioning for Decathlon, enabling real-time shelf-level inventory monitoring and store flow optimization."
 tags: ["systems", "ml", "embedded", "web"]
@@ -13,48 +13,111 @@ heroImage:
   src: "/images/projects/optiflow/hero.png"
   alt: "OptiFlow inventory monitoring dashboard"
 highlights:
-  - "Custom wearable hardware: ESP32-S3 microcontroller + UHF RFID reader + UWB positioning module"
-  - "Real-time web dashboard with store maps, employee trajectories, and stock heatmaps"
-  - "ML pipeline for product clustering, demand forecasting, anomaly detection, and ABC classification"
-  - "Best in class — top marks, client was extremely happy with the solution"
-role: "Lead developer"
-organization: "Decathlon"
-status: "shipped"
+  - "Custom wearable hardware: ESP32-S3 microcontroller + UHF RFID reader + UWB positioning module with stationary anchor network"
+  - "Full-stack real-time platform: Next.js dashboard with live store maps, WebSocket-driven employee tracking, and stock heatmaps"
+  - "ML analytics pipeline: K-Means product clustering, demand forecasting, anomaly detection, and ABC classification"
+  - "Containerized microservice architecture with dual PostgreSQL databases, MQTT broker, and simulation engine"
+role: "Software & Firmware Lead"
+teamSize: 6
+organization: "EPFL"
+location: "Lausanne, Switzerland"
+status: "prototype"
 relatedExperience: []
 ---
 
 ## Overview
 
-From small retailers to companies like Decathlon, everyone deals with the same problem: what's supposed to be on the shelf often isn't, and figuring out where your inventory actually is in real-time is harder than it sounds. Existing solutions either don't scale, aren't real-time, or raise privacy concerns.
+**Grade: 6 / 6** | EPFL Innovation & Entrepreneurship in Engineering (10 ECTS)
 
-OptiFlow tackles this with a system that turns routine employee movement into a continuous sensing layer — no cameras, no manual scanning.
+A semester-long project for Decathlon addressing a core retail problem: recorded inventory rarely matches what's actually on the shelf. Employees spend up to 6 hours per day searching for "ghost stock" — items that are technically in-store but missing from their correct shelf location. Existing solutions either don't scale, aren't real-time, or raise privacy concerns.
+
+OptiFlow turns routine employee movement into a continuous sensing layer — no cameras, no manual scanning rounds. Decathlon was extremely happy with the result and expressed interest in taking it further after the course.
 
 ## How It Works
 
-The core idea: sales associates wear a small custom device while doing their normal tasks. As they walk around the store, the device passively scans RFID-tagged products and tracks its own position using UWB, building a real-time picture of what's on which shelf.
+Sales associates wear a small custom device while doing their normal tasks. As they walk through the store, the device passively scans RFID-tagged products and tracks its own position via UWB, building a real-time picture of what's on which shelf.
 
 ### Hardware
 
-We built a custom wearable platform combining:
-- **ESP32-S3** microcontroller running multi-tasking firmware
-- **JRD-100** UHF RFID reader for scanning product tags
-- **DWM3001CDK** UWB module for centimeter-level indoor positioning
-- A network of stationary UWB anchors deployed throughout the store
+<FloatingImage src="/images/projects/optiflow/control-box.jpg" alt="Control box internals showing Qorvo DWM3001CDK, ESP32-S3, and Li-ion battery" caption="Control box: Qorvo UWB module, ESP32-S3, and battery in 3D-printed enclosure" side="right" width={400} height={300} />
 
-The firmware handles concurrent sensor polling, data collection, and wireless communication via MQTT — all running in real-time on a resource-constrained device.
+We built a custom wearable platform combining:
+- **ESP32-S3** microcontroller as the main processing unit
+- **M5Stack JRD-4035** UHF RFID reader (wristband-mounted) for scanning product tags
+- **Qorvo DWM3001CDK** UWB module for centimeter-level indoor positioning via DS-TWR
+- **Bosch BNO085** IMU (optional, for dead-reckoning augmentation)
+- A network of stationary UWB anchors deployed throughout the store
+- Custom 3D-printed enclosures for the control box, anchors, and wristband
+
+The multi-tasking firmware orchestrates concurrent sensor polling, data collection, and wireless communication via MQTT — all running in real-time on a resource-constrained device.
+
+I was responsible for a large part of the firmware development, alongside all of the software. I also contributed to hardware design and assembly, including soldering and prototype iteration.
+
+<FloatingImage src="/images/projects/optiflow/wristband.jpg" alt="Complete wearable system with RFID wristband and control box" caption="Assembled wearable: RFID wristband connected to control box" side="left" width={400} height={300} />
+
+<FloatingImage src="/images/projects/optiflow/anchor-deployed.jpg" alt="UWB anchor deployed on Decathlon shelf" caption="UWB anchor mounted on store shelving during field testing at Decathlon" side="right" width={400} height={300} />
 
 ### Software
 
-A containerized microservice architecture processes the incoming telemetry:
-- **Real-time trilateration** from UWB distance measurements
-- **Dual-mode missing item detection** — comparing expected vs. observed inventory
-- **ML analytics pipeline** — product clustering, demand forecasting, anomaly detection, and ABC classification
-- **Next.js dashboard** showing live store maps, employee trajectories, stock heatmaps, and admin controls
+I designed and built the full software stack — a containerized microservice architecture processing incoming telemetry:
+
+- **FastAPI backend** handling trilateration, data ingestion, analytics, WebSocket management, and simulation control
+- **Trilateration engine** converting UWB distance measurements from multiple anchors into coordinates using least-squares optimization with confidence scoring
+- **Dual-mode missing item detection** with a conservative algorithm requiring 6 consecutive misses before flagging items unavailable
+- **AI-powered analytics** — K-Means product clustering, short-term demand forecasting, anomaly detection, ABC classification, and product affinity analysis
+- **Next.js dashboard** with live canvas-based store maps, employee trajectories, stock depletion heatmaps, and admin controls
+- **Real-time WebSocket communication** broadcasting position updates, inventory changes, and detection events
+- **Dual PostgreSQL databases** fully isolating simulation and production data
+- **MQTT broker** (Mosquitto) routing messages between hardware/simulation and the backend with mode-based topic filtering
+- **Full simulation engine** replicating employee movement, RFID detection, and UWB distance measurements for development and demo without hardware
+
+All services orchestrated via Docker Compose with proper network configuration and volume management.
+
+The dashboard below shows the system running live — the store map displays real-time employee position (blue), detected items (green), and missing items (red), with a prioritized restock queue on the right:
+
+<FloatingImage src="/images/projects/optiflow/dashboard.png" alt="Live operational dashboard with store map and restock queue" caption="Operational dashboard: live employee tracking, item detection, and restock priorities" side="left" width={600} height={375} />
+
+The heatmap view aggregates stock depletion data across the store, highlighting zones with the highest inventory loss — enabling managers to identify problem areas at a glance and allocate restocking effort accordingly:
+
+<FloatingImage src="/images/projects/optiflow/heatmap.png" alt="Stock depletion heatmap" caption="Heatmap overlay showing inventory depletion intensity by store zone" side="right" width={600} height={375} />
+
+The analytics engine goes beyond basic inventory tracking. It identifies sales anomalies, forecasts short-term demand, and classifies products by velocity — giving store managers actionable intelligence rather than raw data:
+
+<FloatingImage src="/images/projects/optiflow/ai-insights.png" alt="AI-powered anomaly detection and forecasting" caption="AI Insights: anomaly detection with surge alerts and demand forecasting" side="left" width={600} height={375} />
 
 ### Business Viability
 
-We also did financial modeling across three deployment scenarios — pilot store, full store, and scalable UL-TDOA architecture — showing that the system is commercially viable through a hybrid hardware + SaaS revenue model.
+The team also developed financial modeling across three deployment scenarios:
+- **Pilot:** 1 wearable + 7 anchors
+- **Full-store:** 20 wearables + 99 anchors
+- **Scalable:** UL-TDOA architecture with PCB miniaturization
+
+Analysis confirmed commercially viable returns through a hybrid hardware + SaaS revenue model, with sustainability evaluation and IP cost assessment included.
+
+## Technical Details
+
+<FloatingImage src="/images/projects/optiflow/kpis.png" alt="Analytics KPI dashboard" caption="KPI dashboard: stock coverage, turnover rate, and sales metrics at a glance" side="right" width={500} height={350} />
+
+**Data flow:** Hardware packets arrive via MQTT → bridge service → FastAPI ingestion → trilateration + detection → WebSocket broadcast to dashboard. Append-only tables with UTC timestamps enable full historical reconstruction and audit trails.
+
+**Position calculation:** Supports 2-anchor weighted midpoint through 4+ anchor least-squares optimization, with confidence scoring (0.3–0.95 range) based on measurement consistency.
+
+**Scalability consideration:** The prototype uses DS-TWR (Double-Sided Two-Way Ranging) which limits the number of concurrent tags. For production, the report proposes UL-TDOA (Uplink Time Difference of Arrival) which scales to many more simultaneous devices.
+
+## My Role
+
+- Designed and implemented the entire software platform (backend, frontend, simulation, MQTT bridge, database schema, deployment)
+- Developed a large portion of the ESP32 firmware (sensor orchestration, MQTT communication)
+- Led system architecture and design decisions across the full stack
+- Contributed to hardware assembly — soldering, prototyping, field testing at Decathlon stores
 
 ## Results
 
-Decathlon was extremely happy with what we delivered. The project was rated best in class and received top marks. We demonstrated that continuous, real-time shelf monitoring is both technically feasible and financially sustainable — without compromising privacy or requiring heavy infrastructure.
+The system was field-tested at Decathlon and demonstrated real-time shelf monitoring without compromising privacy or requiring heavy infrastructure. The project received a perfect grade (6/6) and Decathlon expressed strong interest in continuing development beyond the course.
+
+## What I Learned
+
+- Building a full system from hardware through firmware to web dashboard taught me how each layer constrains the others — firmware buffer sizes dictate packet formats, which dictate backend parsing, which dictates frontend update rates
+- MQTT is excellent glue between embedded devices and web services, especially with topic-based routing for mode separation
+- Designing a simulation engine that faithfully mimics hardware behavior was essential for rapid iteration without needing the physical device at every step
+- Working with UWB positioning exposed the practical challenges of indoor localization: multipath, anchor placement, and the gap between datasheet accuracy and real-world performance

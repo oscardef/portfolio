@@ -18,6 +18,13 @@ const typeOptions = [
   { value: 'company', label: 'Company' },
 ];
 
+const statusOptions = [
+  { value: 'all', label: 'All' },
+  { value: 'shipped', label: 'Shipped' },
+  { value: 'prototype', label: 'Prototype' },
+  { value: 'coursework', label: 'Coursework' },
+];
+
 const sortOptions = [
   { value: 'newest', label: 'Newest' },
   { value: 'featured', label: 'Featured' },
@@ -26,9 +33,10 @@ const sortOptions = [
 export function FilterBar({ projects, onFilter }: FilterBarProps) {
   const [search, setSearch] = useState('');
   const [activeType, setActiveType] = useState('all');
+  const [activeStatus, setActiveStatus] = useState('all');
   const [activeTags, setActiveTags] = useState<string[]>([]);
   const [sort, setSort] = useState<'featured' | 'newest'>('featured');
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
 
   const allTags = useMemo(() => getAllTags(projects), [projects]);
 
@@ -41,11 +49,12 @@ export function FilterBar({ projects, onFilter }: FilterBarProps) {
   const clearFilters = () => {
     setSearch('');
     setActiveType('all');
+    setActiveStatus('all');
     setActiveTags([]);
     setSort('featured');
   };
 
-  const hasActiveFilters = search || activeType !== 'all' || activeTags.length > 0;
+  const hasActiveFilters = search || activeType !== 'all' || activeStatus !== 'all' || activeTags.length > 0;
 
   // Compute filtered results
   const filtered = useMemo(() => {
@@ -54,8 +63,9 @@ export function FilterBar({ projects, onFilter }: FilterBarProps) {
       tags: activeTags,
       search,
       sort,
+      status: activeStatus,
     });
-  }, [projects, activeType, activeTags, search, sort]);
+  }, [projects, activeType, activeStatus, activeTags, search, sort]);
 
   // Sync filtered results to parent
   useEffect(() => {
@@ -70,7 +80,7 @@ export function FilterBar({ projects, onFilter }: FilterBarProps) {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
           <input
             type="text"
-            placeholder="Search projects..."
+            placeholder="Search by name, technology, or topic..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 text-sm bg-bg-card border border-border rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent transition-colors"
@@ -119,6 +129,24 @@ export function FilterBar({ projects, onFilter }: FilterBarProps) {
                   label={opt.label}
                   active={activeType === opt.value}
                   onClick={() => setActiveType(opt.value)}
+                  size="md"
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Status filter */}
+          <div>
+            <label className="text-xs font-medium text-text-muted uppercase tracking-wider mb-2 block">
+              Status
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {statusOptions.map((opt) => (
+                <Tag
+                  key={opt.value}
+                  label={opt.label}
+                  active={activeStatus === opt.value}
+                  onClick={() => setActiveStatus(opt.value)}
                   size="md"
                 />
               ))}

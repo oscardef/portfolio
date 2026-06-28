@@ -1,0 +1,57 @@
+---
+title: "Portfolio Site"
+slug: "portfolio"
+date: "2025-06-01"
+type: "personal"
+featured: false
+summary: "This site — a content-driven portfolio built with Next.js 16, MDX, and Tailwind CSS. Statically generated, fast, and designed to showcase projects with rich media and interactive components."
+tags: ["web"]
+stack: ["Next.js", "TypeScript", "Tailwind CSS", "MDX", "Framer Motion", "Vercel"]
+links:
+  github: "https://github.com/oscardef/portfolio"
+heroImage:
+  src: "/images/projects/portfolio/hero.png"
+  alt: "Portfolio site homepage"
+highlights:
+  - "Content-driven architecture: MDX files with Zod-validated frontmatter, compiled at build time with next-mdx-remote"
+  - "Custom MDX components: FloatingImage with text wrapping, Gallery, DiagramBlock, MetricRow, and animated GIF support"
+  - "Statically generated with Next.js 16 App Router — all 24+ pages pre-rendered for instant loading"
+  - "Dark theme with Framer Motion animations, responsive design, and SEO optimization with auto-generated sitemap"
+role: "Solo developer"
+teamSize: 1
+organization: ""
+location: ""
+status: "shipped"
+---
+
+## Overview
+
+The site you're looking at. Built to present my projects with the depth they deserve — not just a list of cards, but full write-ups with architecture diagrams, screenshots, and interactive elements.
+
+## Architecture
+
+Content-driven approach where each project/experience is an MDX file with validated frontmatter:
+
+- **MDX files** in `content/projects/` and `content/experiences/` define all content
+- **Zod schemas** validate frontmatter at build time — type-safe content with no runtime surprises
+- **next-mdx-remote** compiles MDX server-side with remark/rehype plugins (GFM tables, syntax highlighting via Shiki, auto-linked headings)
+- **Static generation** via `generateStaticParams` — every page is pre-rendered at build
+
+## Custom MDX Components
+
+Built a set of components available in any project write-up:
+
+- **FloatingImage** — images that float left/right with text wrapping and optional captions (with automatic GIF detection for unoptimized rendering)
+- **Gallery** — responsive grid of images with hover effects
+- **DiagramBlock** — styled container for technical diagrams
+- **MetricRow** — display key metrics inline
+- **VideoEmbed** — responsive video embedding
+
+## Stack
+
+- **Next.js 16** with App Router and React 19
+- **Tailwind CSS 4** for styling
+- **Framer Motion** for page transitions and scroll animations
+- **MDX** with rehype-pretty-code (Shiki) for syntax highlighting
+- **Vercel** for deployment with analytics and speed insights
+- **Lucide** for icons

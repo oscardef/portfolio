@@ -4,83 +4,87 @@ slug: "solar-forecasting"
 date: "2024-12-15"
 type: "school"
 featured: true
-summary: "Developed probabilistic solar irradiance forecasting models that quantify prediction uncertainty, enabling more reliable grid integration of solar energy."
+summary: "Developed probabilistic solar irradiance forecasting models using quantile regression and Bayesian neural networks, producing calibrated 95% prediction intervals from webcam imagery and meteorological data."
 tags: ["ml", "probabilistic", "forecasting"]
-stack: ["Python", "PyTorch", "Scikit-learn", "Pandas", "Matplotlib"]
+stack: ["Python", "PyTorch", "BayesianTorch", "NumPy", "Matplotlib"]
 links:
-  github: ""
+  github: "https://github.com/oscardef/uncertainty-aware-solar-forecasting"
   paper: ""
 heroImage:
   src: "/images/projects/solar-forecasting/hero.png"
   alt: "Solar irradiance probabilistic forecast visualization"
 highlights:
-  - "Implemented Bayesian neural networks and ensemble methods for probabilistic irradiance prediction"
-  - "Achieved 15% improvement in calibration over deterministic baselines"
-  - "Built a pipeline for real-time ingestion of meteorological data from Swiss weather stations"
-  - "Developed custom metrics for evaluating probabilistic forecast quality (CRPS, reliability diagrams)"
-role: "Research project"
+  - "CNN-LSTM architecture processing paired webcam images and meteorological features for 2-hour-ahead GHI prediction"
+  - "Quantile regression achieving 95.13% coverage with the sharpest prediction intervals (average certainty 0.7474)"
+  - "Bayesian neural networks via BayesianTorch with Monte Carlo sampling for principled uncertainty estimation"
+  - "Demonstrated that incorporating meteorological features significantly reduces interval width without sacrificing coverage"
+role: "Team member"
 teamSize: 3
 organization: "EPFL CFI Lab"
 location: "Lausanne, Switzerland"
-status: "research"
+status: "coursework"
 ---
 
 ## Overview
 
-Solar energy integration into the power grid needs more than just "how much sun do we expect?" — grid operators need to know how confident that prediction is. A 3-person team project at EPFL's Chair of Finance and Insurance Lab, tackling uncertainty quantification in short-term solar irradiance forecasting.
+Short-term solar irradiance (GHI) forecasting is critical for grid stability and renewable energy integration — but point predictions aren't enough. Grid operators need to know *how confident* a forecast is. This project was done for EPFL's CFI Lab as part of the Machine Learning course (Professors Nicolas Flammarion and Martin Jaggi), introducing uncertainty quantification into GHI prediction and building on prior work by the Laboratory of Applied Photonics Devices (LAPD).
 
-## What I Built
+We investigated two complementary approaches — quantile regression and Bayesian neural networks — to produce calibrated 95% prediction intervals from webcam imagery captured on the EPFL campus.
 
-A full forecasting pipeline from raw meteorological data to probabilistic predictions:
+## Data
 
-**Data Pipeline**
-- Ingested historical solar irradiance measurements from MeteoSwiss stations
-- Incorporated webcam sky imagery alongside meteorological features for richer input
-- Feature engineering: solar geometry (zenith angle, azimuth), cloud cover indices, lagged irradiance values, time-of-day cyclical features
-- Robust handling of missing data, sensor anomalies, and seasonal patterns
+The project uses two complementary data sources collected on the EPFL campus:
 
-**Modeling**
-- **Deterministic baselines:** Gradient boosted trees (XGBoost), feedforward neural networks
-- **Probabilistic models:**
-  - Monte Carlo Dropout for approximate Bayesian inference
-  - Deep Ensembles (5 independently trained neural networks)
-  - Quantile Regression Neural Networks
-  - Gaussian Process regression for short horizons
-- **Post-hoc calibration:** Isotonic regression and temperature scaling to improve calibration
+- **Webcam images** captured from two distinct angles, providing visual perspectives of atmospheric conditions (resized to 224x224, normalized)
+- **Meteorological features:** air temperature, cloud opacity, precipitable water, relative humidity, and solar zenith angle
 
-**Evaluation Framework**
-- Continuous Ranked Probability Score (CRPS) as the primary metric
-- Reliability diagrams and sharpness analysis
-- Coverage analysis at multiple confidence levels (50%, 80%, 90%, 95%)
+For each image pair collected at a given time, the target is the GHI value 2 hours later — a structured temporal prediction task. Data was split into training, validation, and test subsets.
 
-## Technical Details
+## Architecture
 
-The key insight was that **different sources of uncertainty matter at different forecast horizons:**
+Both models share a CNN-LSTM backbone adapted from a deterministic baseline:
 
-- **Short-term (< 1 hour):** Aleatoric uncertainty dominates — mainly from rapid cloud transients. MC Dropout captured this well.
-- **Medium-term (1–6 hours):** Both aleatoric and epistemic uncertainty are significant. Deep Ensembles performed best here.
-- **Day-ahead:** Epistemic uncertainty dominates — model uncertainty about weather patterns. Gaussian Processes gave the best-calibrated uncertainty estimates.
+- **CNN module:** 4 convolutional layers (16, 16, 32, 32 channels) with 3x3 kernels, ReLU activation, batch normalization, max-pooling, and dropout (0.3 and 0.1)
+- **Meteorological MLP:** 2 fully connected layers (32 neurons each, ReLU, dropout 0.1) processing the weather features
+- **LSTM:** 2 stacked layers with 128 and 64 hidden units, combining image and meteorological features temporally
+- **Output head:** Final MLP (64 neurons, ReLU) mapping to either 3 quantiles (QR) or a single value (BNN)
 
-We took two complementary approaches: **quantile regression** for sharp, computationally efficient prediction intervals, and **Bayesian neural networks** for a broader view of uncertainty. Quantile regression gave us the best-calibrated intervals, especially when meteorological data was incorporated. BNNs produced wider intervals and needed more compute, but captured a richer picture of what the model didn't know.
+Training used Adam optimizer (lr=0.003), batch size 32, 200 epochs with early stopping (patience 30, min delta 0.3%).
 
-We also implemented a **horizon-adaptive ensemble** that blended predictions from different models based on the forecast horizon, weighted by their historical CRPS performance.
+## Approaches
 
-## Challenges & Tradeoffs
+**Quantile Regression** directly predicts the 2.5%, 50%, and 97.5% quantiles using the pinball loss, which asymmetrically penalizes under- and over-predictions at each quantile. A non-negativity constraint is applied only at inference (not during training) to keep GHI physically realistic while allowing the model to learn freely.
 
-- **Calibration vs. sharpness tradeoff:** Models can trivially achieve perfect calibration by predicting very wide intervals. We optimized for CRPS which naturally balances both.
-- **Computational cost:** Gaussian Processes don't scale well to large datasets. We used sparse GP approximations with inducing points.
-- **Non-stationarity:** Solar irradiance patterns change seasonally. We implemented online learning with exponential decay weighting of historical data.
+<FloatingImage src="/images/projects/solar-forecasting/qr-meteo.jpeg" alt="Quantile regression predictions with meteorological data showing tight prediction intervals" caption="Quantile regression with meteorological data: tight, well-calibrated intervals that closely track true GHI" side="right" width={500} height={330} />
+
+**Bayesian Neural Networks** replace deterministic weight layers with probabilistic equivalents (via the IntelLabs BayesianTorch library), treating weights as distributions. During inference, 50 Monte Carlo forward passes produce a distribution of outputs — the mean gives the prediction, the standard deviation gives the uncertainty. Training minimizes a combined data loss + KL divergence term to regularize the posterior.
+
+<FloatingImage src="/images/projects/solar-forecasting/bnn-meteo.png" alt="BNN predictions with 95% confidence intervals" caption="BNN with meteorological data: wider intervals capturing more uncertainty, but lower certainty" side="left" width={500} height={330} />
 
 ## Results
 
-- **15% CRPS improvement** over deterministic baselines
-- **Well-calibrated intervals:** 90% prediction intervals contained the true value 89.2% of the time (near-perfect calibration)
-- The horizon-adaptive ensemble outperformed any single model across all forecast horizons
-- Results presented to the lab group; potential extension to wind power forecasting discussed
+We evaluated on three metrics: percentage of true values within the predicted bounds, average certainty (inverse of interval width), and MSE.
+
+| Model | Within Bounds | Avg Certainty | MSE |
+|-------|:---:|:---:|:---:|
+| QR + Meteo | 95.13% | 0.7474 | 0.0214 |
+| QR (images only) | 94.93% | 0.6533 | 0.0329 |
+| BNN + Meteo | 92.22% | 0.6624 | 0.0244 |
+| BNN (images only) | 96.55% | 0.5432 | 0.0200 |
+
+The comparison below shows the effect of meteorological data on quantile regression — without it, intervals are noticeably wider and median predictions deviate more from true values:
+
+<FloatingImage src="/images/projects/solar-forecasting/qr-no-meteo.jpeg" alt="Quantile regression without meteorological data showing wider prediction intervals" caption="Without meteorological data: wider intervals and more deviation from true GHI" side="right" width={500} height={330} />
+
+**Key findings:**
+- Quantile regression with meteorological data produced the best balance — 95.13% coverage with the sharpest intervals (highest certainty) and low MSE
+- Meteorological features significantly improved interval sharpness without sacrificing coverage
+- BNNs tended to over-estimate uncertainty (wider intervals), likely from weight over-regularization
+- Preliminary experiments with a pretrained ResNet18 backbone showed promise (certainty 0.8197, MSE 0.0223 after only 14 epochs)
 
 ## What I Learned
 
-- Probabilistic forecasting is a genuinely different way of thinking — it changes how you design models, not just how you evaluate them
-- CRPS matters more than MSE when you care about the full predictive distribution
-- Real sensor data is messy in ways that textbook datasets aren't — missing values, calibration drift, timestamps that don't quite line up
-- Uncertainty quantification isn't just academic — it directly translates to economic value in energy trading
+- The distinction between aleatoric and epistemic uncertainty isn't just theoretical — it directly determines which modeling approach works better
+- Quantile regression is surprisingly effective for well-calibrated intervals with minimal computational overhead compared to full Bayesian approaches
+- Calibration and sharpness are in tension: BNNs can easily achieve high coverage by producing very wide intervals, but that's not useful operationally
+- Webcam imagery contains meaningful signal for solar forecasting — shadows, reflections, and sky conditions encode information that meteorological sensors miss

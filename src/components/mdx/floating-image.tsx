@@ -30,6 +30,7 @@ export function FloatingImage({
         alt={alt}
         width={width}
         height={height}
+        unoptimized={src.endsWith('.gif')}
         className="rounded-lg border border-border w-full h-auto"
       />
       {caption && (

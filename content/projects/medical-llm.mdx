@@ -4,9 +4,9 @@ slug: "medical-llm"
 date: "2025-06-15"
 type: "school"
 featured: true
-summary: "Built a large language model from first principles and fine-tuned it on public medical conversational and MCQ datasets for clinical question answering."
+summary: "Implemented a GPT-2 architecture from scratch in PyTorch, then fine-tuned Mistral models on medical conversational and MCQ datasets using LoRA for clinical question answering."
 tags: ["ml", "llm", "nlp"]
-stack: ["Python", "PyTorch", "Hugging Face", "Weights & Biases"]
+stack: ["Python", "PyTorch", "Hugging Face", "Docker"]
 links:
   github: "https://github.com/oscardef/llm-medical-finetune"
   paper: ""
@@ -14,83 +14,84 @@ heroImage:
   src: "/images/projects/llm/hero.png"
   alt: "Medical LLM architecture and training pipeline"
 highlights:
-  - "Implemented transformer architecture from scratch including multi-head attention, positional encoding, and layer normalization"
-  - "Fine-tuned on medical conversational datasets (MedDialog, HealthCareMagic) and MCQ benchmarks (MedQA, PubMedQA)"
-  - "Achieved competitive performance on medical QA tasks compared to baseline models"
-  - "Explored instruction tuning and RLHF alignment techniques for medical domain safety"
+  - "Implemented full GPT-2 decoder-only transformer from scratch including multi-head attention with causal masking, learned positional embeddings, and layer normalization"
+  - "Fine-tuned Mistral-7B and TinyMistral-248M on medical instruction data (~112K conversations) using LoRA with 8-bit quantization"
+  - "Built containerized training pipeline deployed on EPFL's Run:AI GPU cluster with multi-GPU support via DeepSpeed"
+  - "Developed instruction-following fine-tuning with loss masking on prompt tokens for targeted response learning"
 role: "Individual project"
-teamSize: 1
+teamSize: 2
 organization: "EPFL"
-location: "Zurich, Switzerland"
+location: "Lausanne, Switzerland"
 status: "coursework"
 ---
 
 ## Overview
 
-This was part of an advanced NLP course at EPFL — build a language model from scratch (no pre-trained weights, no existing architectures) and apply it to something real. I picked the medical domain because it's one of the hardest applications for LLMs: you need factual accuracy, clinical reasoning, and you really can't afford to hallucinate.
+**Grade: 5.75 / 6** | Supervised by Yousra El-Bachir and Oleg Bakhteev under Prof. Mathieu Salzmann
+
+This was an EPFL semester project split into two phases: first implement a GPT-2 style language model entirely from scratch to understand transformer internals, then apply efficient fine-tuning techniques to adapt larger models for the medical domain.
 
 The code is split across two repos: [the base LLM implementation](https://github.com/oscardef/my-llm) and [the medical fine-tuning pipeline](https://github.com/oscardef/llm-medical-finetune).
 
 ## What I Built
 
-Three main phases:
+**1. GPT-2 Architecture from Scratch**
 
-**1. Transformer Architecture Implementation**
+<FloatingImage src="/images/projects/llm/architecture.png" alt="GPT-2 decoder-only transformer architecture" caption="The transformer architecture I implemented from scratch, showing multi-head attention, feed-forward layers with GELU, and layer normalization." side="right" width={500} height={600} />
 
-I implemented the full transformer decoder architecture from scratch in PyTorch, including:
+Following Sebastian Raschka's "Build a Large Language Model from Scratch," I implemented the full decoder-only transformer in PyTorch:
 - Multi-head self-attention with causal masking
-- Rotary positional embeddings (RoPE)
-- RMSNorm (instead of LayerNorm, following LLaMA's approach)
-- SwiGLU activation functions
-- KV-cache for efficient inference
+- Learnable token and positional embeddings
+- Feed-forward networks with GELU activation
+- Residual connections and layer normalization
+- Support for GPT-2 Small (124M params) and Medium (355M params)
 
-**2. Pre-training on Medical Corpora**
+Tokenization uses OpenAI's `tiktoken` BPE tokenizer. The model supports loading official GPT-2 pretrained weights and autoregressive text generation.
 
-The model was pre-trained on a curated medical text corpus including PubMed abstracts, clinical notes (de-identified), and medical textbook excerpts. Training involved:
-- BPE tokenizer trained from scratch on the medical corpus
-- Mixed-precision training (bfloat16)
-- Gradient accumulation for effective large batch sizes
-- Learning rate scheduling with warmup and cosine decay
+I then fine-tuned this for two downstream tasks: spam classification (with a linear classification head) and instruction following (using structured prompt formatting with loss computed only on response tokens).
 
-**3. Fine-tuning for Clinical QA**
+**2. Medical Fine-tuning with LoRA**
 
-After pre-training, the model was fine-tuned on:
-- MedDialog and HealthCareMagic for conversational medical QA
-- MedQA and PubMedQA for multiple-choice medical reasoning
-- Custom instruction-following format for safe medical responses
+For the medical domain, I fine-tuned Mistral-7B and TinyMistral-248M using parameter-efficient LoRA adapters rather than updating all weights:
+
+- **LoRA config:** rank 8, alpha 16, dropout 0.05, targeting Q/K/V/O projection layers
+- **Quantization:** 8-bit loading via BitsAndBytes for memory efficiency
+- **Data:** Medical instruction dataset (~112K conversations) combined with a separate MCQ dataset
+- **Prompt format:** `<s>[INST] instruction [/INST] response </s>` with loss masking on instruction tokens
+- **Infrastructure:** Dockerized on NVIDIA PyTorch base image (CUDA 12.6), deployed to EPFL's Run:AI cluster with multi-GPU support via DeepSpeed
 
 ## Technical Details
 
-The model architecture followed the LLaMA design pattern but at a smaller scale suitable for academic compute budgets:
+**Base model (from-scratch implementation):**
+- **Architecture:** Decoder-only transformer (GPT-2)
+- **Parameters:** 124M (Small) / 355M (Medium)
+- **Attention heads:** 12 (Small) / 24 (Medium)
+- **Hidden dimension:** 768 (Small) / 1024 (Medium)
+- **Layers:** 12 (Small) / 24 (Medium)
 
-- **Parameters:** ~125M (comparable to GPT-2 small)
-- **Context length:** 2048 tokens
-- **Attention heads:** 12
-- **Hidden dimension:** 768
-- **Layers:** 12
-
-Key technical decisions:
-- **RoPE over learned positional embeddings:** Better length generalization and computational efficiency
-- **SwiGLU over GELU:** Marginally better performance at same parameter count
-- **RMSNorm:** Simpler and slightly faster than LayerNorm, equally effective
+**Medical fine-tuning:**
+- **Base models:** Mistral-7B, TinyMistral-248M
+- **Method:** LoRA with 8-bit quantization
+- **Training data:** ~112K medical conversations (instruction-response pairs) + MCQ dataset
+- **Compute:** EPFL RCP cluster (NVIDIA GPUs), with gradient accumulation and configurable hyperparameters
 
 ## Challenges & Tradeoffs
 
-The biggest challenge was working within limited compute constraints (single A100 for ~48h). This required careful decisions:
-
-- **Model size vs. data quality:** I opted for a smaller model trained on higher-quality, curated medical data rather than a larger model on noisy web data
-- **Evaluation rigor:** Medical QA evaluation is notoriously tricky — models can score well on MCQs by pattern matching without genuine understanding
-- **Safety considerations:** Ensuring the model doesn't generate harmful medical advice required careful instruction tuning and output filtering
+- **Full fine-tuning vs. LoRA:** With limited cluster compute, LoRA made it feasible to fine-tune 7B-parameter models by only training a small number of adapter parameters
+- **Quantization trade-offs:** 8-bit quantization reduced memory requirements significantly but required careful handling (Flash Attention 2 caused instability on A100s, so standard attention was used)
+- **Loss masking:** Computing loss only on response tokens (not instruction/prompt tokens) was important for teaching the model to generate useful responses rather than memorizing prompts
 
 ## Results
 
-- Achieved **62.3% accuracy on MedQA** (5-shot), competitive with larger pre-trained models fine-tuned on the same data
-- **78.1% accuracy on PubMedQA** (binary classification)
-- Qualitative evaluation showed coherent, contextually appropriate medical responses with appropriate hedging and referral suggestions
+The fine-tuned models produce coherent medical responses to patient queries, handling topics like symptom assessment, medication information, and general health guidance. Below are two examples of the model in action:
+
+![A patient asks about diabetes — the model explains Type 1 vs Type 2 and provides dietary advice](/images/projects/llm/example1.jpg)
+
+![A patient describes back pain — the model asks follow-up questions and suggests treatment steps](/images/projects/llm/example2.jpg)
 
 ## What I Learned
 
-- Implementing attention from scratch gives you an understanding of transformers that you just don't get from using a library
-- Data quality beats quantity — especially in specialized domains where bad examples actively teach the model wrong things
-- RLHF and instruction tuning don't just improve loss numbers, they genuinely change how the model behaves in ways that are hard to predict
-- Got hands-on with distributed training patterns, even if the scale was modest
+- Implementing attention from scratch gives you an understanding of transformers that you simply don't get from using a library
+- LoRA is remarkably effective — you can meaningfully adapt a 7B model's behavior by training less than 1% of its parameters
+- Infrastructure matters: containerizing the training pipeline and configuring cluster jobs (Run:AI, NAS storage, GPU scheduling) was a significant part of the real work
+- Loss masking on prompt tokens is a small implementation detail that makes a big difference in fine-tuning quality

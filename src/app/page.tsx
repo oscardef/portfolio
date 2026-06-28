@@ -4,7 +4,6 @@ import { Github, Linkedin, Mail, MapPin, ArrowRight, Briefcase, FolderOpen } fro
 import { getAllProjects, getAllExperiences } from '@/lib/content';
 import { siteConfig } from '@/lib/constants';
 import { AnimatedSection, AnimatedDiv } from '@/components/ui/animated-section';
-import { WipBanner } from '@/components/wip-banner';
 import { Button } from '@/components/ui/button';
 import { Tag } from '@/components/ui/tag';
 import { formatDate, formatDateRange } from '@/lib/utils';
@@ -25,7 +24,6 @@ export default async function HomePage() {
 
   return (
     <div className="relative">
-      <WipBanner />
       {/* ── Hero ── */}
       <section className="relative min-h-[85vh] flex items-center pt-16">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-transparent to-transparent" />
@@ -243,10 +241,10 @@ export default async function HomePage() {
         <h2 className="text-xl font-bold text-text-primary mb-6">Skills &amp; Tools</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {[
-            { category: 'Languages', items: ['Python', 'C/C++', 'Java', 'TypeScript', 'Rust', 'SQL'] },
+            { category: 'Languages', items: ['Python', 'C', 'C++', 'Java', 'TypeScript', 'SQL', 'Haskell', 'R', 'Assembly', 'CUDA'] },
             { category: 'ML & Data', items: ['PyTorch', 'TensorFlow', 'Pandas', 'NumPy', 'Scikit-learn'] },
-            { category: 'Systems & Web', items: ['Linux', 'Docker', 'Git', 'React', 'Next.js', 'Node.js'] },
-            { category: 'Practices', items: ['CI/CD', 'Testing', 'Agile', 'Code Review', 'Technical Writing'] },
+            { category: 'Systems & Web', items: ['Linux', 'Docker', 'Git', 'React', 'Next.js', 'Flask', 'FastAPI', 'Spring Boot', 'Node.js'] },
+            { category: 'Practices', items: ['CI/CD', 'Testing', 'Agile', 'Teaching', 'Code Review', 'Technical Writing'] },
           ].map(({ category, items }) => (
             <div key={category}>
               <h3 className="font-medium text-text-primary text-sm mb-3">{category}</h3>

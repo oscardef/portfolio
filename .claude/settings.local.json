@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pdftotext \"/Users/odefrancesca/Downloads/Design_and_Implementation_of_an_AI_Research_Management_Platform_for_the_Healthcare_Domain.pdf\" -)"
+    ]
+  }
+}

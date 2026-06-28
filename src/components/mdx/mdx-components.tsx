@@ -23,6 +23,7 @@ export const mdxComponents: MDXComponents = {
       alt={props.alt || ''}
       width={800}
       height={500}
+      unoptimized={props.src?.endsWith('.gif')}
       className="rounded-lg border border-border my-4 w-full h-auto"
     />
   ),
