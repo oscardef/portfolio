@@ -4,21 +4,21 @@ slug: "stock-market-simulation"
 date: "2022-12-15"
 type: "school"
 featured: false
-summary: "Built a multi-threaded stock market simulator with autonomous trading bots, real-time GUI visualization, and configurable market dynamics."
+summary: "Built a modular Java stock-market simulator where 25 autonomous bots trade 11 stocks through a client-server message queue, with a live browser dashboard for market and portfolio data."
 tags: ["systems", "concurrency", "visualization"]
-stack: ["Java", "Swing", "Gradle"]
+stack: ["Java", "Maven", "Docker", "HTTP"]
 links:
   github: "https://github.com/oscar-konstantinos/stock-market-simulation"
 heroImage:
   src: "/images/projects/stock-market/hero.png"
   alt: "Stock market simulation trading interface"
 highlights:
-  - "Concurrent architecture with thread-safe order book and matching engine"
-  - "Multiple autonomous trading bot strategies (mean reversion, momentum, market making)"
-  - "Real-time GUI with live price charts, order book depth, and portfolio tracking"
-  - "Configurable market parameters for studying different market microstructure scenarios"
-role: "Individual project"
-teamSize: 1
+  - "Seven-module Maven architecture separating commands, networking, the message queue, stock domain objects, trader and exchange applications, and UI"
+  - "Thread-safe BlockingQueue and observer pattern connect the client-server trading applications without tightly coupling them"
+  - "25 autonomous bots use the implemented RandomChoiceStrategy to trade 11 stocks"
+  - "Browser dashboard tracks traders, portfolios, stock prices, and market performance"
+role: "Team member"
+teamSize: 2
 organization: "University of Groningen"
 location: "Groningen, Netherlands"
 status: "coursework"
@@ -26,20 +26,20 @@ status: "coursework"
 
 ## Overview
 
-A multi-threaded stock market simulator in Java — an order-matching engine, autonomous trading bots with different strategies, and a real-time Swing GUI showing everything as it happens. Built to explore concurrent programming patterns while also being a fun way to learn about market microstructure.
+A modular stock-market simulation built in Java 17 with Konstantinos Chasiotis for the University of Groningen's Advanced Object-Oriented Programming course. The application separates the stock exchange, trader bots, networking, shared domain models, and browser UI into independently buildable Maven modules.
 
 ## What I Built
 
-- Thread-safe order book supporting both limit and market orders
-- Price-time priority matching engine
-- Autonomous trading bots (mean reversion, momentum, random walk, market making)
-- Real-time Swing GUI with candlestick charts and order book depth visualization
-- Configurable market parameters for experimenting with different scenarios
+- Client-server networking with a separate handler for each connected client
+- A thread-safe `BlockingQueue` for passing buy and sell commands between applications
+- 25 autonomous trader bots using the implemented `RandomChoiceStrategy` across 11 stocks, with a strategy interface designed for additional implementations
+- A browser dashboard for live trader, portfolio, stock-price, and market-performance views
+- Docker Compose configuration for running the exchange and trader applications together
 
 ## Technical Details
 
-The interesting part was the concurrency: multiple trading bots submitting orders to a shared order book simultaneously, each running in its own thread. Getting the synchronization right without killing performance was the main challenge — you need locks to prevent race conditions, but too much locking and the whole thing grinds to a halt.
+The system uses Command, Observer, and Factory patterns to keep the modules independent. A property-change listener wakes the stock exchange when the thread-safe message queue receives an order, avoiding continuous polling. The repository's evaluation also records an important limitation: orders are processed sequentially, and parallel extraction plus explicit locking was identified as future work rather than implemented functionality.
 
 ## What I Learned
 
-This was my first real encounter with concurrent programming beyond textbook exercises. Lock ordering to prevent deadlocks, the actual cost of synchronization, and learning to reason about what can go wrong when multiple threads touch shared state — all of that clicked during this project.
+This project made modular design concrete: shared interfaces and domain objects can connect independently deployable applications without making them depend on each other's implementations. It also showed the difference between using a thread-safe communication primitive and making an entire processing pipeline concurrent—the queue supports concurrent access, while order execution remains deliberately sequential.

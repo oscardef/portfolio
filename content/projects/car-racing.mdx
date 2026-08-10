@@ -14,8 +14,8 @@ heroImage:
   alt: "DQN agent navigating the CarRacing-v2 environment"
 highlights:
   - "Deep Q-Network learning autonomous driving from raw pixel observations in a continuous control environment"
-  - "Hyperparameter tuning across batch sizes, learning rates, and network architectures with systematic analysis"
-  - "Agent achieves stable track navigation after training, demonstrating effective state representation learning"
+  - "Systematic comparison of batch sizes and learning rates using saved checkpoints, reward plots, and agent visualizations"
+  - "Image preprocessing pipeline crops each observation to 84×84 grayscale and stacks four frames for temporal context"
 role: "Team member"
 teamSize: 2
 organization: "University of Groningen"
@@ -40,17 +40,17 @@ The DQN discretizes the action space and uses a convolutional neural network to 
 - **State representation:** Raw pixel observations from the environment (96x96 RGB), preprocessed and stacked for temporal context
 - **Network architecture:** CNN processing visual input → fully connected layers mapping to discrete action Q-values
 - **Training:** Experience replay buffer for sample decorrelation, target network for training stability, epsilon-greedy exploration
-- **Hyperparameter tuning:** Systematic exploration of batch sizes, learning rates, replay buffer sizes, and network depth documented in analysis notebooks
+- **Hyperparameter tuning:** Systematic comparison of batch sizes and learning rates, with saved checkpoints, reward plots, and agent visualizations documented in analysis notebooks
 
 ## Results
 
-The trained agent successfully navigates the procedurally generated track, handling curves, maintaining speed on straights, and recovering from minor deviations:
+The repository includes trained checkpoints and visualizations showing how different batch sizes and learning rates affect the agent's driving behavior:
 
 ![Trained DQN agent autonomously navigating the CarRacing-v2 track](/images/projects/car-racing/agent-demo.gif)
 
 ## What I Learned
 
 - Visual RL is a fundamentally different challenge from state-based RL — the representation learning problem dominates
-- Experience replay and target networks aren't just theoretical improvements; without them the agent completely fails to converge
-- Hyperparameter sensitivity in DQN is extreme — small changes in batch size or learning rate can mean the difference between a competent driver and an agent that drives in circles
-- The gap between "agent sometimes completes a lap" and "agent reliably drives well" requires careful reward shaping and training stability
+- Experience replay and target networks are central to stabilizing value estimates during training
+- Batch size and learning rate materially change the learning curve and observed driving behavior
+- Preprocessing choices such as grayscale conversion, cropping, frame skipping, and frame stacking make visual RL substantially more tractable

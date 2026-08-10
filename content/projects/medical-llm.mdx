@@ -1,5 +1,5 @@
 ---
-title: "Medical LLM from Scratch"
+title: "LLMs from Scratch & Medical Fine-Tuning"
 slug: "medical-llm"
 date: "2025-06-15"
 type: "school"
@@ -15,10 +15,10 @@ heroImage:
   alt: "Medical LLM architecture and training pipeline"
 highlights:
   - "Implemented full GPT-2 decoder-only transformer from scratch including multi-head attention with causal masking, learned positional embeddings, and layer normalization"
-  - "Fine-tuned Mistral-7B and TinyMistral-248M on medical instruction data (~112K conversations) using LoRA with 8-bit quantization"
+  - "Fine-tuned Mistral-7B and TinyMistral-248M on 105K medical conversations and 182K multiple-choice examples using LoRA with 8-bit quantization"
   - "Built containerized training pipeline deployed on EPFL's Run:AI GPU cluster with multi-GPU support via DeepSpeed"
   - "Developed instruction-following fine-tuning with loss masking on prompt tokens for targeted response learning"
-role: "Individual project"
+role: "Team member"
 teamSize: 2
 organization: "EPFL"
 location: "Lausanne, Switzerland"
@@ -29,7 +29,7 @@ status: "coursework"
 
 **Grade: 5.75 / 6** | Supervised by Yousra El-Bachir and Oleg Bakhteev under Prof. Mathieu Salzmann
 
-This was an EPFL semester project split into two phases: first implement a GPT-2 style language model entirely from scratch to understand transformer internals, then apply efficient fine-tuning techniques to adapt larger models for the medical domain.
+This was an EPFL semester project completed with Ali Ridha Mrad and split into two phases: first implement a GPT-2 style language model entirely from scratch to understand transformer internals, then apply efficient fine-tuning techniques to adapt larger models for the medical domain.
 
 The code is split across two repos: [the base LLM implementation](https://github.com/oscardef/my-llm) and [the medical fine-tuning pipeline](https://github.com/oscardef/llm-medical-finetune).
 
@@ -56,7 +56,7 @@ For the medical domain, I fine-tuned Mistral-7B and TinyMistral-248M using param
 
 - **LoRA config:** rank 8, alpha 16, dropout 0.05, targeting Q/K/V/O projection layers
 - **Quantization:** 8-bit loading via BitsAndBytes for memory efficiency
-- **Data:** Medical instruction dataset (~112K conversations) combined with a separate MCQ dataset
+- **Data:** 105,488 medical conversations combined with 182,822 multiple-choice examples
 - **Prompt format:** `<s>[INST] instruction [/INST] response </s>` with loss masking on instruction tokens
 - **Infrastructure:** Dockerized on NVIDIA PyTorch base image (CUDA 12.6), deployed to EPFL's Run:AI cluster with multi-GPU support via DeepSpeed
 
@@ -72,7 +72,7 @@ For the medical domain, I fine-tuned Mistral-7B and TinyMistral-248M using param
 **Medical fine-tuning:**
 - **Base models:** Mistral-7B, TinyMistral-248M
 - **Method:** LoRA with 8-bit quantization
-- **Training data:** ~112K medical conversations (instruction-response pairs) + MCQ dataset
+- **Training data:** 105,488 medical conversations (instruction-response pairs) + 182,822 multiple-choice examples
 - **Compute:** EPFL RCP cluster (NVIDIA GPUs), with gradient accumulation and configurable hyperparameters
 
 ## Challenges & Tradeoffs
