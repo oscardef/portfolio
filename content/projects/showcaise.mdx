@@ -1,10 +1,10 @@
 ---
-title: "showcAIse — AI Presentation Coach"
+title: "showcAIse: AI Presentation Coach"
 slug: "showcaise"
 date: "2025-11-01"
 type: "personal"
-featured: true
-summary: "AI-powered presentation analysis tool with voice cloning — upload a video, get delivery feedback, confidence scoring, and an improved version in your own voice. Built at LauzHack 2025, winning 3rd place overall and 2nd in the Huawei Challenge."
+featured: false
+summary: "AI-powered presentation analysis tool with voice cloning: upload a video, get delivery feedback, confidence scoring, and an improved version in your own voice. Built at LauzHack 2025, winning 3rd place overall and 2nd in the Huawei Challenge."
 tags: ["ml", "web", "nlp"]
 stack: ["Python", "FastAPI", "React", "Docker", "Coqui TTS", "DistilBERT", "Together AI"]
 links:
@@ -13,7 +13,7 @@ heroImage:
   src: "/images/projects/showcaise/hero.png"
   alt: "showcAIse logo"
 highlights:
-  - "3rd place overall at LauzHack 2025, 2nd place Huawei Challenge — built in under 48 hours"
+  - "3rd place overall at LauzHack 2025, 2nd place Huawei Challenge, built in under 48 hours"
   - "Voice cloning pipeline: extracts audio, generates improved script, re-synthesizes in the speaker's own voice using XTTS v2"
   - "Real-time presentation analysis: confidence scoring, filler word detection, sentiment tracking, and actionable recommendations"
   - "Multi-container Docker architecture with FastAPI backend, React frontend, and ML model serving"
@@ -26,30 +26,30 @@ status: "prototype"
 
 ## Overview
 
-**3rd place overall | 2nd place Huawei Challenge** — LauzHack 2025, EPFL
+**3rd place overall | 2nd place Huawei Challenge**: LauzHack 2025, EPFL
 
 Built in under 48 hours at LauzHack, EPFL's annual hackathon. I led a team of 4 to build an AI presentation coach that analyzes your speaking performance and can regenerate an improved version of your presentation *in your own voice*.
 
-The presentation itself was part of the demo — we deliberately started poorly (lots of "ums", "uhs", awkward pauses), then stopped and said: "We can tell we're presenting badly... if only there was some tool that could help us do better." From there we showed showcAIse analyzing our own bad delivery in real-time and suggesting improvements. The judges loved it.
+The presentation itself was part of the demo. We deliberately started poorly (lots of "ums", "uhs", awkward pauses), then stopped and said: "We can tell we're presenting badly... if only there was some tool that could help us do better." From there we showed showcAIse analyzing our own bad delivery in real-time and suggesting improvements.
 
 ## How It Works
 
 Upload a presentation video and the platform delivers:
 
-1. **Overview Dashboard** — word count, speaking pace, filler word frequency, overall confidence score (0–100)
-2. **Key Moments** — identifies strong and weak segments with specific categorization and improvement suggestions
-3. **Sentiment Analysis** — tone evaluation and emotional progression throughout the presentation
-4. **Delivery Metrics** — confidence breakdowns, performance timelines, detailed speech analysis
-5. **Recommendations** — prioritized actionable improvements by severity
-6. **Voice Cloning** — generates an improved version of your presentation in your own voice, with filler words removed and uncertain language replaced with confident phrasing
-7. **Transcript View** — full text with highlighted filler words and hedge phrases
+1. **Overview Dashboard**: word count, speaking pace, filler word frequency, overall confidence score (0–100)
+2. **Key Moments**: identifies strong and weak segments with specific categorization and improvement suggestions
+3. **Sentiment Analysis**: tone evaluation and emotional progression throughout the presentation
+4. **Delivery Metrics**: confidence breakdowns, performance timelines, detailed speech analysis
+5. **Recommendations**: prioritized actionable improvements by severity
+6. **Voice Cloning**: generates an improved version of your presentation in your own voice, with filler words removed and uncertain language replaced with confident phrasing
+7. **Transcript View**: full text with highlighted filler words and hedge phrases
 
 ## Voice Cloning Pipeline
 
 The standout feature. The pipeline:
 1. Extracts audio from the uploaded video (MoviePy + FFmpeg)
 2. Transcribes using Together AI's Whisper API
-3. Generates an improved script — removes fillers ("um", "uh", "like"), replaces hedge words ("I guess", "kind of") with confident alternatives
+3. Generates an improved script, removes fillers ("um", "uh", "like"), replaces hedge words ("I guess", "kind of") with confident alternatives
 4. Clones the speaker's voice using Coqui TTS XTTS v2 (~2GB model)
 5. Outputs a WAV file with the improved presentation in the original speaker's voice
 
@@ -75,7 +75,7 @@ The scoring algorithm starts at a base of 50 and adjusts across five dimensions:
 
 ## What I Learned
 
-- Hackathons force you to prioritize ruthlessly — the voice cloning feature was the "wow factor" that made us stand out, so we built that first and polished the dashboard second
-- Presentation is half the battle at hackathons — our deliberately bad opening got the judges' attention more than any slide could
-- Coqui TTS is impressive for voice cloning quality but extremely sensitive to Python version (3.11.6 specifically) and takes careful dependency management
-- Leading a team under extreme time pressure means making fast architectural decisions you'd normally deliberate on — Docker Compose saved us from "works on my machine" issues across 4 developers
+- Hackathons force you to prioritize ruthlessly. The voice cloning feature was the "wow factor" that made us stand out, so we built that first and polished the dashboard second
+- Presentation is half the battle at hackathons. Our deliberately bad opening got the judges' attention more than any slide could
+- Coqui TTS is strong for voice cloning quality but sensitive to Python version (3.11.6 specifically) and needs careful dependency management
+- Leading a team under extreme time pressure means making fast architectural decisions you'd normally deliberate on. Docker Compose saved us from "works on my machine" issues across 4 developers

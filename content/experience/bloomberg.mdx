@@ -1,20 +1,19 @@
 ---
-title: "Software Engineering Intern"
+title: "Software Engineer"
 slug: "bloomberg"
 organization: "Bloomberg"
 location: "London, United Kingdom"
 startDate: "2026-03"
-endDate: "2026-09"
-type:
-  - "fulltime"
-  - "internship"
-summary: "Joining Bloomberg's Core Communications Distribution team in London, working on infrastructure for real-time event distribution used by Bloomberg's IB and MSG platforms."
-stack: ["Python", "C++", "Distributed Systems", "Linux", "Git"]
+endDate: "2026-10"
+type: "fulltime"
+summary: "Software Engineer on Bloomberg's Core Communications Distribution team in London, working on real-time messaging infrastructure. I designed and built a C++23 service that replaces hard-coded event-routing logic with a configurable, thoroughly tested rule engine, focused on low latency and correctness."
+stack: ["C++23", "Kafka", "Linux", "CMake", "GoogleTest", "Git"]
 highlights:
-  - "Part of the Core Communications Distribution team building infrastructure for real-time event distribution"
-  - "Working on scalable, low-latency systems in a high-performance production environment"
-  - "Systems powering Bloomberg's IB (Instant Bloomberg) and MSG platforms"
-  - "6-month software engineering placement starting March 2026"
+  - "Designed and built a C++23 service from scratch on Bloomberg's real-time messaging infrastructure"
+  - "Replaced a manual, code-driven process with a configurable, composable rule engine, so routine changes no longer require code changes"
+  - "Focused on low, predictable latency on the real-time hot path and on correctness under production load"
+  - "Covered by unit, integration, and performance tests, and validated against historical production data before rollout"
+  - "Owned the architecture and implementation end to end"
 logo: "/images/logos/bloomberg.svg"
 links:
   company: "https://www.bloomberg.com"
@@ -22,20 +21,16 @@ links:
 
 ## Context
 
-Bloomberg builds the infrastructure that powers global financial markets. Their systems handle massive volumes of real-time data and support workflows that financial institutions around the world depend on every day.
+Bloomberg's messaging infrastructure moves events between services in real time, where both latency and reliability matter. I joined the Core Communications Distribution team in London for a six-month full-time placement, working on the systems that decide how those events are filtered and routed.
 
-I'll be joining the London engineering office for a six-month placement starting March 2026, on the Core Communications Distribution team.
+Originally, the logic for deciding which events to forward lived in hard-coded application code. Adjusting it meant a manual, code-driven process for what was really a configuration change.
 
-## What I'll Be Working On
+## What I Built
 
-The Core Communications Distribution team builds infrastructure for real-time event distribution — the systems that Bloomberg's IB (Instant Bloomberg) and MSG platforms rely on to move data between services quickly and reliably.
+I designed and built a new service in C++23, from the ground up, that treats those decisions as data instead of code. Rules are expressed in a composable, configurable form and evaluated by a single engine, so routine changes can be made without touching application code.
 
-Day-to-day, this means contributing to the design and development of scalable, low-latency systems in a high-performance production environment. Think real-time messaging infrastructure, event routing, and the kind of backend work where milliseconds matter.
+The two hard constraints were latency and correctness. The service sits on the real-time hot path, so it is built for low, predictable latency and for keeping up under production load, and the performance tests are written against tail latency rather than averages. Because it changes behavior that already exists, I treated correctness as something to demonstrate rather than assume: it is covered by unit, integration, and performance tests, and validated against historical production data before being put forward for rollout.
 
-<Callout type="info" title="Note">
-This section will be updated with more details once the internship begins.
-</Callout>
+## What I Owned
 
-## Why Bloomberg
-
-Honestly, the engineering culture is what stood out. Bloomberg has been refining their core systems for decades, and they take reliability and performance seriously. The chance to work on infrastructure at that scale — systems that directly impact global markets — is hard to pass up.
+I owned the architecture and the implementation: the rule model, the evaluation engine, the messaging integration, and the tests around them. The clearest lesson so far has been writing systems code that has to be both fast and provably correct, on infrastructure where regressions are costly and hard to reverse.

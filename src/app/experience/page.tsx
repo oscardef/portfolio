@@ -5,7 +5,7 @@ import { ExperienceListClient } from '@/components/experience-list-client';
 export const metadata: Metadata = {
   title: 'Experience',
   description:
-    'Oscar de Francesca\'s professional experience — roles at Bloomberg, ASML, EPFL, and more. Software engineering internships and research positions.',
+    'Oscar de Francesca\'s professional experience: roles at Bloomberg, ASML, EPFL, and more, across software engineering, research, and teaching.',
   alternates: { canonical: 'https://oscar.defrancesca.com/experience' },
 };
 
@@ -19,7 +19,7 @@ export default async function ExperiencePage() {
           Experience
         </h1>
         <p className="mt-2 text-text-secondary">
-          Professional roles, internships, and research positions — from startups to global institutions.
+          Professional roles, internships, and research positions, from startups to global institutions.
         </p>
         <div className="flex items-center gap-6 mt-4 text-sm text-text-muted">
           <span>{experiences.length} roles</span>

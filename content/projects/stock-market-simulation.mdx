@@ -28,6 +28,13 @@ status: "coursework"
 
 A modular stock-market simulation built in Java 17 with Konstantinos Chasiotis for the University of Groningen's Advanced Object-Oriented Programming course. The application separates the stock exchange, trader bots, networking, shared domain models, and browser UI into independently buildable Maven modules.
 
+<MetricRow>
+  <Metric value="7" label="Maven modules" />
+  <Metric value="25" label="Trader bots" />
+  <Metric value="11" label="Stocks" />
+  <Metric value="3" label="Design patterns" />
+</MetricRow>
+
 ## What I Built
 
 - Client-server networking with a separate handler for each connected client
@@ -42,4 +49,4 @@ The system uses Command, Observer, and Factory patterns to keep the modules inde
 
 ## What I Learned
 
-This project made modular design concrete: shared interfaces and domain objects can connect independently deployable applications without making them depend on each other's implementations. It also showed the difference between using a thread-safe communication primitive and making an entire processing pipeline concurrent—the queue supports concurrent access, while order execution remains deliberately sequential.
+This project made modular design concrete: shared interfaces and domain objects can connect independently deployable applications without making them depend on each other's implementations. It also showed the difference between using a thread-safe communication primitive and making an entire processing pipeline concurrent: the queue supports concurrent access, while order execution remains deliberately sequential.

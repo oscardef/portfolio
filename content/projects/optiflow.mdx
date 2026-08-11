@@ -1,5 +1,5 @@
 ---
-title: "OptiFlow — AI-Enhanced Retail Inventory Monitoring"
+title: "OptiFlow: AI-Enhanced Retail Inventory Monitoring"
 slug: "optiflow"
 date: "2025-11-01"
 type: "school"
@@ -29,9 +29,9 @@ relatedExperience: []
 
 **Grade: 6 / 6** | EPFL Innovation & Entrepreneurship in Engineering (10 ECTS)
 
-A semester-long project for Decathlon addressing a core retail problem: recorded inventory rarely matches what's actually on the shelf. Employees spend up to 6 hours per day searching for "ghost stock" — items that are technically in-store but missing from their correct shelf location. Existing solutions either don't scale, aren't real-time, or raise privacy concerns.
+A semester-long project for Decathlon addressing a core retail problem: recorded inventory rarely matches what's actually on the shelf. Employees lose time searching for "ghost stock": items that are in the store but not in their correct shelf location. Existing solutions either don't scale, aren't real-time, or raise privacy concerns.
 
-OptiFlow turns routine employee movement into a continuous sensing layer — no cameras, no manual scanning rounds. Decathlon was extremely happy with the result and expressed interest in taking it further after the course.
+OptiFlow turns routine employee movement into a continuous sensing layer, with no cameras and no manual scanning rounds. Decathlon was interested in exploring it further after the course.
 
 ## How It Works
 
@@ -49,7 +49,7 @@ We built a custom wearable platform combining:
 - A network of stationary UWB anchors deployed throughout the store
 - Custom 3D-printed enclosures for the control box, anchors, and wristband
 
-The multi-tasking firmware orchestrates concurrent sensor polling, data collection, and wireless communication via MQTT — all running in real-time on a resource-constrained device.
+The multi-tasking firmware orchestrates concurrent sensor polling, data collection, and wireless communication via MQTT, running concurrently without blocking on a resource-constrained device.
 
 I was responsible for a large part of the firmware development, alongside all of the software. I also contributed to hardware design and assembly, including soldering and prototype iteration.
 
@@ -59,12 +59,12 @@ I was responsible for a large part of the firmware development, alongside all of
 
 ### Software
 
-I designed and built the full software stack — a containerized microservice architecture processing incoming telemetry:
+I designed and built the full software stack, a containerized microservice architecture processing incoming telemetry:
 
 - **FastAPI backend** handling trilateration, data ingestion, analytics, WebSocket management, and simulation control
 - **Trilateration engine** converting UWB distance measurements from multiple anchors into coordinates using least-squares optimization with confidence scoring
 - **Dual-mode missing item detection** with a conservative algorithm requiring 6 consecutive misses before flagging items unavailable
-- **AI-powered analytics** — K-Means product clustering, short-term demand forecasting, anomaly detection, ABC classification, and product affinity analysis
+- **AI-powered analytics**: K-Means product clustering, short-term demand forecasting, anomaly detection, ABC classification, and product affinity analysis
 - **Next.js dashboard** with live canvas-based store maps, employee trajectories, stock depletion heatmaps, and admin controls
 - **Real-time WebSocket communication** broadcasting position updates, inventory changes, and detection events
 - **Dual PostgreSQL databases** fully isolating simulation and production data
@@ -73,15 +73,15 @@ I designed and built the full software stack — a containerized microservice ar
 
 All services orchestrated via Docker Compose with proper network configuration and volume management.
 
-The dashboard below shows the system running live — the store map displays real-time employee position (blue), detected items (green), and missing items (red), with a prioritized restock queue on the right:
+The dashboard below shows the system running live. The store map displays real-time employee position (blue), detected items (green), and missing items (red), with a prioritized restock queue on the right:
 
 <FloatingImage src="/images/projects/optiflow/dashboard.png" alt="Live operational dashboard with store map and restock queue" caption="Operational dashboard: live employee tracking, item detection, and restock priorities" side="left" width={600} height={375} />
 
-The heatmap view aggregates stock depletion data across the store, highlighting zones with the highest inventory loss — enabling managers to identify problem areas at a glance and allocate restocking effort accordingly:
+The heatmap view aggregates stock depletion data across the store, highlighting zones with the highest inventory loss. Managers can spot problem areas and allocate restocking effort accordingly:
 
 <FloatingImage src="/images/projects/optiflow/heatmap.png" alt="Stock depletion heatmap" caption="Heatmap overlay showing inventory depletion intensity by store zone" side="right" width={600} height={375} />
 
-The analytics engine goes beyond basic inventory tracking. It identifies sales anomalies, forecasts short-term demand, and classifies products by velocity — giving store managers actionable intelligence rather than raw data:
+The analytics engine goes beyond basic inventory tracking. It identifies sales anomalies, forecasts short-term demand, and classifies products by velocity, giving store managers actionable intelligence rather than raw data:
 
 <FloatingImage src="/images/projects/optiflow/ai-insights.png" alt="AI-powered anomaly detection and forecasting" caption="AI Insights: anomaly detection with surge alerts and demand forecasting" side="left" width={600} height={375} />
 
@@ -109,15 +109,24 @@ Analysis confirmed commercially viable returns through a hybrid hardware + SaaS 
 - Designed and implemented the entire software platform (backend, frontend, simulation, MQTT bridge, database schema, deployment)
 - Developed a large portion of the ESP32 firmware (sensor orchestration, MQTT communication)
 - Led system architecture and design decisions across the full stack
-- Contributed to hardware assembly — soldering, prototyping, field testing at Decathlon stores
+- Contributed to hardware assembly, soldering, prototyping, field testing at Decathlon stores
 
 ## Results
 
-The system was field-tested at Decathlon and demonstrated real-time shelf monitoring without compromising privacy or requiring heavy infrastructure. The project received a perfect grade (6/6) and Decathlon expressed strong interest in continuing development beyond the course.
+We field-tested the system at Decathlon Bussigny across four site visits. In prototype testing it reached:
+
+<MetricRow>
+  <Metric value="Sub-10 cm" label="UWB localization" />
+  <Metric value="~200" label="RFID tags / cycle" />
+  <Metric value="Sub-100 ms" label="Sensor to dashboard" />
+  <Metric value="5h+" label="Battery runtime" />
+</MetricRow>
+
+These are prototype figures under test conditions, not production guarantees; the DS-TWR scalability limit above is why the tag count is what it is. The project received the top grade (6/6) and a course performance prize.
 
 ## What I Learned
 
-- Building a full system from hardware through firmware to web dashboard taught me how each layer constrains the others — firmware buffer sizes dictate packet formats, which dictate backend parsing, which dictates frontend update rates
+- Building a full system from hardware through firmware to web dashboard taught me how each layer constrains the others: firmware buffer sizes dictate packet formats, which dictate backend parsing, which dictates frontend update rates
 - MQTT is excellent glue between embedded devices and web services, especially with topic-based routing for mode separation
 - Designing a simulation engine that faithfully mimics hardware behavior was essential for rapid iteration without needing the physical device at every step
 - Working with UWB positioning exposed the practical challenges of indoor localization: multipath, anchor placement, and the gap between datasheet accuracy and real-world performance

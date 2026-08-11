@@ -1,8 +1,8 @@
 import { type MDXComponents } from 'mdx/types';
 import { Callout } from './callout';
-import { Gallery } from './gallery';
+import { Gallery, GalleryImage } from './gallery';
 import { VideoEmbed } from './video-embed';
-import { MetricRow } from './metric-row';
+import { MetricRow, Metric } from './metric-row';
 import { FloatingImage } from './floating-image';
 import { DiagramBlock } from './diagram-block';
 import Image from 'next/image';
@@ -11,8 +11,10 @@ export const mdxComponents: MDXComponents = {
   // Custom components available in MDX files
   Callout,
   Gallery,
+  GalleryImage,
   VideoEmbed,
   MetricRow,
+  Metric,
   FloatingImage,
   DiagramBlock,
 

@@ -205,6 +205,12 @@ const rawTravelData: TravelEntry[] = [
   { place: 'Haringsee',       country: 'Austria',      startDate: '2025-12-20', endDate: '2025-12-24',   purpose: 'travel' },
   { place: 'Trenčín',         country: 'Slovakia',     startDate: '2025-12-22',                          purpose: 'travel' },
   { place: 'Tenerife',        country: 'Spain',        startDate: '2025-12-24', endDate: '2026-01-05',   purpose: 'travel' },
+
+  // ── 2026 ──
+  { place: 'Cambridge',       country: 'United Kingdom', startDate: '2026-05-24',                         purpose: 'travel', notes: 'Day trip' },
+  { place: 'Stockholm',       country: 'Sweden',        startDate: '2026-06-19', endDate: '2026-06-28',  purpose: 'travel', notes: 'Midsummer' },
+  { place: 'Madrid',          country: 'Spain',         startDate: '2026-07-13', endDate: '2026-07-16',  purpose: 'travel' },
+  { place: 'Rigi',            country: 'Switzerland',   startDate: '2026-07-28',                          purpose: 'travel', notes: 'Hiked Rigi' },
 ];
 
 // Resolve all entries (add lat/lng/countryCode)

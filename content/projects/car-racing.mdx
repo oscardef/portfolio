@@ -1,5 +1,5 @@
 ---
-title: "RL Car Racing — DQN Agent"
+title: "RL Car Racing: DQN Agent"
 slug: "car-racing"
 date: "2023-12-01"
 type: "school"
@@ -27,11 +27,11 @@ status: "coursework"
 
 Final project for the Reinforcement Learning Practical course at the University of Groningen, supervised by Prof. Matthia Sabatelli. Built with my partner Konstantinos Chasiotis.
 
-The challenge: teach an agent to drive a car around a procedurally generated track using only pixel observations — no access to car physics, no hand-crafted features. The agent must learn to steer, accelerate, and brake purely from visual input through trial and error.
+The challenge: teach an agent to drive a car around a procedurally generated track using only pixel observations, no access to car physics, no hand-crafted features. The agent must learn to steer, accelerate, and brake purely from visual input through trial and error.
 
 ## Approach
 
-We implemented a **Deep Q-Network (DQN)** for the [CarRacing-v2](https://gymnasium.farama.org/environments/box2d/car_racing/) environment. The key challenge is that the observation space is high-dimensional (96x96 RGB pixels) and the environment requires precise continuous control — making it significantly harder than classic RL benchmarks like CartPole or Atari games with discrete, low-dimensional states.
+We implemented a **Deep Q-Network (DQN)** for the [CarRacing-v2](https://gymnasium.farama.org/environments/box2d/car_racing/) environment. The key challenge is that the observation space is high-dimensional (96x96 RGB pixels) and the environment requires precise continuous control, making it significantly harder than classic RL benchmarks like CartPole or Atari games with discrete, low-dimensional states.
 
 The DQN discretizes the action space and uses a convolutional neural network to map raw pixel frames to Q-values for each possible action. The agent learns which actions maximize cumulative reward (staying on track, maintaining speed) through experience replay and temporal difference learning.
 
@@ -50,7 +50,7 @@ The repository includes trained checkpoints and visualizations showing how diffe
 
 ## What I Learned
 
-- Visual RL is a fundamentally different challenge from state-based RL — the representation learning problem dominates
+- Visual RL is a fundamentally different challenge from state-based RL: the representation learning problem dominates
 - Experience replay and target networks are central to stabilizing value estimates during training
 - Batch size and learning rate materially change the learning curve and observed driving behavior
 - Preprocessing choices such as grayscale conversion, cropping, frame skipping, and frame stacking make visual RL substantially more tractable

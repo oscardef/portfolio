@@ -12,6 +12,13 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+const experienceTypeLabels: Record<string, string> = {
+  internship: 'Internship',
+  fulltime: 'Full-time',
+  teaching: 'Teaching',
+  research: 'Research',
+};
+
 export async function generateStaticParams() {
   const slugs = await getExperienceSlugs();
   return slugs.map((slug) => ({ slug }));
@@ -25,14 +32,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { frontmatter } = data;
   return {
     title: `${frontmatter.title} at ${frontmatter.organization}`,
-    description: `${frontmatter.summary} — Oscar de Francesca's experience at ${frontmatter.organization}.`,
+    description: `${frontmatter.summary} Part of Oscar de Francesca's experience at ${frontmatter.organization}.`,
     alternates: { canonical: `${siteConfig.url}/experience/${slug}` },
     openGraph: {
-      title: `${frontmatter.title} at ${frontmatter.organization} — Oscar de Francesca`,
+      title: `${frontmatter.title} at ${frontmatter.organization} · Oscar de Francesca`,
       description: frontmatter.summary,
       type: 'article',
       authors: ['Oscar de Francesca'],
-      images: [{ url: siteConfig.ogImage }],
     },
   };
 }
@@ -96,7 +102,7 @@ export default async function ExperienceDetailPage({ params }: PageProps) {
           <Calendar size={14} />
           <time>{formatDateRange(frontmatter.startDate, frontmatter.endDate)}</time>
           <span>·</span>
-          <span className="capitalize">{frontmatter.type.join(' + ')}</span>
+          <span>{frontmatter.type.map((t) => experienceTypeLabels[t] ?? t).join(' + ')}</span>
         </div>
 
         <p className="text-lg text-text-secondary mt-4 leading-relaxed">

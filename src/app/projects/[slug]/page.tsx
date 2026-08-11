@@ -26,17 +26,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { frontmatter } = data;
   return {
     title: frontmatter.title,
-    description: `${frontmatter.summary} — A project by Oscar de Francesca.`,
+    description: `${frontmatter.summary} A project by Oscar de Francesca.`,
     alternates: { canonical: `${siteConfig.url}/projects/${slug}` },
     openGraph: {
-      title: `${frontmatter.title} — Oscar de Francesca`,
+      title: `${frontmatter.title} · Oscar de Francesca`,
       description: frontmatter.summary,
       type: 'article',
       publishedTime: frontmatter.date,
       authors: ['Oscar de Francesca'],
-      images: frontmatter.heroImage
-        ? [{ url: frontmatter.heroImage.src }]
-        : [{ url: siteConfig.ogImage }],
+      ...(frontmatter.heroImage && { images: [{ url: frontmatter.heroImage.src }] }),
     },
   };
 }
@@ -47,6 +45,12 @@ const linkIcons = {
   paper: { icon: FileText, label: 'Paper' },
   video: { icon: Play, label: 'Video' },
   blog: { icon: FileText, label: 'Blog Post' },
+};
+
+const projectTypeLabels: Record<string, string> = {
+  school: 'Academic',
+  personal: 'Personal',
+  company: 'Professional',
 };
 
 export default async function ProjectPage({ params }: PageProps) {
@@ -111,7 +115,7 @@ export default async function ProjectPage({ params }: PageProps) {
           <Calendar size={14} />
           <time dateTime={frontmatter.date}>{formatDateFull(frontmatter.date)}</time>
           <span>·</span>
-          <span className="capitalize">{frontmatter.type}</span>
+          <span>{projectTypeLabels[frontmatter.type] ?? frontmatter.type}</span>
           {frontmatter.status && (
             <>
               <span>·</span>

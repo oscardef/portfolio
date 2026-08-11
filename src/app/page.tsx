@@ -5,8 +5,8 @@ import { getAllProjects, getAllExperiences } from '@/lib/content';
 import { siteConfig } from '@/lib/constants';
 import { AnimatedSection, AnimatedDiv } from '@/components/ui/animated-section';
 import { Button } from '@/components/ui/button';
-import { Tag } from '@/components/ui/tag';
-import { formatDate, formatDateRange } from '@/lib/utils';
+import { ProjectCard } from '@/components/project-card';
+import { formatDateRange } from '@/lib/utils';
 
 const organizations = [
   { name: 'Bloomberg', logo: '/images/logos/bloomberg.svg', width: 130, height: 28 },
@@ -25,7 +25,7 @@ export default async function HomePage() {
   return (
     <div className="relative">
       {/* ── Hero ── */}
-      <section className="relative min-h-[85vh] flex items-center pt-16">
+      <section className="relative min-h-[80vh] flex items-center pt-16">
         <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.03] via-transparent to-transparent" />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-accent/[0.04] rounded-full blur-3xl" />
 
@@ -37,14 +37,27 @@ export default async function HomePage() {
                 London, United Kingdom
               </p>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-text-primary tracking-tight leading-[1.1]">
-                Oscar
-                <br />
-                de Francesca
+                Oscar <span className="block">de Francesca</span>
               </h1>
-              <p className="mt-6 text-lg text-text-secondary max-w-lg leading-relaxed">
-                Systems-oriented software engineer with a focus on performance,
-                reliability, and data systems. MSc in Computer Science from EPFL,
-                currently at Bloomberg in London.
+              <p className="mt-3 text-lg font-medium text-text-secondary">
+                Software Engineer · Systems &amp; ML
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-text-secondary">
+                <span>Bloomberg</span>
+                <span className="text-text-muted">·</span>
+                <span>MSc CS, EPFL</span>
+                <span className="text-text-muted">·</span>
+                <span className="text-accent-hover">Incoming: ETH Zurich research</span>
+              </div>
+              <p className="mt-5 text-base text-text-secondary max-w-lg leading-relaxed">
+                I work across systems and machine learning. Right now I&apos;m building
+                real-time C++ infrastructure at{' '}
+                <strong className="font-semibold text-text-primary">Bloomberg</strong> in London.
+                I&apos;m completing an MSc in Computer Science at{' '}
+                <strong className="font-semibold text-text-primary">EPFL</strong>, and from October
+                I&apos;ll be doing my EPFL Master&apos;s thesis, hosted at{' '}
+                <strong className="font-semibold text-text-primary">ETH Zurich</strong>, on
+                diffusion language models for antibody design.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mt-8">
@@ -93,9 +106,9 @@ export default async function HomePage() {
 
       {/* ── Organization Logos ── */}
       <AnimatedSection className="mx-auto max-w-6xl px-6 py-8">
-        <p className="text-xs text-text-muted uppercase tracking-widest text-center mb-6">
+        <h2 className="text-xs text-text-muted uppercase tracking-widest text-center mb-6">
           Worked &amp; Studied With
-        </p>
+        </h2>
         <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
           {organizations.map((org) => (
             <div
@@ -110,7 +123,7 @@ export default async function HomePage() {
                 alt={org.name}
                 width={org.width}
                 height={org.height}
-                className="relative object-contain brightness-0 invert opacity-60 group-hover:brightness-100 group-hover:invert-0 group-hover:opacity-100 transition-all duration-300"
+                className="relative object-contain brightness-0 invert opacity-70 group-hover:brightness-100 group-hover:invert-0 group-hover:opacity-100 transition-all duration-300"
                 style={{ height: org.height, width: 'auto' }}
               />
             </div>
@@ -139,6 +152,23 @@ export default async function HomePage() {
               href={`/experience/${exp.slug}`}
               className="group flex items-center gap-4 rounded-xl border border-border bg-bg-card p-4 transition-all hover:border-border-hover hover:bg-bg-card-hover"
             >
+              {exp.logo ? (
+                <div className="shrink-0 w-11 h-11 rounded-lg border border-border flex items-center justify-center overflow-hidden bg-white/90">
+                  <Image
+                    src={exp.logo}
+                    alt={exp.organization}
+                    width={32}
+                    height={32}
+                    className="w-8 h-8 object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="shrink-0 w-11 h-11 rounded-lg border border-accent/20 bg-accent/10 flex items-center justify-center">
+                  <span className="text-accent font-semibold text-base">
+                    {exp.organization.charAt(0)}
+                  </span>
+                </div>
+              )}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="font-semibold text-text-primary text-sm group-hover:text-accent transition-colors">
@@ -174,38 +204,9 @@ export default async function HomePage() {
             View all <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {featuredProjects.map((project) => (
-            <Link
-              key={project.slug}
-              href={`/projects/${project.slug}`}
-              className="group rounded-xl border border-border bg-bg-card p-5 transition-all hover:border-border-hover hover:bg-bg-card-hover"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h3 className="font-semibold text-text-primary text-sm group-hover:text-accent transition-colors line-clamp-1">
-                    {project.title}
-                  </h3>
-                  <p className="text-xs text-text-muted mt-1">
-                    {formatDate(project.date)}
-                    {project.organization && ` · ${project.organization}`}
-                  </p>
-                </div>
-                <ArrowRight
-                  size={14}
-                  className="shrink-0 text-text-muted group-hover:text-accent transition-all group-hover:translate-x-0.5 mt-1"
-                />
-              </div>
-              <p className="text-sm text-text-secondary mt-3 line-clamp-2">{project.summary}</p>
-              <div className="flex flex-wrap gap-1.5 mt-3">
-                {project.tags.slice(0, 3).map((tag) => (
-                  <Tag key={tag} label={tag} />
-                ))}
-                {project.tags.length > 3 && (
-                  <span className="text-xs text-text-muted self-center">+{project.tags.length - 3}</span>
-                )}
-              </div>
-            </Link>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {featuredProjects.map((project, i) => (
+            <ProjectCard key={project.slug} project={project} index={i} />
           ))}
         </div>
       </AnimatedSection>
@@ -219,18 +220,19 @@ export default async function HomePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="rounded-xl border border-border bg-bg-card p-5 transition-all hover:border-border-hover hover:bg-bg-card-hover">
             <h3 className="font-semibold text-text-primary text-sm">MSc Computer Science</h3>
-            <p className="text-xs text-text-muted mt-1">EPFL · 2024 — 2026</p>
+            <p className="text-xs text-text-muted mt-1">EPFL · 2024 – 2027</p>
             <p className="text-sm text-text-secondary mt-3">
-              Average 5.6/6. Minor in Management, Technology &amp; Entrepreneurship.
-              Focus on systems, security, and machine learning.
+              In progress, 5.38/6 average, with a minor in Management, Technology &amp;
+              Entrepreneurship. Coursework across distributed systems, security, and
+              machine learning. Master&apos;s thesis hosted at ETH Zurich from October 2026.
             </p>
           </div>
           <div className="rounded-xl border border-border bg-bg-card p-5 transition-all hover:border-border-hover hover:bg-bg-card-hover">
             <h3 className="font-semibold text-text-primary text-sm">BSc Computer Science</h3>
-            <p className="text-xs text-text-muted mt-1">University of Groningen · 2021 — 2024</p>
+            <p className="text-xs text-text-muted mt-1">University of Groningen · 2021 – 2024</p>
             <p className="text-sm text-text-secondary mt-3">
-              Cum Laude, average 8.6/10. Coursework in algorithms, operating systems,
-              concurrent programming, and data systems.
+              Cum Laude, 8.6/10 average, Honours College. Coursework in algorithms,
+              operating systems, concurrent programming, and data systems.
             </p>
           </div>
         </div>
@@ -241,10 +243,10 @@ export default async function HomePage() {
         <h2 className="text-xl font-bold text-text-primary mb-6">Skills &amp; Tools</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {[
-            { category: 'Languages', items: ['Python', 'C', 'C++', 'Java', 'TypeScript', 'SQL', 'Haskell', 'R', 'Assembly', 'CUDA'] },
-            { category: 'ML & Data', items: ['PyTorch', 'TensorFlow', 'Pandas', 'NumPy', 'Scikit-learn'] },
-            { category: 'Systems & Web', items: ['Linux', 'Docker', 'Git', 'React', 'Next.js', 'Flask', 'FastAPI', 'Spring Boot', 'Node.js'] },
-            { category: 'Practices', items: ['CI/CD', 'Testing', 'Agile', 'Teaching', 'Code Review', 'Technical Writing'] },
+            { category: 'Languages', items: ['C++', 'Python', 'C', 'Java', 'SQL', 'Bash', 'Haskell', 'R', 'Assembly'] },
+            { category: 'Systems', items: ['Low-latency', 'Concurrency', 'Distributed systems', 'Real-time', 'POSIX / Unix'] },
+            { category: 'ML & AI', items: ['PyTorch', 'Hugging Face', 'LoRA / PEFT', 'DeepSpeed', 'NumPy', 'pandas', 'scikit-learn'] },
+            { category: 'Backend & Tools', items: ['Kafka', 'Linux', 'Docker', 'PostgreSQL', 'FastAPI', 'CMake', 'Git', 'CI/CD'] },
           ].map(({ category, items }) => (
             <div key={category}>
               <h3 className="font-medium text-text-primary text-sm mb-3">{category}</h3>
@@ -269,13 +271,12 @@ export default async function HomePage() {
           <div className="absolute top-0 right-0 w-72 h-72 bg-accent/[0.05] rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent/[0.03] rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
           <div className="relative max-w-xl mx-auto text-center">
-            <p className="text-3xl mb-3">👋</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">
-              Let&apos;s connect!
+              Get in touch
             </h2>
             <p className="text-text-secondary mt-4 leading-relaxed">
-              Always open to interesting conversations about systems, research, or
-              potential collaborations. Feel free to reach out!
+              I&apos;m open to conversations about systems, machine learning, and
+              interesting engineering problems. Email is the best way to reach me.
             </p>
             <div className="flex flex-wrap justify-center gap-3 mt-8">
               <Button href={siteConfig.links.email} variant="primary" icon="arrow">

@@ -30,7 +30,7 @@ export function formatDateRange(start: string, end: string): string {
   });
 
   if (end === 'present') {
-    return `${startStr} — Present`;
+    return `${startStr} – Present`;
   }
 
   const endDate = new Date(end);
@@ -39,5 +39,5 @@ export function formatDateRange(start: string, end: string): string {
     month: 'short',
   });
 
-  return `${startStr} — ${endStr}`;
+  return `${startStr} – ${endStr}`;
 }

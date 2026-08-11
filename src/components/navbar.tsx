@@ -5,11 +5,12 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { navLinks, siteConfig } from '@/lib/constants';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const prefersReducedMotion = useReducedMotion();
 
   function isActive(href: string) {
     if (href === '/') return pathname === '/';
@@ -54,6 +55,7 @@ export function Navbar() {
           className="md:hidden text-text-secondary hover:text-text-primary transition-colors p-2"
           aria-label={isOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isOpen}
+          aria-controls="mobile-menu"
         >
           {isOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -62,10 +64,11 @@ export function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
             className="md:hidden border-t border-border/50 bg-bg/95 backdrop-blur-xl overflow-hidden"
           >
             <div className="px-6 py-4 flex flex-col gap-4">

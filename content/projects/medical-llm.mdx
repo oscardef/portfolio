@@ -15,7 +15,7 @@ heroImage:
   alt: "Medical LLM architecture and training pipeline"
 highlights:
   - "Implemented full GPT-2 decoder-only transformer from scratch including multi-head attention with causal masking, learned positional embeddings, and layer normalization"
-  - "Fine-tuned Mistral-7B and TinyMistral-248M on 105K medical conversations and 182K multiple-choice examples using LoRA with 8-bit quantization"
+  - "Fine-tuned Mistral-7B and TinyMistral-248M on 105K medical conversations and 182K multiple-choice examples (MedMCQA) using LoRA with 8-bit quantization"
   - "Built containerized training pipeline deployed on EPFL's Run:AI GPU cluster with multi-GPU support via DeepSpeed"
   - "Developed instruction-following fine-tuning with loss masking on prompt tokens for targeted response learning"
 role: "Team member"
@@ -27,7 +27,7 @@ status: "coursework"
 
 ## Overview
 
-**Grade: 5.75 / 6** | Supervised by Yousra El-Bachir and Oleg Bakhteev under Prof. Mathieu Salzmann
+**Grade: 5.75 / 6** | EPFL semester project (12 ECTS), supervised by Yousra El-Bachir and Oleg Bakhteev under Prof. Mathieu Salzmann
 
 This was an EPFL semester project completed with Ali Ridha Mrad and split into two phases: first implement a GPT-2 style language model entirely from scratch to understand transformer internals, then apply efficient fine-tuning techniques to adapt larger models for the medical domain.
 
@@ -56,8 +56,8 @@ For the medical domain, I fine-tuned Mistral-7B and TinyMistral-248M using param
 
 - **LoRA config:** rank 8, alpha 16, dropout 0.05, targeting Q/K/V/O projection layers
 - **Quantization:** 8-bit loading via BitsAndBytes for memory efficiency
-- **Data:** 105,488 medical conversations combined with 182,822 multiple-choice examples
-- **Prompt format:** `<s>[INST] instruction [/INST] response </s>` with loss masking on instruction tokens
+- **Data:** 105,488 medical conversations combined with 182,822 multiple-choice examples (MedMCQA)
+- **Prompt format:** `<s>[INST] instruction [/INST] response </s>` with loss computed only on the response tokens (instruction tokens masked out)
 - **Infrastructure:** Dockerized on NVIDIA PyTorch base image (CUDA 12.6), deployed to EPFL's Run:AI cluster with multi-GPU support via DeepSpeed
 
 ## Technical Details
@@ -65,15 +65,15 @@ For the medical domain, I fine-tuned Mistral-7B and TinyMistral-248M using param
 **Base model (from-scratch implementation):**
 - **Architecture:** Decoder-only transformer (GPT-2)
 - **Parameters:** 124M (Small) / 355M (Medium)
-- **Attention heads:** 12 (Small) / 24 (Medium)
+- **Attention heads:** 12 (Small) / 16 (Medium)
 - **Hidden dimension:** 768 (Small) / 1024 (Medium)
 - **Layers:** 12 (Small) / 24 (Medium)
 
 **Medical fine-tuning:**
 - **Base models:** Mistral-7B, TinyMistral-248M
 - **Method:** LoRA with 8-bit quantization
-- **Training data:** 105,488 medical conversations (instruction-response pairs) + 182,822 multiple-choice examples
-- **Compute:** EPFL RCP cluster (NVIDIA GPUs), with gradient accumulation and configurable hyperparameters
+- **Training data:** 105,488 medical conversations (instruction-response pairs) + 182,822 multiple-choice examples (MedMCQA)
+- **Compute:** EPFL's Run:AI cluster (NVIDIA GPUs), with gradient accumulation and configurable hyperparameters
 
 ## Challenges & Tradeoffs
 
@@ -83,15 +83,15 @@ For the medical domain, I fine-tuned Mistral-7B and TinyMistral-248M using param
 
 ## Results
 
-The fine-tuned models produce coherent medical responses to patient queries, handling topics like symptom assessment, medication information, and general health guidance. Below are two examples of the model in action:
+The fine-tuned models produce coherent medical responses to patient queries, handling topics like symptom assessment, medication information, and general health guidance. The focus of this project was the from-scratch implementation and the training infrastructure, so I validated the fine-tuned models qualitatively rather than against a held-out benchmark. Below are two examples of the model in action:
 
-![A patient asks about diabetes — the model explains Type 1 vs Type 2 and provides dietary advice](/images/projects/llm/example1.jpg)
+![A patient asks about diabetes, the model explains Type 1 vs Type 2 and provides dietary advice](/images/projects/llm/example1.jpg)
 
-![A patient describes back pain — the model asks follow-up questions and suggests treatment steps](/images/projects/llm/example2.jpg)
+![A patient describes back pain, the model asks follow-up questions and suggests treatment steps](/images/projects/llm/example2.jpg)
 
 ## What I Learned
 
-- Implementing attention from scratch gives you an understanding of transformers that you simply don't get from using a library
-- LoRA is remarkably effective — you can meaningfully adapt a 7B model's behavior by training less than 1% of its parameters
+- Implementing attention from scratch gave me a mechanical understanding of transformers that using a library does not
+- LoRA is effective: adapting a 7B model's behavior only requires training less than 1% of its parameters
 - Infrastructure matters: containerizing the training pipeline and configuring cluster jobs (Run:AI, NAS storage, GPU scheduling) was a significant part of the real work
 - Loss masking on prompt tokens is a small implementation detail that makes a big difference in fine-tuning quality

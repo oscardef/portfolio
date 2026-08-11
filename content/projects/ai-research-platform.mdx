@@ -4,8 +4,8 @@ slug: "ai-research-platform"
 date: "2024-07-01"
 type: "school"
 featured: true
-summary: "Designed and built LLACE, a full-stack platform for managing the lifecycle of AI models in healthcare research — from project organization and model versioning to deployment — built in collaboration with UMCG."
-tags: ["web", "backend", "systems"]
+summary: "Designed and built LLACE, a full-stack platform for managing the lifecycle of AI models in healthcare research, from project organization and model versioning to deployment, built in collaboration with UMCG."
+tags: ["web", "backend"]
 stack: ["React", "Python", "Flask", "PocketBase", "UbiOps"]
 links:
   github: "https://github.com/oscardef/AI-Research-Management-Platform"
@@ -15,9 +15,9 @@ heroImage:
   alt: "LLACE AI Research Management Platform dashboard"
 highlights:
   - "Full-stack platform with React frontend, PocketBase backend, and Flask proxy for model deployment via UbiOps"
-  - "Requirements gathered through interviews with UMCG researchers — user-driven design addressing real healthcare AI workflow gaps"
+  - "Requirements gathered through interviews with UMCG researchers, user-driven design addressing real healthcare AI workflow gaps"
   - "Modular architecture with advanced search across projects, models, publications, and researcher profiles"
-  - "Designed both ideal production architecture (NGINX, Django, PostgreSQL, Kubernetes) and feasible MVP within thesis scope"
+  - "Scoped with MoSCoW prioritization: shipped a working MVP (React, PocketBase, Flask, UbiOps) and documented a production architecture as a blueprint for future work"
 role: "Solo developer"
 teamSize: 1
 organization: "University of Groningen"
@@ -29,13 +29,13 @@ status: "prototype"
 
 **Grade: 8.5 / 10** | BSc Thesis in Computing Science | Supervised by Prof. Dimka Karastoyanova and Michel Medema, MSc.
 
-My Bachelor's thesis at the University of Groningen, built in collaboration with the University Medical Center Groningen (UMCG). Researchers at UMCG were working in isolation — AI models stored locally, no shared infrastructure for collaboration, and no convenient way to discover or deploy each other's work despite using the Habrok HPC cluster for computation.
+My Bachelor's thesis at the University of Groningen, built in collaboration with the University Medical Center Groningen (UMCG). Researchers at UMCG were working in isolation: AI models stored locally, no shared infrastructure for collaboration, and no convenient way to discover or deploy each other's work despite using the Habrok HPC cluster for computation.
 
 LLACE (named after Ada Lovelace) addresses this by providing a centralized platform for the entire AI model lifecycle in healthcare research: project organization, model versioning and metadata, deployment, and cross-team discovery.
 
 ## Requirements & Process
 
-The design was driven by direct interviews with UMCG researchers to understand their actual workflows and pain points. I used MoSCoW prioritization to scope requirements into must-have, should-have, could-have, and won't-have categories — essential given the fixed thesis timeline.
+The design was driven by interviews with eight UMCG researchers to understand their actual workflows and pain points. I used MoSCoW prioritization to scope requirements into must-have, should-have, could-have, and won't-have categories, essential given the fixed thesis timeline.
 
 Key requirements that emerged:
 - Researchers needed to **discover** what others were working on (models, datasets, publications)
@@ -56,7 +56,7 @@ Key requirements that emerged:
 **AI Model Management**
 - Version control and metadata tracking for AI models
 - Model upload and configuration interface
-- Deployment to UbiOps directly from the platform — researchers can deploy models without managing infrastructure themselves
+- Deployment to UbiOps directly from the platform: researchers deploy models without managing infrastructure themselves
 
 <FloatingImage src="/images/projects/ai-research-platform/model-deployment.png" alt="Model deployment interface with UbiOps integration" caption="One-click model deployment to UbiOps with version selection" side="left" width={450} height={300} />
 
@@ -98,7 +98,7 @@ This separation keeps the MVP lean while the ideal architecture serves as a road
 ## Challenges & Tradeoffs
 
 - **Scope vs. ambition:** The ideal architecture is significantly more complex than what's feasible in a thesis. Choosing PocketBase over Django + PostgreSQL meant sacrificing some flexibility but enabled a working prototype within the timeline
-- **Healthcare compliance:** Even for an MVP, data security considerations had to be baked in from the start — not bolted on later
+- **Healthcare compliance:** Even for an MVP, data security considerations had to be baked in from the start, not bolted on later
 - **User interviews vs. assumptions:** My initial assumptions about what researchers needed were wrong in several places. The interviews reshaped the feature priorities significantly
 - **Modularity for handoff:** Since UMCG might continue development, I prioritized clean separation of concerns and extensibility over feature completeness
 
@@ -106,11 +106,11 @@ This separation keeps the MVP lean while the ideal architecture serves as a road
 
 The MVP delivers a functional platform covering user management, project and model lifecycle management, search/discovery, and model deployment. The modular architecture ensures it can evolve toward the ideal production system as resources allow.
 
-The thesis documents both the platform implementation and the full ideal architecture as a blueprint — positioning LLACE as a foundation that UMCG can build upon.
+The thesis documents both the platform implementation and the full ideal architecture as a blueprint, positioning LLACE as a foundation that UMCG can build upon.
 
 ## What I Learned
 
-- Interviewing actual users before building anything is invaluable — the gap between what you assume researchers need and what they actually need is significant
+- Interviewing actual users before building anything pays off: the gap between what you assume researchers need and what they actually need is significant
 - Designing both an ideal and constrained architecture forces you to understand which abstractions actually matter vs. which are premature
-- PocketBase is remarkably effective for prototyping — embedded DB + auth + REST API in a single binary eliminates a lot of setup friction
-- Writing a thesis that satisfies both technical implementation and academic writing requirements is its own skill — balancing depth of detail with readability
+- PocketBase is effective for prototyping: an embedded DB, auth, and REST API in a single binary eliminate a lot of setup friction
+- Writing a thesis that satisfies both technical implementation and academic writing requirements is its own skill: it means balancing depth of detail against readability

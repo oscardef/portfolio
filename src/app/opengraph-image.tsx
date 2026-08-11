@@ -1,7 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const runtime = 'edge';
-export const alt = 'Oscar de Francesca — Software Engineer';
+export const alt = 'Oscar de Francesca · Software Engineer';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -67,7 +66,7 @@ export default function Image() {
             lineHeight: 1.4,
           }}
         >
-          Software Engineer · ML · Systems
+          Software Engineer · Systems · Machine Learning
         </p>
         <div
           style={{
@@ -76,7 +75,7 @@ export default function Image() {
             marginTop: '40px',
           }}
         >
-          {['Python', 'TypeScript', 'C++', 'PyTorch', 'React'].map((tag) => (
+          {['C++', 'Python', 'Kafka', 'PyTorch', 'Distributed Systems'].map((tag) => (
             <span
               key={tag}
               style={{

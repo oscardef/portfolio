@@ -6,13 +6,13 @@ location: "Groningen, Netherlands"
 startDate: "2023-06"
 endDate: "2023-09"
 type: "internship"
-summary: "Built an interactive visualization dashboard for the 'Network Medicine Residues from Water' project, visualizing GP prescription data and pharmaceutical residues in sewage water across two neighborhoods in Drachten."
-stack: ["Python", "Pandas", "Data Visualization", "PostgreSQL"]
+summary: "Analyzed the relationship between GP prescriptions and pharmaceutical residues in sewage water for a public-health project, and built interactive Tableau dashboards that let non-technical stakeholders explore the data across two districts."
+stack: ["Python", "Pandas", "Tableau"]
 highlights:
-  - "Built interactive dashboard visualizing prescribing behavior of general practitioners"
-  - "Visualized ~30 pharmaceutical residues detected in sewage water samples"
-  - "Part of a network with 46 stakeholders from healthcare, water, government, and research"
-  - "Compared two Drachten neighborhoods to study the link between prescriptions and water contamination"
+  - "Independently analyzed multi-year prescription data and two rounds of sewage residue measurements across two Dutch districts"
+  - "Built interactive Tableau dashboards for a mixed audience of clinicians, researchers, and environmental and policy stakeholders"
+  - "Investigated links between prescriptions, consumption, and measured residues in sewage"
+  - "The data did not show a simple, clean correlation; the work was exploratory and worked around real data-quality limitations"
 logo: "/images/logos/researchable.svg"
 links:
   company: "https://researchable.nl"
@@ -20,23 +20,18 @@ links:
 
 ## Context
 
-Researchable is a Groningen-based data company. I interned there working on a project called "Network Medicine Residues from Water" — part of the Northern Dutch Network run by the Healthy Aging Network Northern Netherlands (HANNN), which brings together 46 stakeholders from healthcare, the water sector, government, research institutions, and tech.
+Researchable is a Groningen-based data company. I interned there on a public-health project studying pharmaceutical residues in water, part of a regional network bringing together healthcare, the water sector, government, and research. Pharmaceutical residues that pass through people and into the sewage system are an environmental and drinking-water concern, and the project wanted to understand how prescribing patterns relate to what actually shows up in the water.
 
-The problem: every year, over 190 tons of pharmaceutical residues end up in Dutch water systems, harming the environment and drinking water quality. With climate change and an aging population, it's only getting worse.
+## What I Did
 
-## What I Built
+I worked with two data sources for two districts: multi-year records of what general practitioners prescribed, and two rounds of measurements of pharmaceutical residues in sewage samples from the same areas. I analyzed both independently and then looked for relationships between them.
 
-I built an interactive visualization dashboard that let stakeholders explore two things side by side:
+I built interactive Tableau dashboards so that people without a data background (clinicians, water authorities, policymakers) could explore prescribing behavior and measured residues side by side, broken down by year, age group, and medication type. The two districts were chosen for contrast: one with a strong focus on healthy living and one without, to see whether that difference was visible downstream.
 
-1. **Prescribing behavior** — how often general practitioners in two Drachten neighborhoods prescribed different types of medication, broken down by year, age group, and gender
-2. **Medicine residues in sewage water** — the concentration of around 30 pharmaceutical residues measured in sewage samples from those same neighborhoods
+## What I Found
 
-The two neighborhoods were chosen deliberately: one was a "bloeizone" (a community with a strong focus on healthy living), and the other was a control area without that emphasis. By comparing them, the project aimed to understand whether lifestyle-focused interventions actually affect what ends up in the water.
-
-## Impact
-
-The dashboard made it possible for non-technical stakeholders — healthcare providers, water authorities, policymakers — to explore complex prescription and water quality data interactively. It was designed to be reusable for other neighborhoods and healthcare providers as the network expands.
+The honest result is that the data did not show a simple, clean correlation between prescription levels and measured residues. The work was exploratory, and it ran into the usual real-world problems: sparse measurements (two sampling rounds), differences in how the two data sources were collected, and confounding factors between prescription, consumption, and what ends up in sewage. The dashboards were still useful as a way for a mixed group of stakeholders to look at the same evidence and reason about it together.
 
 ## What I Learned
 
-Working on this project showed me how data visualization can make a real difference when you're dealing with stakeholders from completely different domains. Making something that a water authority engineer and a GP can both understand and use — that's a different kind of challenge from just building a dashboard.
+Making complex data legible to people from completely different domains is a real skill, and a different one from the analysis itself. It also reinforced the importance of being clear about what the data can and cannot support: presenting an exploratory finding as a firm conclusion would have been the wrong call here.

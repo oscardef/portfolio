@@ -29,18 +29,3 @@ export function CardLink({ href, children, className }: CardLinkProps) {
     </Link>
   );
 }
-
-interface CardProps {
-  children: ReactNode;
-  className?: string;
-}
-
-export function Card({ children, className }: CardProps) {
-  return (
-    <div
-      className={cn('rounded-xl border border-border bg-bg-card p-6', className)}
-    >
-      {children}
-    </div>
-  );
-}

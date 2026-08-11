@@ -6,3 +6,5 @@ out
 
 # Photo import pipeline build artifacts
 scripts/.build/
+scripts/__pycache__/
+*.pyc

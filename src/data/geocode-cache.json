@@ -79,6 +79,11 @@
     "lng": 4.6809717,
     "cc": "NL"
   },
+  "Cambridge, United Kingdom": {
+    "lat": 52.1976,
+    "lng": 0.1392,
+    "cc": "GB"
+  },
   "Carmel-By-The-Sea, USA": {
     "lat": 36.5554,
     "lng": -121.9233,
@@ -244,6 +249,11 @@
     "lng": 11.4196339,
     "cc": "SE"
   },
+  "Madrid, Spain": {
+    "lat": 40.4168,
+    "lng": -3.7035,
+    "cc": "ES"
+  },
   "Mariestad, Sweden": {
     "lat": 58.7093225,
     "lng": 13.8228754,
@@ -328,6 +338,11 @@
     "lat": 25.7737705,
     "lng": 55.938232,
     "cc": "AE"
+  },
+  "Rigi, Switzerland": {
+    "lat": 47.0567,
+    "lng": 8.4853,
+    "cc": "CH"
   },
   "Rome, Italy": {
     "lat": 41.8933203,

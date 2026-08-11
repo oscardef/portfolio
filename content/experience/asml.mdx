@@ -6,13 +6,13 @@ location: "Veldhoven, Netherlands"
 startDate: "2023-02"
 endDate: "2023-09"
 type: "internship"
-summary: "Led a team of CS students from the University of Groningen developing a framework for build-time configuration checkers at ASML, serving as Project Lead and Communications Officer."
+summary: "Project Lead on a four-person team building a reusable Python framework for build-time configuration checkers at ASML, replacing a manual, hard-coded process. New checkers became more than 10x faster to write, with over 80% less code per checker."
 stack: ["Python", "Git", "Agile/Scrum"]
 highlights:
-  - "Led a team of computer science students from the University of Groningen"
-  - "Developed and implemented a framework for build-time configuration checkers"
-  - "Served as Project Lead and Communications Officer between ASML and the development team"
-  - "Enhanced system reliability and reduced build errors"
+  - "Project Lead and Communications Officer on a four-person team from the University of Groningen"
+  - "Built a reusable framework that unified build-time configuration checkers around a common set of abstractions"
+  - "Cut the effort to add a new checker by more than 10x, and reduced checker code size by more than 80%"
+  - "Deployed into ASML's build system; a later team reused and extended the framework"
 logo: "/images/logos/asml.svg"
 links:
   company: "https://www.asml.com"
@@ -20,20 +20,24 @@ links:
 
 ## Context
 
-ASML makes the lithography machines that every major chipmaker uses to produce semiconductors. I worked there as part of a university–industry collaboration between ASML and the University of Groningen.
+ASML builds the lithography machines that every major chipmaker uses to produce semiconductors. I worked there for seven months as part of a collaboration between ASML and the University of Groningen, on a four-person team of computer science students. I was the Project Lead and the Communications Officer, so I owned both the technical direction and the interface with ASML.
 
-## What I Did
+## The Problem
 
-I led a team of computer science students in designing and building a framework for build-time configuration checkers. The goal was to catch configuration issues before they made it into production builds — improving system reliability and reducing build errors downstream.
+ASML's build system runs configuration checkers that catch invalid or inconsistent settings before they reach a production build. Writing a new checker was a manual, hard-coded exercise: each one repeated a lot of the same boilerplate, so adding checks was slow and the code was hard to maintain.
 
-Beyond the technical work, I served as the Communications Officer, which meant I was the main point of contact between our development team and ASML. I made sure both sides stayed aligned on requirements and that we were delivering on milestones.
+## What I Built
 
-**Key responsibilities:**
-- Led the development team through the full project lifecycle
-- Designed the architecture for the configuration checking framework
-- Facilitated communication between ASML stakeholders and the student team
-- Ensured project alignment and timely delivery of milestones
+We designed and implemented a reusable Python framework that unified checker construction around a small set of shared abstractions. Instead of hand-writing each checker end to end, a developer describes the check against those abstractions and the framework handles the repetitive machinery around it.
+
+The results were concrete:
+
+- Adding a new checker became more than 10x faster
+- The code needed per checker dropped by more than 80%
+- The framework was deployed into ASML's build system
+
+Architecture, testing, and documentation were treated as first-class deliverables rather than afterthoughts, which is a large part of why a later team was able to pick up the framework, reuse it, and extend it.
 
 ## What I Learned
 
-This was my first real experience leading a team on a project with external stakeholders. The technical work was important, but the bigger takeaway was learning how to bridge the gap between what a company needs and what a development team can deliver — keeping both sides happy while actually shipping something useful.
+This was my first time leading a team on a project with a real external stakeholder. The technical work mattered, but so did keeping ASML and the team aligned on scope and milestones. The habit that stuck with me is that a framework is only reusable if the tests and documentation make it safe for the next person to build on. That is exactly what let a later team pick it up.

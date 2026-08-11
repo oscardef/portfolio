@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/navbar';
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
     default: siteConfig.title,
-    template: `%s — ${siteConfig.name}`,
+    template: `%s · ${siteConfig.name}`,
   },
   description: siteConfig.description,
   keywords: [...siteConfig.keywords],
@@ -45,7 +45,6 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: siteConfig.title,
     description: siteConfig.description,
-    creator: '@oscardef',
   },
   robots: {
     index: true,
@@ -58,6 +57,11 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#0a0a0b',
+  colorScheme: 'dark',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -92,12 +96,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     knowsAbout: [
       'Software Engineering',
       'Systems Programming',
+      'Low-Latency Systems',
+      'Distributed Systems',
+      'Real-Time Systems',
       'Machine Learning',
-      'Data Systems',
-      'Performance Engineering',
-      'Python',
-      'TypeScript',
+      'Language Models',
       'C++',
+      'Python',
     ],
     address: {
       '@type': 'PostalAddress',
@@ -131,8 +136,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-sans min-h-screen flex flex-col">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-white"
+        >
+          Skip to content
+        </a>
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main id="main" className="flex-1 scroll-mt-16">
+          {children}
+        </main>
         <Footer />
         <Analytics />
         <SpeedInsights />

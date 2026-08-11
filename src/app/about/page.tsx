@@ -8,25 +8,25 @@ import { TravelExplorer } from '@/components/travel-explorer';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'About Oscar de Francesca — software engineer at Bloomberg, EPFL MSc graduate. Background, life journey, education, and interests.',
+    'About Oscar de Francesca: software engineer working across systems and machine learning. At Bloomberg in London, completing an MSc at EPFL, with an incoming ETH Zurich thesis.',
   alternates: { canonical: 'https://oscar.defrancesca.com/about' },
 };
 
 const timeline = [
   {
-    year: '2026–',
+    year: '2026',
     title: 'Software Engineer',
     location: 'London, United Kingdom',
     flag: '🇬🇧',
-    description: 'Software Engineer at Bloomberg.',
+    description: 'Real-time C++ infrastructure at Bloomberg, on the Core Communications Distribution team.',
     type: 'work' as const,
   },
   {
-    year: '2024–26',
+    year: '2024–27',
     title: 'MSc Computer Science',
     location: 'Lausanne, Switzerland',
     flag: '🇨🇭',
-    description: 'Master\'s at EPFL (5.6/6 average). Systems, security, ML, and a minor in Management, Technology & Entrepreneurship.',
+    description: 'EPFL, 5.38/6 average. Systems, security, and ML, with a minor in Management, Technology & Entrepreneurship. Thesis at ETH Zurich from October 2026.',
     type: 'education' as const,
   },
   {
@@ -50,7 +50,7 @@ const timeline = [
     title: 'Middle & early high school',
     location: 'Dubai, UAE',
     flag: '🇦🇪',
-    description: 'Longest stretch in one place — formative years in Dubai.',
+    description: 'Longest stretch in one place; formative years in Dubai.',
     type: 'life' as const,
   },
   {
@@ -101,21 +101,27 @@ export default function AboutPage() {
             </h1>
             <div className="mt-6 space-y-4 text-text-secondary leading-relaxed">
               <p>
-                I&apos;m a Swedish-American software engineer who grew up moving around — born
-                in Bangkok and raised across six countries on three continents. I got used to
-                being the new kid, picking things up quickly, and figuring out how things work
-                in unfamiliar places. That carried over into how I work as an engineer.
+                I&apos;m a software engineer who works across systems and machine learning.
+                I&apos;m a Swedish and American citizen (and so an EU citizen), born in Bangkok
+                and raised across six countries, which is where I got used to landing somewhere
+                unfamiliar and working out how it fits together.
               </p>
               <p>
-                I did my MSc in Computer Science at EPFL and my BSc at the University of
-                Groningen, where I graduated cum laude. I like building things that are fast
-                and don&apos;t break — whether that&apos;s low-level systems code or data-heavy
-                backends.
+                I studied computer science at the University of Groningen, where I graduated
+                cum laude, and I&apos;m now completing an MSc at EPFL. Along the way I&apos;ve
+                worked on both sides of what I care about: language models and the
+                infrastructure to train them, embedded real-time systems, and probabilistic
+                ML, alongside internships in software and data engineering.
               </p>
               <p>
-                Outside of work, I tutor students in maths, enjoy hackathons (3rd place
-                at LauzHack 2025), and I&apos;m into startups, travel, and thinking about how
-                tech actually affects people&apos;s lives. Currently at Bloomberg in London.
+                Right now I&apos;m a Software Engineer at Bloomberg in London, working on
+                real-time C++ infrastructure. From October 2026 I&apos;ll be doing my EPFL
+                Master&apos;s thesis, hosted at ETH Zurich, on diffusion language models for
+                antibody design.
+              </p>
+              <p>
+                Outside of work I tutor students in maths, do the occasional hackathon (third
+                place at LauzHack 2025), and travel a lot.
               </p>
             </div>
             <div className="flex items-center gap-4 mt-6">
@@ -142,11 +148,23 @@ export default function AboutPage() {
         </div>
       </AnimatedDiv>
 
+      {/* Technical Interests */}
+      <AnimatedSection className="mb-16">
+        <h2 className="text-xl font-bold text-text-primary mb-3">What I work on</h2>
+        <p className="text-text-secondary leading-relaxed max-w-2xl">
+          My interests sit at two ends that keep meeting in the middle. On one side:
+          low-latency and real-time systems, distributed and backend infrastructure, and
+          performance-oriented C++. On the other: language models, ML systems, and
+          research-oriented engineering. My Master&apos;s thesis is where those two threads
+          come together.
+        </p>
+      </AnimatedSection>
+
       {/* Life Timeline */}
       <AnimatedSection className="mb-16">
         <h2 className="text-xl font-bold text-text-primary mb-2">Where I&apos;ve Lived</h2>
         <p className="text-sm text-text-muted mb-6">
-          9 cities, 6 countries, 3 continents — and counting.
+          9 cities, 6 countries, and counting.
         </p>
         <div className="relative">
           {/* Vertical line */}
@@ -187,10 +205,12 @@ export default function AboutPage() {
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-[11px] font-mono text-accent font-medium">
+                            <span className="text-[11px] font-mono text-accent-hover font-medium">
                               {item.year}
                             </span>
-                            <span className="text-sm leading-none">{item.flag}</span>
+                            <span className="text-sm leading-none" aria-hidden="true">
+                              {item.flag}
+                            </span>
                           </div>
                           <h3 className="font-semibold text-text-primary text-[13px] mt-1">
                             {item.title}
@@ -215,11 +235,11 @@ export default function AboutPage() {
         </div>
       </AnimatedSection>
 
-      {/* Where I've Been — 3D Globe */}
+      {/* Where I've Been (3D Globe) */}
       <AnimatedSection className="mb-16">
         <h2 className="text-xl font-bold text-text-primary mb-2">Where I&apos;ve Been</h2>
         <p className="text-sm text-text-muted mb-8">
-          Cities and countries I&apos;ve visited, worked, and lived in — select a place to explore.
+          Cities and countries I&apos;ve visited, worked, and lived in. Select a place to explore.
         </p>
         <TravelExplorer />
       </AnimatedSection>
@@ -230,10 +250,10 @@ export default function AboutPage() {
           <div className="absolute top-0 right-0 w-48 h-48 bg-accent/[0.04] rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-accent/[0.03] rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
           <div className="relative">
-            <p className="text-2xl mb-2">👋</p>
-            <h2 className="text-xl font-bold text-text-primary">Let&apos;s connect!</h2>
+            <h2 className="text-xl font-bold text-text-primary">Get in touch</h2>
             <p className="text-text-secondary mt-2 text-sm max-w-md mx-auto">
-              Always open to interesting conversations about systems, research, or potential collaborations. Feel free to reach out!
+              I&apos;m open to conversations about systems, machine learning, and interesting
+              engineering problems. Email is the best way to reach me.
             </p>
             <div className="flex flex-wrap justify-center gap-3 mt-5">
               <Button href={siteConfig.links.email} variant="primary" size="sm" icon="arrow">Email Me</Button>

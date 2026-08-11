@@ -1,24 +1,24 @@
 export const siteConfig = {
   name: 'Oscar de Francesca',
-  title: 'Oscar de Francesca — Software Engineer',
+  title: 'Oscar de Francesca · Software Engineer',
   description:
-    'Oscar de Francesca is a software engineer specializing in systems, machine learning, and full-stack development. MSc in Computer Science from EPFL, currently at Bloomberg in London.',
+    'Software engineer working across systems and machine learning. Software Engineer at Bloomberg in London, completing an MSc in Computer Science at EPFL, with an incoming ETH Zurich Master\'s thesis on diffusion language models for antibody design.',
   url: 'https://oscar.defrancesca.com',
   links: {
     github: 'https://github.com/oscardef',
-    linkedin: 'https://www.linkedin.com/in/oscardef/?skipRedirect=true',
+    linkedin: 'https://www.linkedin.com/in/oscardef',
     email: 'mailto:oscar.defrancesca@gmail.com',
   },
-  ogImage: '/images/og-default.png',
   keywords: [
     'Oscar de Francesca',
     'software engineer',
     'Oscar de Francesca portfolio',
     'Oscar de Francesca Bloomberg',
     'Oscar de Francesca EPFL',
-    'systems engineer',
+    'C++ engineer',
+    'low-latency systems',
+    'distributed systems',
     'machine learning engineer',
-    'full-stack developer',
     'EPFL computer science',
     'Bloomberg engineer London',
   ],
@@ -29,14 +29,4 @@ export const navLinks = [
   { label: 'About', href: '/about' },
   { label: 'Experience', href: '/experience' },
   { label: 'Projects', href: '/projects' },
-] as const;
-
-export const tagTaxonomy = [
-  'systems', 'performance', 'concurrency', 'security', 'networking',
-  'data-systems', 'databases', 'distributed',
-  'ml', 'llm', 'nlp', 'probabilistic', 'forecasting', 'computer-vision',
-  'robotics', 'embedded',
-  'blockchain', 'fintech',
-  'visualization', 'web', 'backend', 'frontend', 'devops',
-  'cloud', 'infrastructure', 'testing', 'compilers',
 ] as const;

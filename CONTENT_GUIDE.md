@@ -83,17 +83,17 @@ Regular paragraph text.
 
 Text wraps around the floating image above.
 
-<Gallery images={[
-  { src: "/images/projects/a.png", alt: "Screenshot A" },
-  { src: "/images/projects/b.png", alt: "Screenshot B" },
-]} />
+<Gallery>
+  <GalleryImage src="/images/projects/a.png" alt="Screenshot A" />
+  <GalleryImage src="/images/projects/b.png" alt="Screenshot B" />
+</Gallery>
 
 <VideoEmbed url="https://youtube.com/embed/..." title="Demo Video" />
 
-<MetricRow metrics={[
-  { label: "Accuracy", value: "94.2%" },
-  { label: "Latency", value: "< 50ms" },
-]} />
+<MetricRow>
+  <Metric value="94.2%" label="Accuracy" />
+  <Metric value="< 50ms" label="Latency" />
+</MetricRow>
 
 <DiagramBlock title="System Architecture">
   Content rendered inside a styled card.

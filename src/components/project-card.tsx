@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { Tag } from '@/components/ui/tag';
@@ -43,7 +42,7 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
               {project.featured && (
-                <span className="text-xs text-accent font-medium">Featured</span>
+                <span className="text-xs text-accent-hover font-medium">Featured</span>
               )}
               {project.organization && (
                 <span className="text-xs text-text-muted">{project.organization}</span>
@@ -80,31 +79,5 @@ export function ProjectCard({ project, index = 0 }: ProjectCardProps) {
         </div>
       </CardLink>
     </AnimatedDiv>
-  );
-}
-
-interface ProjectCardCompactProps {
-  project: Project;
-}
-
-export function ProjectCardCompact({ project }: ProjectCardCompactProps) {
-  return (
-    <Link
-      href={`/projects/${project.slug}`}
-      className="group flex items-start gap-4 py-4 border-b border-border last:border-0 hover:bg-bg-card/50 -mx-3 px-3 rounded-lg transition-colors"
-    >
-      <div className="min-w-0 flex-1">
-        <h3 className="font-medium text-text-primary group-hover:text-accent transition-colors text-sm">
-          {project.title}
-        </h3>
-        <p className="text-xs text-text-muted mt-0.5">
-          {formatDate(project.date)} · {project.organization || project.type}
-        </p>
-      </div>
-      <ArrowRight
-        size={14}
-        className="shrink-0 text-text-muted group-hover:text-accent transition-all group-hover:translate-x-0.5 mt-1"
-      />
-    </Link>
   );
 }

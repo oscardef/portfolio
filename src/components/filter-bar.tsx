@@ -8,7 +8,7 @@ import { filterProjects, getAllTags } from '@/lib/filters';
 
 interface FilterBarProps {
   projects: Project[];
-  onFilter: (filtered: Project[]) => void;
+  onFilter: (filtered: Project[], hasActiveFilters: boolean) => void;
 }
 
 const typeOptions = [
@@ -54,7 +54,12 @@ export function FilterBar({ projects, onFilter }: FilterBarProps) {
     setSort('featured');
   };
 
-  const hasActiveFilters = search || activeType !== 'all' || activeStatus !== 'all' || activeTags.length > 0;
+  const hasActiveFilters = !!(
+    search ||
+    activeType !== 'all' ||
+    activeStatus !== 'all' ||
+    activeTags.length > 0
+  );
 
   // Compute filtered results
   const filtered = useMemo(() => {
@@ -69,8 +74,8 @@ export function FilterBar({ projects, onFilter }: FilterBarProps) {
 
   // Sync filtered results to parent
   useEffect(() => {
-    onFilter(filtered);
-  }, [filtered, onFilter]);
+    onFilter(filtered, hasActiveFilters);
+  }, [filtered, hasActiveFilters, onFilter]);
 
   return (
     <div className="space-y-4 mb-8">

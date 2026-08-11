@@ -10,15 +10,16 @@
   --color-border-hover: #33333d;
 
   --color-text-primary: #f0f0f3;
-  --color-text-secondary: #a0a0ab;
-  --color-text-muted: #65656f;
+  --color-text-secondary: #a8a8b3;
+  --color-text-muted: #7e7e88;
 
   --color-accent: #6366f1;
   --color-accent-hover: #818cf8;
+  --color-accent-light: #a5abf9;
   --color-accent-muted: rgba(99, 102, 241, 0.15);
 
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, 'Cascadia Code', monospace;
 }
 
 /* ── Base styles ───────────────────────────────────────────────────────── */
@@ -124,7 +125,12 @@ html {
 }
 
 .prose a {
-  @apply text-accent hover:text-accent-hover underline underline-offset-4 transition-colors;
+  @apply underline underline-offset-4 transition-colors;
+  color: var(--color-accent-hover);
+}
+
+.prose a:hover {
+  color: var(--color-accent-light);
 }
 
 .prose strong {
