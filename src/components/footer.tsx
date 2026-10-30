@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Github, Linkedin, Mail } from 'lucide-react';
 import { siteConfig } from '@/lib/constants';
 
@@ -13,7 +14,10 @@ export function Footer() {
       <div className="container-page py-10">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-text-muted">
-            © {new Date().getFullYear()} {siteConfig.name}. Built with Next.js &amp; Tailwind.
+            © {new Date().getFullYear()} {siteConfig.name}.{' '}
+            <Link href="/projects/portfolio" scroll={false} className="underline decoration-border-hover underline-offset-4 hover:text-text-primary">
+              How this site is built
+            </Link>
           </p>
           <div className="flex items-center gap-4">
             {socialLinks.map(({ href, icon: Icon, label }) => (

@@ -33,6 +33,7 @@
   --globe-border: rgb(148 163 184 / 0.22);
   --globe-visited: rgb(139 144 255 / 0.42);
   --globe-ring: #0c1220;
+  --globe-place: rgb(255 255 255 / 0.85);
 
   --scrim: rgb(4 7 14 / 0.62);
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -71,6 +72,7 @@
   --globe-border: rgb(71 85 105 / 0.22);
   --globe-visited: rgb(81 87 232 / 0.32);
   --globe-ring: #ffffff;
+  --globe-place: rgb(20 24 32 / 0.7);
 
   --scrim: rgb(20 24 32 / 0.35);
 

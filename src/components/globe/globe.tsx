@@ -49,6 +49,8 @@ export interface GlobeProps {
   active?: number;
   // Travel mode: a place to turn to, e.g. when a country is chosen from the list
   focus?: { lng: number; lat: number } | null;
+  // Route mode: a side trip (index into data.trips) to fly out to from the place in focus
+  detour?: number | null;
   className?: string;
 }
 
@@ -59,11 +61,21 @@ const LEG_SECONDS = 1.8;
 
 const isEurope = (lng: number, lat: number) => lng > -12 && lng < 32 && lat > 36;
 
-function viewFor(data: GlobeData, mode: GlobeProps['mode'], active: number): View {
+function viewFor(data: GlobeData, mode: GlobeProps['mode'], active: number, detour: number | null = null): View {
   if (mode === 'travel') return TRAVEL;
+  const trip = detour === null ? undefined : data.trips[detour];
+  if (trip) {
+    // Frame both ends of the side trip, closer for short hops
+    const home = data.stops[trip.from];
+    const [lng, lat] = geoInterpolate([home.lng, home.lat], [trip.lng, trip.lat])(0.5);
+    const distance = geoDistance([home.lng, home.lat], [trip.lng, trip.lat]);
+    return { lng, lat: lat - 1, zoom: Math.min(5, Math.max(1.5, 0.55 / distance)) };
+  }
   const stop = data.stops[active];
   if (!stop) return OVERVIEW;
-  return { lng: stop.lng, lat: stop.lat - 4, zoom: isEurope(stop.lng, stop.lat) ? 2.3 : 1.55 };
+  return isEurope(stop.lng, stop.lat)
+    ? { lng: stop.lng + 2, lat: stop.lat - 1.5, zoom: 3.6 }
+    : { lng: stop.lng, lat: stop.lat - 3, zoom: 1.9 };
 }
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -77,6 +89,7 @@ interface Palette {
   border: string;
   visited: string;
   ring: string;
+  place: string;
   routeL: string;
   routeC: string;
 }
@@ -93,19 +106,20 @@ function readPalette(el: Element): Palette {
     border: v('--globe-border'),
     visited: v('--globe-visited'),
     ring: v('--globe-ring'),
+    place: v('--globe-place'),
     routeL: v('--route-l') || '0.78',
     routeC: v('--route-c') || '0.13',
   };
 }
 
-export function Globe({ data, mode, active = -1, focus = null, className }: GlobeProps) {
+export function Globe({ data, mode, active = -1, focus = null, detour = null, className }: GlobeProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
 
   // Everything the animation loop mutates lives here, outside React state
   const engine = useRef({
-    view: viewFor(data, mode, active),
+    view: viewFor(data, mode, active, detour),
     flight: null as Flight | null,
     legs: data.stops.slice(1).map(() => 0),
     trips: data.trips.map(() => 0),
@@ -117,7 +131,7 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
     idleUntil: 0,
     palette: null as Palette | null,
     size: { w: 0, h: 0, dpr: 1 },
-    props: { mode, active },
+    props: { mode, active, detour },
     kick: () => {},
   });
 
@@ -158,6 +172,7 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
 
     // Advance leg animations; returns true while anything is still moving
     function stepLegs(dt: number): boolean {
+      if (e.props.mode === 'travel') return false;
       let moving = false;
       // The overview draws the whole route at a steady pace; a single new leg
       // takes its time, and a backlog from fast scrolling catches up quickly
@@ -199,7 +214,8 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
       const p = e.palette;
       const cx = (w / 2) * dpr;
       const cy = (h / 2) * dpr;
-      const R = (Math.min(w, h) / 2) * 0.8 * e.view.zoom * dpr;
+      const boost = parseFloat(getComputedStyle(wrap).getPropertyValue('--globe-boost')) || 0;
+      const R = (Math.min(w, h) / 2) * 0.8 * e.view.zoom * (1 + boost) * dpr;
       const projection = geoOrthographic()
         .translate([cx, cy])
         .scale(R)
@@ -242,8 +258,9 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
       ctx.stroke();
 
       // Countries: all land first, then the ones that light up
-      const { mode, active } = e.props;
+      const { mode, active, detour } = e.props;
       const activeStop = mode === 'route' ? data.stops[active] : undefined;
+      const activeTrip = mode === 'route' && detour !== null ? data.trips[detour] : undefined;
       ctx.beginPath();
       for (const c of COUNTRIES) path(c);
       ctx.fillStyle = p.land;
@@ -310,15 +327,17 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
         ctx.restore();
       };
 
-      for (let i = 0; i < e.legs.length; i++) {
-        const a = data.stops[i];
-        const b = data.stops[i + 1];
-        drawArc([a.lng, a.lat], [b.lng, b.lat], e.legs[i], a.hue, b.hue, mode === 'travel' ? 1.4 : 2.2);
+      if (mode === 'route') {
+        for (let i = 0; i < e.legs.length; i++) {
+          const a = data.stops[i];
+          const b = data.stops[i + 1];
+          drawArc([a.lng, a.lat], [b.lng, b.lat], e.legs[i], a.hue, b.hue, 2.2);
+        }
+        data.trips.forEach((t, i) => {
+          const a = data.stops[t.from];
+          drawArc([a.lng, a.lat], [t.lng, t.lat], e.trips[i], a.hue, a.hue, detour === i ? 2.8 : 1.6);
+        });
       }
-      data.trips.forEach((t, i) => {
-        const a = data.stops[t.from];
-        drawArc([a.lng, a.lat], [t.lng, t.lat], e.trips[i], a.hue, a.hue, mode === 'travel' ? 1.2 : 1.8);
-      });
 
       // Places
       const dot = (x: number, y: number, r: number, fill: string) => {
@@ -332,28 +351,33 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
       };
 
       if (mode === 'travel') {
-        for (const place of data.places) {
-          if (place.hue !== null) continue;
+        // Trips as white dots, then homes on top in their route colour
+        const ordered = [...data.places].sort((a, b) => Number(a.hue !== null) - Number(b.hue !== null));
+        for (const place of ordered) {
           const pt = project([place.lng, place.lat]);
-          if (pt.front) dot(pt.x, pt.y, 2.4, 'rgb(255 255 255 / 0.85)');
+          if (!pt.front) continue;
+          if (place.hue === null) dot(pt.x, pt.y, 2.4, p.place);
+          else dot(pt.x, pt.y, 3.8, colour(place.hue));
         }
+      } else {
+        const reached = (i: number) => active < 0 || i <= active;
+        data.stops.forEach((s, i) => {
+          const pt = project([s.lng, s.lat]);
+          if (!pt.front) return;
+          dot(pt.x, pt.y, reached(i) ? 4 : 3, colour(s.hue, reached(i) ? 1 : 0.35));
+        });
+        data.trips.forEach((t, i) => {
+          if (e.trips[i] < 1) return;
+          const pt = project([t.lng, t.lat]);
+          if (pt.front) dot(pt.x, pt.y, 3, colour(data.stops[t.from].hue));
+        });
       }
-      const reached = (i: number) => mode === 'travel' || active < 0 || i <= active;
-      data.stops.forEach((s, i) => {
-        const pt = project([s.lng, s.lat]);
-        if (!pt.front) return;
-        dot(pt.x, pt.y, reached(i) ? 4 : 3, colour(s.hue, reached(i) ? 1 : 0.35));
-      });
-      data.trips.forEach((t, i) => {
-        if (e.trips[i] < 1) return;
-        const pt = project([t.lng, t.lat]);
-        if (pt.front) dot(pt.x, pt.y, 3, colour(data.stops[t.from].hue));
-      });
 
       // The place in focus: a pulsing ring and a label
       const label = labelRef.current;
-      if (activeStop) {
-        const pt = project([activeStop.lng, activeStop.lat]);
+      const focusPoint = activeTrip ?? activeStop;
+      if (focusPoint && activeStop) {
+        const pt = project([focusPoint.lng, focusPoint.lat]);
         if (pt.front) {
           if (!e.reduced) {
             const phase = (now / 1600) % 1;
@@ -426,6 +450,11 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
     });
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
+    const onScroll = () => {
+      if (e.visible && !e.raf) requestAnimationFrame((now) => draw(now));
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
     const onMotion = () => {
       e.reduced = motion.matches;
       e.kick();
@@ -470,6 +499,7 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
       visibility.disconnect();
       themeObserver.disconnect();
       motion.removeEventListener('change', onMotion);
+      window.removeEventListener('scroll', onScroll);
       canvas.removeEventListener('pointerdown', onDown);
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerup', onUp);
@@ -480,15 +510,16 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
   // New focus: fly there
   useEffect(() => {
     const e = engine.current;
-    e.props = { mode, active };
-    const to = focus ? { lng: focus.lng, lat: focus.lat, zoom: 1.6 } : viewFor(data, mode, active);
+    e.props = { mode, active, detour };
+    const to = focus ? { lng: focus.lng, lat: focus.lat, zoom: 1.6 } : viewFor(data, mode, active, detour);
     const distance = geoDistance([e.view.lng, e.view.lat], [to.lng, to.lat]);
     e.flight = { from: e.view, to, start: performance.now(), duration: 1300 + 900 * Math.min(1, distance) };
     e.idleUntil = performance.now() + (focus ? 6000 : 0);
     e.kick();
-  }, [data, mode, active, focus]);
+  }, [data, mode, active, focus, detour]);
 
-  const activeStop = mode === 'route' ? data.stops[active] : undefined;
+  const labelPlace =
+    mode === 'route' ? (detour !== null ? data.trips[detour]?.place : data.stops[active]?.place) : undefined;
 
   return (
     // Callers position the globe (e.g. absolute inset-0); it fills that box
@@ -496,7 +527,11 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
       <canvas
         ref={canvasRef}
         className="globe-fade absolute inset-0 h-full w-full"
-        style={{ touchAction: mode === 'travel' ? 'pan-y' : 'auto', cursor: mode === 'travel' ? 'grab' : 'default' }}
+        style={{
+          touchAction: mode === 'travel' ? 'pan-y' : 'auto',
+          cursor: mode === 'travel' ? 'grab' : 'default',
+          pointerEvents: mode === 'travel' ? 'auto' : 'none',
+        }}
         aria-hidden="true"
       />
       <div
@@ -504,9 +539,9 @@ export function Globe({ data, mode, active = -1, focus = null, className }: Glob
         aria-hidden="true"
         className="pointer-events-none absolute left-0 top-0 opacity-0 transition-opacity duration-300"
       >
-        {activeStop && (
+        {labelPlace && (
           <span className="place-name absolute bottom-3 left-3 whitespace-nowrap rounded-full bg-bg/80 px-3 py-1 text-lg text-text-primary backdrop-blur">
-            {activeStop.place}
+            {labelPlace}
           </span>
         )}
       </div>

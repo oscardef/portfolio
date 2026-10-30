@@ -2,7 +2,7 @@ export const siteConfig = {
   name: 'Oscar de Francesca',
   title: 'Oscar de Francesca · Software Engineer',
   description:
-    'Software engineer working across systems and machine learning. Completing an MSc in Computer Science at EPFL with a Master\'s thesis at ETH Zurich on diffusion language models for antibody design. Previously built real-time C++ infrastructure at Bloomberg in London.',
+    'Oscar de Francesca: software engineer, Swedish and American, raised across Asia, the Middle East and Europe. Systems and machine learning, from real-time C++ at Bloomberg to language models and a Master\'s thesis at ETH Zurich.',
   url: 'https://oscar.defrancesca.com',
   email: 'oscar.defrancesca@gmail.com',
   links: {

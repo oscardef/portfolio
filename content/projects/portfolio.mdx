@@ -3,22 +3,22 @@ title: "Portfolio Site"
 slug: "portfolio"
 kind: "products"
 blurb: "This site."
-date: "2026-02-08"
+date: "2026-10-31"
 type: "personal"
 featured: false
-summary: "This site, a content-driven portfolio built with Next.js 16, MDX, and Tailwind CSS. Statically generated, fast, and designed to showcase projects with rich media and interactive components."
+summary: "This site: one dark scrolling page built around a globe of the places I've lived, with each project and role attached to the place it happened. Statically generated, with the globe drawn on a canvas and loaded only when needed."
 tags: ["web"]
-stack: ["Next.js", "TypeScript", "Tailwind CSS", "MDX", "Framer Motion", "Vercel"]
+stack: ["Next.js", "TypeScript", "Tailwind CSS", "MDX", "d3-geo", "Vercel"]
 links:
   github: "https://github.com/oscardef/portfolio"
 heroImage:
   src: "/images/projects/portfolio/hero.png"
-  alt: "Portfolio site homepage"
+  alt: "The route on this site: the globe zoomed on Lausanne beside the projects from there"
 highlights:
-  - "Content-driven architecture: MDX files with Zod-validated frontmatter, compiled at build time with next-mdx-remote"
-  - "Custom MDX components: FloatingImage with text wrapping, Gallery, DiagramBlock, MetricRow, and animated GIF support"
-  - "Statically generated with Next.js 16 App Router: project and experience routes are pre-rendered for fast loading"
-  - "Dark theme with Framer Motion animations, responsive design, and SEO optimization with auto-generated sitemap"
+  - "A scroll-driven route: the globe flies to each place, draws the leg from the previous home and lights the countries lived in"
+  - "A canvas globe built on d3-geo's orthographic projection, about 50 KB gzipped and loaded only near its section"
+  - "Projects and roles open as sheets over the page via intercepting routes, with their own URLs for sharing"
+  - "Content in MDX with Zod-validated frontmatter; dark and light themes from one set of tokens"
 role: "Solo developer"
 teamSize: 1
 organization: ""
@@ -28,32 +28,20 @@ status: "shipped"
 
 ## Overview
 
-The site you're looking at. Built to present my projects as full write-ups with architecture diagrams, screenshots, and interactive elements, not just a list of cards.
+The site you're looking at. Instead of separate pages for experience and projects, it tells the story by place: every city I've lived in, in order, with what I did there attached to it.
 
-## Architecture
+## How It Works
 
-Content-driven approach where each project/experience is an MDX file with validated frontmatter:
-
-- **MDX files** in `content/projects/` and `content/experience/` define all content
-- **Zod schemas** validate frontmatter at build time: type-safe content with no runtime surprises
-- **next-mdx-remote** compiles MDX server-side with remark/rehype plugins (GFM tables, syntax highlighting via Shiki, auto-linked headings)
-- **Static generation** via `generateStaticParams`: every page is pre-rendered at build
-
-## Custom MDX Components
-
-Built a set of components available in any project write-up:
-
-- **FloatingImage**: images that float left/right with text wrapping and optional captions (with automatic GIF detection for unoptimized rendering)
-- **Gallery**: responsive grid of images with hover effects
-- **DiagramBlock**: styled container for technical diagrams
-- **MetricRow**: display key metrics inline
-- **VideoEmbed**: responsive video embedding
+- **The globe** is drawn on a canvas with d3-geo's orthographic projection and Natural Earth country shapes. Each leg of the route is a great-circle arc lifted off the surface; the camera eases between places and zooms in on Europe, where the stops are close together.
+- **Scrolling drives it.** Each chapter reports when it crosses the middle of the screen, and the globe flies there. Side trips, like a summer in Abu Dhabi during my Groningen years, get their own detour when you reach them.
+- **Performance:** the globe's code and map data load only as you approach the section, it stops drawing when off screen, and it holds still for anyone who prefers reduced motion.
+- **Sheets:** projects and roles open over the page through Next.js intercepting routes. The URL changes, the page keeps its place, and the same URL renders a full page when visited directly.
+- **Content** lives in MDX files with frontmatter validated by Zod at build time; a `chapter` field attaches each project or role to a place.
 
 ## Stack
 
-- **Next.js 16** with App Router and React 19
-- **Tailwind CSS 4** for styling
-- **Framer Motion** for page transitions and scroll animations
-- **MDX** with rehype-pretty-code (Shiki) for syntax highlighting
-- **Vercel** for deployment with analytics and speed insights
-- **Lucide** for icons
+- **Next.js 16** with the App Router and static generation, on React 19
+- **TypeScript** and **Tailwind CSS 4**
+- **MDX** via next-mdx-remote, with Zod for frontmatter
+- **d3-geo** and **world-atlas** for the globe
+- **Vercel** for hosting
