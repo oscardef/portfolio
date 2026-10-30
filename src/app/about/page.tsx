@@ -8,17 +8,25 @@ import { TravelExplorer } from '@/components/travel-explorer';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'About Oscar de Francesca: software engineer working across systems and machine learning. At Bloomberg in London, completing an MSc at EPFL, with an incoming ETH Zurich thesis.',
+    'About Oscar de Francesca: software engineer working across systems and machine learning. Completing an MSc at EPFL with a Master\'s thesis at ETH Zurich, previously at Bloomberg in London.',
   alternates: { canonical: 'https://oscar.defrancesca.com/about' },
 };
 
 const timeline = [
   {
+    year: '2026–27',
+    title: "Master's Thesis",
+    location: 'Basel, Switzerland',
+    flag: '🇨🇭',
+    description: "EPFL Master's thesis at ETH Zurich's Laboratory for Systems and Synthetic Immunology, on diffusion language models for antibody design.",
+    type: 'education' as const,
+  },
+  {
     year: '2026',
-    title: 'Software Engineer',
+    title: 'Software Engineer (Placement)',
     location: 'London, United Kingdom',
     flag: '🇬🇧',
-    description: 'Real-time C++ infrastructure at Bloomberg, on the Core Communications Distribution team.',
+    description: 'Built a real-time C++ service at Bloomberg, on the Core Communications Distribution team. It is now in production.',
     type: 'work' as const,
   },
   {
@@ -26,7 +34,7 @@ const timeline = [
     title: 'MSc Computer Science',
     location: 'Lausanne, Switzerland',
     flag: '🇨🇭',
-    description: 'EPFL, 5.38/6 average. Systems, security, and ML, with a minor in Management, Technology & Entrepreneurship. Thesis at ETH Zurich from October 2026.',
+    description: 'EPFL, 5.4/6 average. Systems, security, and ML, with a minor in Management, Technology & Entrepreneurship. Master\'s thesis at ETH Zurich, 2026–27.',
     type: 'education' as const,
   },
   {
@@ -114,10 +122,9 @@ export default function AboutPage() {
                 ML, alongside internships in software and data engineering.
               </p>
               <p>
-                Right now I&apos;m a Software Engineer at Bloomberg in London, working on
-                real-time C++ infrastructure. From October 2026 I&apos;ll be doing my EPFL
-                Master&apos;s thesis, hosted at ETH Zurich, on diffusion language models for
-                antibody design.
+                I&apos;m now in Basel, doing my EPFL Master&apos;s thesis at ETH Zurich on
+                diffusion language models for antibody design. Before that I was at Bloomberg
+                in London, where I built a real-time C++ service that is now in production.
               </p>
               <p>
                 Outside of work I tutor students in maths, do the occasional hackathon (third

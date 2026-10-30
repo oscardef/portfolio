@@ -34,7 +34,7 @@ export default async function HomePage() {
             <AnimatedDiv>
               <p className="text-accent font-medium text-sm mb-4 flex items-center gap-2">
                 <MapPin size={14} />
-                London, United Kingdom
+                Basel, Switzerland
               </p>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-text-primary tracking-tight leading-[1.1]">
                 Oscar <span className="block">de Francesca</span>
@@ -43,21 +43,22 @@ export default async function HomePage() {
                 Software Engineer · Systems &amp; ML
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-text-secondary">
-                <span>Bloomberg</span>
-                <span className="text-text-muted">·</span>
                 <span>MSc CS, EPFL</span>
                 <span className="text-text-muted">·</span>
-                <span className="text-accent-hover">Incoming: ETH Zurich research</span>
+                <span className="text-accent-hover">Thesis at ETH Zurich</span>
+                <span className="text-text-muted">·</span>
+                <span>Previously Bloomberg</span>
               </div>
               <p className="mt-5 text-base text-text-secondary max-w-lg leading-relaxed">
-                I work across systems and machine learning. Right now I&apos;m building
+                I work across systems and machine learning. I&apos;m completing an MSc in
+                Computer Science at{' '}
+                <strong className="font-semibold text-text-primary">EPFL</strong> and doing my
+                Master&apos;s thesis at{' '}
+                <strong className="font-semibold text-text-primary">ETH Zurich</strong> in Basel,
+                on diffusion language models for antibody design. Before that I built
                 real-time C++ infrastructure at{' '}
-                <strong className="font-semibold text-text-primary">Bloomberg</strong> in London.
-                I&apos;m completing an MSc in Computer Science at{' '}
-                <strong className="font-semibold text-text-primary">EPFL</strong>, and from October
-                I&apos;ll be doing my EPFL Master&apos;s thesis, hosted at{' '}
-                <strong className="font-semibold text-text-primary">ETH Zurich</strong>, on
-                diffusion language models for antibody design.
+                <strong className="font-semibold text-text-primary">Bloomberg</strong> in London,
+                now in production.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mt-8">
@@ -222,9 +223,9 @@ export default async function HomePage() {
             <h3 className="font-semibold text-text-primary text-sm">MSc Computer Science</h3>
             <p className="text-xs text-text-muted mt-1">EPFL · 2024 – 2027</p>
             <p className="text-sm text-text-secondary mt-3">
-              In progress, 5.38/6 average, with a minor in Management, Technology &amp;
+              In progress, 5.4/6 average, with a minor in Management, Technology &amp;
               Entrepreneurship. Coursework across distributed systems, security, and
-              machine learning. Master&apos;s thesis hosted at ETH Zurich from October 2026.
+              machine learning. Master&apos;s thesis at ETH Zurich, October 2026 to April 2027.
             </p>
           </div>
           <div className="rounded-xl border border-border bg-bg-card p-5 transition-all hover:border-border-hover hover:bg-bg-card-hover">

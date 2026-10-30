@@ -72,10 +72,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     url: siteConfig.url,
     image: `${siteConfig.url}/images/portrait.jpg`,
     jobTitle: 'Software Engineer',
-    worksFor: {
-      '@type': 'Organization',
-      name: 'Bloomberg',
-      url: 'https://www.bloomberg.com',
+    affiliation: {
+      '@type': 'CollegeOrUniversity',
+      name: 'ETH Zurich',
+      url: 'https://ethz.ch',
     },
     alumniOf: [
       {
@@ -106,8 +106,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     ],
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'London',
-      addressCountry: 'GB',
+      addressLocality: 'Basel',
+      addressCountry: 'CH',
     },
   };
 

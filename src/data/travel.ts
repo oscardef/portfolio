@@ -102,7 +102,8 @@ const rawTravelData: TravelEntry[] = [
   { place: 'Stockholm',  country: 'Sweden',          startDate: '2018',    endDate: '2021',    purpose: 'study', notes: 'IB Diploma at ISSR' },
   { place: 'Groningen',  country: 'Netherlands',     startDate: '2021',    endDate: '2024',    purpose: 'study', notes: 'BSc Computing Science' },
   { place: 'Lausanne',   country: 'Switzerland',     startDate: '2024',    endDate: '2026',    purpose: 'study', notes: 'MSc Computer Science at EPFL' },
-  { place: 'London',     country: 'United Kingdom',   startDate: '2026',                        purpose: 'work',  notes: 'Bloomberg SWE' },
+  { place: 'London',     country: 'United Kingdom',   startDate: '2026',    endDate: '2026',    purpose: 'work',  notes: 'Bloomberg SWE' },
+  { place: 'Basel',      country: 'Switzerland',     startDate: '2026',                        purpose: 'study', notes: "Master's thesis at ETH Zurich" },
 
   // ── Work ──
   { place: 'Veldhoven',  country: 'Netherlands',     startDate: '2023-02', endDate: '2023-09', purpose: 'work',  notes: 'ASML internship' },

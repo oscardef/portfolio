@@ -2,7 +2,7 @@ export const siteConfig = {
   name: 'Oscar de Francesca',
   title: 'Oscar de Francesca · Software Engineer',
   description:
-    'Software engineer working across systems and machine learning. Software Engineer at Bloomberg in London, completing an MSc in Computer Science at EPFL, with an incoming ETH Zurich Master\'s thesis on diffusion language models for antibody design.',
+    'Software engineer working across systems and machine learning. Completing an MSc in Computer Science at EPFL with a Master\'s thesis at ETH Zurich on diffusion language models for antibody design. Previously built real-time C++ infrastructure at Bloomberg in London.',
   url: 'https://oscar.defrancesca.com',
   links: {
     github: 'https://github.com/oscardef',
@@ -20,7 +20,7 @@ export const siteConfig = {
     'distributed systems',
     'machine learning engineer',
     'EPFL computer science',
-    'Bloomberg engineer London',
+    'Oscar de Francesca ETH Zurich',
   ],
 } as const;
 
