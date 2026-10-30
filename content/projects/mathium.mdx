@@ -1,22 +1,23 @@
 ---
-title: "TutorAssist: AI-Enhanced Tutoring Platform"
-slug: "tutorassist"
+title: "Mathium: Maths Practice and Tutoring Platform"
+slug: "mathium"
 date: "2025-06-01"
 type: "personal"
 featured: false
-summary: "A full-stack tutoring platform with AI-generated questions tailored to each student's syllabus and weak areas, progress tracking for tutors, and adaptive practice with spaced repetition."
+summary: "A maths practice and tutoring platform for students, tutors and schools that began as a tool for my own tutoring. It combines a question bank with AI generation and symbolic grading, a reviewed library tagged to the IB Diploma syllabus, assignments and progress tracking, and live session rooms with a shared whiteboard."
 tags: ["web", "ml", "education"]
-stack: ["Next.js", "TypeScript", "Supabase", "OpenAI", "Tailwind CSS", "Cloudflare R2"]
+stack: ["Next.js", "TypeScript", "PostgreSQL", "pgvector", "PostgREST", "Better Auth", "OpenAI", "Docker"]
 links:
   github: "https://github.com/oscardef/TutorAssist"
 heroImage:
-  src: "/images/projects/tutorassist/hero.png"
-  alt: "TutorAssist platform interface"
+  src: "/images/projects/mathium/hero.png"
+  alt: "Mathium question generation screen"
 highlights:
-  - "AI-powered question generation via GPT-4o-mini, tailored to each student's syllabus, grade level, and identified weak areas"
-  - "Dual-interface platform: tutors track student progress and manage content; students practice with adaptive questions and progressive hints"
-  - "Supports 12+ mathematical answer formats (expressions, matrices, coordinates, vectors) with MathLive input and KaTeX rendering"
-  - "Spaced repetition scheduling, streak tracking, and similarity search via pgvector for intelligent question bank management"
+  - "Question bank with LaTeX, figures and multi-part questions, plus AI generation tailored to each student's syllabus and weak areas"
+  - "Symbolic grading: answers are compared as mathematics rather than text, so equivalent forms of the same answer are accepted"
+  - "Shared, reviewed question library tagged to IB Diploma syllabus points, which any workspace can import from"
+  - "Live session rooms with a shared whiteboard, assignments with progress tracking, and self-service booking"
+  - "Isolation between workspaces enforced in the database with row-level security, on a self-hosted Postgres, PostgREST and worker stack"
 role: "Solo developer"
 teamSize: 1
 organization: ""
@@ -26,48 +27,50 @@ status: "prototype"
 
 ## Overview
 
-I tutor students in mathematics, and I built this platform to make my own tutoring more effective. The core idea: instead of manually creating practice questions or assigning from a textbook, the platform generates questions tailored to each student's specific syllabus, grade level, and identified weak areas, then tracks their progress so I can see exactly where they need help before our next session.
+I tutor maths on the side, and Mathium started in 2025 as TutorAssist, a tool to make my own tutoring more effective. Instead of assigning practice from a textbook, it generates questions tailored to each student's syllabus and weak areas, then shows me where they need help before our next session.
 
-It serves both sides of the tutoring relationship: students get adaptive practice with immediate feedback, and I get visibility into what's actually working.
+In 2026 I rebuilt it and renamed it Mathium: a platform for students, tutors and schools rather than just for me.
+
+<Callout type="info" title="In development">
+Mathium is in active development and not yet open to the public.
+</Callout>
 
 ## For Students
 
-- **Adaptive practice**: AI generates questions based on their specific curriculum (IB, NSW HSC, etc.), current topic, and difficulty level
-- **Progressive hints**: stuck students can request hints before seeing the full solution
-- **MathLive input**: proper mathematical expression entry (fractions, matrices, coordinates, vectors, not just typing text)
-- **Spaced repetition**: questions they struggled with resurface at optimal intervals
-- **Progress tracking**: visual charts showing improvement over time, streak tracking for motivation
-- **Question flagging**: students can flag confusing questions for me to review
+- **Practice and assignments** with immediate feedback, hints and worked solutions
+- **Proper mathematical input** with MathLive: fractions, matrices, vectors and coordinates, not just typed text
+- **Symbolic grading**: equivalent forms of an answer are accepted, not just the exact text
+- **Progress over time**, with an activity heat map and streaks
 
 ## For Tutors
 
-- **Student progress dashboard**: see each student's weak areas, practice frequency, and improvement trends
-- **AI question generation**: generate questions with GPT-4o-mini, specifying topic, difficulty, and answer format
-- **Question bank**: manage questions with LaTeX support and similarity search (pgvector) to avoid duplicates
-- **Assignments**: create assignments with due dates, track completion
-- **PDF worksheet export**: generate printable worksheets with optional answer keys
-- **Material uploads**: attach PDFs, images, and reference materials to topics
-- **Google Calendar integration**: schedule tutoring sessions directly from the platform
+- **Question bank** with LaTeX, figures and multi-part questions
+- **AI question generation**, specifying topic, difficulty and answer format
+- **Shared library**: new and edited questions go through review before joining a library that any workspace can import from
+- **Syllabus tagging**: library questions are tagged to IB Diploma syllabus points
+- **Live session rooms** with a shared whiteboard, and self-service booking for sessions
+- **Assignments** with due dates and completion tracking
 
 ## Technical Details
 
-**Stack:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS
+**Stack:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS
 
-**Backend:** Supabase (PostgreSQL with pgvector extension, Row Level Security for data isolation between tutors' workspaces), Supabase Auth
+**Data:** PostgreSQL 17 with pgvector. App data is served through PostgREST, and row-level security policies in the database keep each workspace's data isolated.
 
-**AI:** OpenAI API, GPT-4o-mini for question generation, text-embedding-3-small for similarity search across the question bank
+**Auth:** Better Auth. Requests to PostgREST carry JWTs minted from the user's session, so row-level security applies to every query.
 
-**Math rendering:** MathLive for input, KaTeX for display, supports numeric, expressions, multiple choice, fractions, coordinates, matrices, sets, ranges, complex numbers, vectors, equations, inequalities, intervals, and values with units
+**Maths:** MathLive for input, KaTeX for rendering, Compute Engine for symbolic grading, JSXGraph for figures
 
-**Storage:** Cloudflare R2 for uploaded materials (PDFs, images)
+**Collaboration:** Excalidraw whiteboard in session rooms
 
-**Background jobs:** Job queue pattern for long-running operations (AI generation, PDF creation, embedding computation)
+**AI:** OpenAI API for question generation
 
-**Security:** Row Level Security ensures complete data isolation between tutor workspaces: students only see their own data; tutors only see their own students
+**Background jobs:** a separate worker container for long-running work such as AI generation
+
+**Hosting:** self-hosted with Docker Compose
 
 ## What I Learned
 
-- Building for yourself as the user gives you an unfair advantage in product decisions: I know exactly which features matter because I use them weekly
-- Supabase's Row Level Security is excellent for multi-tenant isolation without application-level complexity
-- Mathematical input is a surprisingly hard UX problem. MathLive handles it well, but integrating it with validation across 12+ answer formats took significant effort
-- GPT-4o-mini is good enough for question generation when you give it proper curriculum context, and significantly cheaper than GPT-4 for this use case
+- Building for yourself as the user gives you an unfair advantage in product decisions: I know which features matter because I use them every week
+- Mathematical input and grading are surprisingly hard. Comparing answers as mathematics rather than text, across many answer formats, took more work than any other feature
+- Moving off Supabase to a self-hosted stack, I kept the existing row-level security policies unchanged by having PostgREST enforce them with JWTs minted from the app's own sessions
