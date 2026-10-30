@@ -4,6 +4,7 @@ export const siteConfig = {
   description:
     'Software engineer working across systems and machine learning. Completing an MSc in Computer Science at EPFL with a Master\'s thesis at ETH Zurich on diffusion language models for antibody design. Previously built real-time C++ infrastructure at Bloomberg in London.',
   url: 'https://oscar.defrancesca.com',
+  email: 'oscar.defrancesca@gmail.com',
   links: {
     github: 'https://github.com/oscardef',
     linkedin: 'https://www.linkedin.com/in/oscardef',
@@ -24,9 +25,10 @@ export const siteConfig = {
   ],
 } as const;
 
-export const navLinks = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/about' },
-  { label: 'Experience', href: '/experience' },
-  { label: 'Projects', href: '/projects' },
+// Sections of the home page, in order, for the navigation
+export const sections = [
+  { id: 'route', label: 'The route' },
+  { id: 'places', label: 'Places' },
+  { id: 'about', label: 'About' },
+  { id: 'contact', label: 'Contact' },
 ] as const;

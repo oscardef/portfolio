@@ -122,5 +122,3 @@ export async function getExperienceSlugs(): Promise<string[]> {
     .map((f) => f.replace(/\.mdx$/, ''));
 }
 
-// Re-export client-safe filtering utilities
-export { filterProjects, getAllTags } from './filters';

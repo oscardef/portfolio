@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import type { ReactNode } from 'react';
+import { Instrument_Sans, Instrument_Serif } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
@@ -7,17 +8,23 @@ import { siteConfig } from '@/lib/constants';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
-const inter = Inter({
+const instrumentSans = Instrument_Sans({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-instrument-sans',
   display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({
+// Place names, in italic, as an atlas would set them
+const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
-  variable: '--font-jetbrains',
+  weight: '400',
+  style: 'italic',
+  variable: '--font-instrument-serif',
   display: 'swap',
 });
+
+// Runs before paint so a saved light theme doesn't flash dark first
+const themeScript = `try{if(localStorage.getItem('theme')==='light'){document.documentElement.dataset.theme='light';addEventListener('DOMContentLoaded',function(){var m=document.querySelector('meta[name="theme-color"]');if(m)m.content='#f4f5f7'})}}catch(e){}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -60,11 +67,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0a0a0b',
-  colorScheme: 'dark',
+  themeColor: '#0c1220',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children, sheet }: { children: ReactNode; sheet: ReactNode }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -124,8 +130,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html
+      lang="en"
+      data-theme="dark"
+      suppressHydrationWarning
+      className={`${instrumentSans.variable} ${instrumentSerif.variable}`}
+    >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -135,18 +147,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
-      <body className="font-sans min-h-screen flex flex-col">
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-white"
-        >
-          Skip to content
-        </a>
-        <Navbar />
-        <main id="main" className="flex-1 scroll-mt-16">
-          {children}
-        </main>
-        <Footer />
+      <body>
+        <div id="page" className="flex min-h-screen flex-col">
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[60] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-white"
+          >
+            Skip to content
+          </a>
+          <Navbar />
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </div>
+        {sheet}
         <Analytics />
         <SpeedInsights />
       </body>
