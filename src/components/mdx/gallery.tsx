@@ -11,18 +11,18 @@ export function GalleryImage({
   caption?: string;
 }) {
   return (
-    <figure className="group">
-      <div className="overflow-hidden rounded-lg border border-border">
+    <figure>
+      <div className="overflow-hidden rounded-[3px] border border-rule">
         <Image
           src={src}
           alt={alt}
           width={800}
           height={500}
-          className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          className="w-full h-auto object-cover"
         />
       </div>
       {caption && (
-        <figcaption className="mt-2 text-xs text-text-muted text-center">{caption}</figcaption>
+        <figcaption className="mt-2 text-sm text-ink-2">{caption}</figcaption>
       )}
     </figure>
   );

@@ -1,15 +1,19 @@
-import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <div className="mx-auto max-w-6xl px-6 pt-28 pb-20 text-center min-h-[60vh] flex flex-col items-center justify-center">
-      <h1 className="text-6xl font-bold text-text-primary mb-4">404</h1>
-      <p className="text-text-secondary text-lg mb-8">
-        This page doesn&apos;t exist. It may have moved, or the link is broken.
+    <div className="mx-auto flex min-h-[70vh] max-w-[1200px] flex-col justify-center px-4 pt-28 pb-20 sm:px-6 md:px-10">
+      <p className="place-name text-2xl text-ink-2">Off the map</p>
+      <h1 className="section-title mt-3">This page doesn’t exist</h1>
+      <p className="mt-5 max-w-[48ch] text-ink-2">
+        It may have moved, or the link may be broken. Everything on this site is on the home page.
       </p>
-      <Button href="/" icon="arrow">
-        Go Home
-      </Button>
+      <Link
+        href="/"
+        className="mt-8 self-start rounded-full bg-ink px-5 py-2.5 text-[0.9375rem] text-paper hover:bg-ink/85"
+      >
+        Go to the home page
+      </Link>
     </div>
   );
 }

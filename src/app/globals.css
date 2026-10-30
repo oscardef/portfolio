@@ -1,162 +1,434 @@
 @import 'tailwindcss';
 
-/* ── Custom theme ──────────────────────────────────────────────────────── */
-@theme {
-  --color-bg: #0a0a0b;
-  --color-bg-card: #141416;
-  --color-bg-card-hover: #1a1a1e;
-  --color-bg-secondary: #111113;
-  --color-border: #23232a;
-  --color-border-hover: #33333d;
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
-  --color-text-primary: #f0f0f3;
-  --color-text-secondary: #a8a8b3;
-  --color-text-muted: #7e7e88;
+/* ── Tokens ────────────────────────────────────────────────────────────
+   Paper and ink for the page, land and graticule for maps. The route
+   colours are one hue per stop (see src/data/route.ts); the theme only
+   sets their lightness and chroma. */
+:root {
+  --paper: #f4f5f3;
+  --paper-raised: #ffffff;
+  --ink: #16191d;
+  --ink-2: #4d555d;
+  --ink-3: #666e76;
+  --rule: #d9dcd8;
+  --land: #dfe3dd;
+  --graticule: #e3e6e1;
+  --route-l: 0.57;
+  --route-c: 0.15;
+  --scrim: rgb(22 25 29 / 0.32);
 
-  --color-accent: #6366f1;
-  --color-accent-hover: #818cf8;
-  --color-accent-light: #a5abf9;
-  --color-accent-muted: rgba(99, 102, 241, 0.15);
+  --duration-exit: 160ms;
+  --duration-enter: 260ms;
+  --duration-move: 420ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, 'Cascadia Code', monospace;
+  color-scheme: light;
 }
 
-/* ── Base styles ───────────────────────────────────────────────────────── */
-body {
-  @apply bg-bg text-text-primary antialiased;
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+[data-theme='dark'] {
+  --paper: #0e1420;
+  --paper-raised: #151c2a;
+  --ink: #e8ecf2;
+  --ink-2: #aeb7c4;
+  --ink-3: #8994a3;
+  --rule: #263044;
+  --land: #1c2536;
+  --graticule: #161e2c;
+  --route-l: 0.78;
+  --route-c: 0.13;
+  --scrim: rgb(4 7 12 / 0.6);
+
+  color-scheme: dark;
 }
 
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rule: var(--rule);
+  --color-land: var(--land);
+
+  --font-sans: var(--font-familjen), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+}
+
+/* ── Base ──────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html:has([data-sheet-open]) {
+  overflow: hidden;
+}
+
+::selection {
+  background: oklch(var(--route-l) var(--route-c) 230 / 0.25);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* A stop's colour: set --h to the stop's hue */
+.hue {
+  color: oklch(var(--route-l) var(--route-c) var(--h));
+}
+
+.hue-bg {
+  background-color: oklch(var(--route-l) var(--route-c) var(--h));
+}
+
+/* ── Type ──────────────────────────────────────────────────────────── */
+.display,
+.section-title {
+  text-wrap: balance;
+}
+
+.display {
+  font-size: clamp(3rem, 9vw, 7.25rem);
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
+
+.section-title {
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.place-name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* ── Route map ─────────────────────────────────────────────────────── */
+.map-land {
+  fill: var(--land);
+}
+
+.map-graticule {
+  fill: none;
+  stroke: var(--graticule);
+  stroke-width: 1;
+}
+
+.map-frame {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.route-seg {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: route-draw var(--seg-duration, 0.46s) var(--ease-out) var(--delay) forwards;
+}
+
+/* Side trips: a dashed line revealed through an animated mask */
+.route-trip {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 4 5;
+}
+
+.route-mask {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 12;
+}
+
+@media (max-width: 640px) {
+  .route-seg {
+    stroke-width: 4;
+  }
+  .route-trip {
+    stroke-width: 2.8;
+    stroke-dasharray: 8 9;
+  }
+  .map-graticule {
+    stroke-width: 2;
+  }
+}
+
+@keyframes route-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.route-point {
+  opacity: 0;
+  animation: point-in 0.32s var(--ease-out) var(--delay) forwards;
+}
+
+@keyframes point-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.route-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px var(--paper);
+}
+
+.route-dot[data-side] {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+/* Label placement relative to the dot */
+.route-label {
+  position: absolute;
+  white-space: nowrap;
+  line-height: 1.1;
+}
+.route-label[data-anchor='r'] {
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.route-label[data-anchor='l'] {
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: right;
+}
+.route-label[data-anchor='t'] {
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.route-label[data-anchor='b'] {
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-seg {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .route-point {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ── Journey ───────────────────────────────────────────────────────── */
+.journey-spine {
+  background: linear-gradient(to bottom, var(--spine));
+}
+
+/* ── View transitions ──────────────────────────────────────────────── */
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sheet-slide {
+  from {
+    translate: 100% 0;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+::view-transition-group(*) {
+  animation-duration: var(--duration-move);
+  animation-timing-function: var(--ease-out);
+}
+
+::view-transition-old(.fade-out) {
+  animation: var(--duration-exit) ease-in both fade reverse;
+}
+::view-transition-new(.fade-in) {
+  animation: var(--duration-enter) ease-out var(--duration-exit) both fade;
+}
+
+::view-transition-new(.sheet-in) {
+  animation: var(--duration-move) var(--ease-out) both sheet-slide;
+}
+::view-transition-old(.sheet-out) {
+  animation: var(--duration-enter) ease-in both sheet-slide reverse;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }
 
-/* ── Focus styles ──────────────────────────────────────────────────────── */
-:focus-visible {
-  @apply outline-2 outline-offset-2 outline-accent rounded-sm;
-}
-
-::selection {
-  @apply bg-accent/30 text-text-primary;
-}
-
-/* ── Scrollbar ─────────────────────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-bg;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-border rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-border-hover;
-}
-
-/* ── Code blocks (rehype-pretty-code) ──────────────────────────────────── */
-[data-rehype-pretty-code-figure] pre {
-  @apply rounded-lg border border-border p-4 text-sm overflow-x-auto;
-}
-
-[data-rehype-pretty-code-figure] code {
-  @apply text-sm font-mono;
-  counter-reset: line;
-}
-
-[data-rehype-pretty-code-figure] [data-line] {
-  @apply px-4 border-l-2 border-transparent;
-}
-
-[data-rehype-pretty-code-figure] [data-highlighted-line] {
-  @apply bg-accent-muted border-l-accent;
-}
-
-:not(pre) > code {
-  @apply rounded bg-bg-card px-1.5 py-0.5 text-sm font-mono text-accent-hover border border-border;
-}
-
-/* ── MDX Prose ─────────────────────────────────────────────────────────── */
+/* ── Long-form writing (project and role pages) ────────────────────── */
 .prose {
-  @apply text-text-secondary leading-relaxed;
+  color: var(--ink-2);
+  max-width: 68ch;
 }
 
 .prose h2 {
-  @apply text-xl font-semibold text-text-primary mt-10 mb-4 scroll-mt-24;
+  color: var(--ink);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  margin: 2.75rem 0 0.875rem;
+  scroll-margin-top: 6rem;
 }
 
 .prose h3 {
-  @apply text-lg font-semibold text-text-primary mt-8 mb-3 scroll-mt-24;
+  color: var(--ink);
+  font-size: 1.1875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 2rem 0 0.625rem;
+  scroll-margin-top: 6rem;
+}
+
+.prose h2 a,
+.prose h3 a {
+  color: inherit;
+  text-decoration: none;
 }
 
 .prose p {
-  @apply mb-4;
+  margin-bottom: 1.1rem;
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 1.25rem;
+  padding-left: 1.25rem;
 }
 
 .prose ul {
-  @apply list-disc pl-6 mb-4 space-y-1;
+  list-style: disc;
 }
 
 .prose ol {
-  @apply list-decimal pl-6 mb-4 space-y-1;
+  list-style: decimal;
 }
 
 .prose li {
-  @apply text-text-secondary;
+  margin-bottom: 0.4rem;
+  padding-left: 0.25rem;
+}
+
+.prose li::marker {
+  color: var(--ink-3);
 }
 
 .prose a {
-  @apply underline underline-offset-4 transition-colors;
-  color: var(--color-accent-hover);
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--ink-3);
+  text-underline-offset: 0.2em;
 }
 
 .prose a:hover {
-  color: var(--color-accent-light);
+  text-decoration-color: var(--ink);
 }
 
 .prose strong {
-  @apply text-text-primary font-semibold;
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .prose blockquote {
-  @apply border-l-2 border-accent pl-4 italic text-text-muted my-4;
+  border-left: 2px solid var(--rule);
+  padding-left: 1rem;
+  font-style: italic;
+  margin: 1.5rem 0;
 }
 
 .prose hr {
-  @apply border-border my-8;
-}
-
-.prose img {
-  @apply rounded-lg border border-border;
+  border-color: var(--rule);
+  margin: 2.5rem 0;
 }
 
 .prose table {
-  @apply w-full text-sm border-collapse my-6;
+  width: 100%;
+  font-size: 0.9375rem;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
 }
 
 .prose thead th {
-  @apply text-left text-text-primary font-medium px-4 py-2 border-b border-border;
+  color: var(--ink);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  border-bottom: 1px solid var(--ink-3);
 }
 
 .prose tbody td {
-  @apply px-4 py-2 border-b border-border;
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.prose :not(pre) > code {
+  font-size: 0.9em;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0.05em 0.35em;
+  color: var(--ink);
+}
+
+.prose::after {
+  content: '';
+  display: table;
+  clear: both;
 }

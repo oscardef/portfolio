@@ -1,35 +1,16 @@
-import { Github, Linkedin, Mail } from 'lucide-react';
-import { siteConfig } from '@/lib/constants';
-
-const socialLinks = [
-  { href: siteConfig.links.github, icon: Github, label: 'GitHub' },
-  { href: siteConfig.links.linkedin, icon: Linkedin, label: 'LinkedIn' },
-  { href: siteConfig.links.email, icon: Mail, label: 'Email' },
-];
+import Link from 'next/link';
 
 export function Footer() {
   return (
-    <footer className="border-t border-border mt-24">
-      <div className="mx-auto max-w-6xl px-6 py-10">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-text-muted">
-            © {new Date().getFullYear()} {siteConfig.name}. Built with Next.js &amp; Tailwind.
-          </p>
-          <div className="flex items-center gap-4">
-            {socialLinks.map(({ href, icon: Icon, label }) => (
-              <a
-                key={label}
-                href={href}
-                target={href.startsWith('mailto:') ? undefined : '_blank'}
-                rel={href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-                className="text-text-muted hover:text-accent transition-colors p-2"
-                aria-label={label}
-              >
-                <Icon size={18} />
-              </a>
-            ))}
-          </div>
-        </div>
+    <footer className="border-t border-rule">
+      <div className="mx-auto flex max-w-[1200px] flex-col gap-2 px-4 py-8 text-sm text-ink-2 sm:flex-row sm:justify-between sm:px-6 md:px-10">
+        <p>© {new Date().getFullYear()} Oscar de Francesca</p>
+        <p>
+          Maps drawn from <a href="https://www.naturalearthdata.com" className="underline decoration-ink-3 underline-offset-4 hover:text-ink">Natural Earth</a> data.{' '}
+          <Link href="/projects/portfolio" className="underline decoration-ink-3 underline-offset-4 hover:text-ink">
+            How this site is built
+          </Link>
+        </p>
       </div>
     </footer>
   );

@@ -26,7 +26,7 @@ export const mdxComponents: MDXComponents = {
       width={800}
       height={500}
       unoptimized={props.src?.endsWith('.gif')}
-      className="rounded-lg border border-border my-4 w-full h-auto"
+      className="rounded-[3px] border border-rule my-4 w-full h-auto"
     />
   ),
   a: (props) => (
@@ -34,7 +34,7 @@ export const mdxComponents: MDXComponents = {
       {...props}
       target={props.href?.startsWith('http') ? '_blank' : undefined}
       rel={props.href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-      className="text-accent hover:text-accent-hover underline underline-offset-4 transition-colors"
+      className="text-ink underline decoration-ink-3 underline-offset-4 hover:decoration-ink"
     />
   ),
 };

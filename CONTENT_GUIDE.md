@@ -14,6 +14,14 @@ content/
 
 Each `.mdx` file = one page. The filename becomes the URL slug.
 
+The home page is one scrolling page. Every project and experience with a
+`chapter` appears on the route under that place; opening it shows its page as
+a sheet over the home page (and as a full page at `/projects/<slug>` or
+`/experience/<slug>` when visited directly).
+
+The route itself (the places lived, in order, with their notes and the
+degrees studied at each) lives in `src/data/route.ts`.
+
 ---
 
 ## Adding a New Project
@@ -30,9 +38,12 @@ content/projects/{slug}.mdx
 ---
 title: "Project Title"
 slug: "project-slug"            # Must match filename
+chapter: "lausanne"             # Route stop id from src/data/route.ts; omit to keep it off the route
+kind: "ml"                      # systems | ml | hardware | products | teaching (the "by kind" view)
+blurb: "One line for the row on the route."
 date: "2025-01-15"              # YYYY-MM-DD, used for sorting
 type: "school"                  # school | personal | company
-featured: true                  # Show on home page (top 4 by date)
+featured: true                  # Larger image on the route
 summary: "One-paragraph summary for cards and meta descriptions."
 tags: ["ml", "web"]             # From tag taxonomy (see below)
 stack: ["Python", "PyTorch"]    # Technologies used
@@ -116,6 +127,9 @@ content/experience/{slug}.mdx
 ---
 title: "Job Title"
 slug: "company-slug"            # Must match filename
+chapter: "london"               # Route stop id from src/data/route.ts; omit to keep it off the route
+kind: "systems"                 # systems | ml | hardware | products | teaching
+blurb: "One line for the row on the route."
 organization: "Company Name"
 location: "City, Country"
 startDate: "2024-01"            # YYYY-MM
@@ -222,7 +236,7 @@ These render as linked cards at the bottom of detail pages.
 
 ## Travel Data
 
-Travel entries appear as markers on the 3D globe and in the searchable travel list.  
+Travel entries appear as dots on the world map in the Places section and in its searchable list. Places on the route (`src/data/route.ts`) are coloured; trips are ink dots.  
 Data lives in `src/data/travel.ts`.
 
 ### Adding a place manually

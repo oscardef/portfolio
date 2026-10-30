@@ -5,15 +5,9 @@ interface DiagramBlockProps {
 
 export function DiagramBlock({ title, children }: DiagramBlockProps) {
   return (
-    <div className="not-prose my-8 rounded-xl border border-border bg-bg-card p-6">
-      {title && (
-        <p className="text-xs font-medium text-text-muted uppercase tracking-wider mb-4">
-          {title}
-        </p>
-      )}
-      <div className="text-sm text-text-secondary [&>*]:leading-relaxed">
-        {children}
-      </div>
+    <div className="not-prose my-8 rounded-[3px] border border-rule bg-paper p-6">
+      {title && <p className="mb-4 text-sm font-semibold text-ink">{title}</p>}
+      <div className="text-sm text-ink-2 [&>*]:leading-relaxed">{children}</div>
     </div>
   );
 }

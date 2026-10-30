@@ -31,10 +31,10 @@ export function FloatingImage({
         width={width}
         height={height}
         unoptimized={src.endsWith('.gif')}
-        className="rounded-lg border border-border w-full h-auto"
+        className="rounded-[3px] border border-rule w-full h-auto"
       />
       {caption && (
-        <figcaption className="text-xs text-text-muted mt-2 text-center italic">
+        <figcaption className="mt-2 text-sm text-ink-2">
           {caption}
         </figcaption>
       )}

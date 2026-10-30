@@ -11,7 +11,7 @@ export function VideoEmbed({ src, title = 'Video' }: VideoEmbedProps) {
 
   return (
     <div className="my-6">
-      <div className="relative aspect-video overflow-hidden rounded-lg border border-border">
+      <div className="relative aspect-video overflow-hidden rounded-[3px] border border-rule">
         <iframe
           src={embedUrl}
           title={title}
@@ -21,7 +21,7 @@ export function VideoEmbed({ src, title = 'Video' }: VideoEmbedProps) {
         />
       </div>
       {title && title !== 'Video' && (
-        <p className="mt-2 text-xs text-text-muted text-center">{title}</p>
+        <p className="mt-2 text-sm text-ink-2">{title}</p>
       )}
     </div>
   );
