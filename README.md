@@ -15,9 +15,17 @@ npm run dev
 - **TypeScript** (strict mode)
 - **Tailwind CSS v4**
 - **MDX** via next-mdx-remote for project & experience write-ups
-- **Framer Motion** for animations
+- **d3-geo** and **world-atlas** for the globe, drawn on a canvas
+- **React View Transitions** for the project and role sheets
 - **Zod** for content schema validation
 - **Shiki** for syntax highlighting
+
+## Structure
+
+- `/` is one page: an introduction and summary, selected projects, experience, then "The route" (a
+  scroll-driven globe of every place lived, `src/data/route.ts`), places visited, interests and contact.
+- `/projects` and `/experience` list everything. Projects and roles open as sheets over whichever page
+  you're on (intercepting routes in `src/app/@sheet`) and render as full pages when visited directly.
 
 ## Adding Content
 

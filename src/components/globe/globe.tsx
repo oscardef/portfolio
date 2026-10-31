@@ -69,7 +69,7 @@ function viewFor(data: GlobeData, mode: GlobeProps['mode'], active: number, deto
     const home = data.stops[trip.from];
     const [lng, lat] = geoInterpolate([home.lng, home.lat], [trip.lng, trip.lat])(0.5);
     const distance = geoDistance([home.lng, home.lat], [trip.lng, trip.lat]);
-    return { lng, lat: lat - 1, zoom: Math.min(5, Math.max(1.5, 0.55 / distance)) };
+    return { lng, lat: lat - 1, zoom: Math.min(3.8, Math.max(1.5, 0.55 / distance)) };
   }
   const stop = data.stops[active];
   if (!stop) return OVERVIEW;
@@ -165,9 +165,8 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
     }
 
     function tripTarget(t: number): number {
-      const { mode, active } = e.props;
-      if (mode === 'travel' || active < 0) return 1;
-      return active >= data.trips[t].from ? 1 : 0;
+      const { mode, detour } = e.props;
+      return mode === 'route' && detour === t ? 1 : 0;
     }
 
     // Advance leg animations; returns true while anything is still moving
@@ -367,7 +366,7 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
           dot(pt.x, pt.y, reached(i) ? 4 : 3, colour(s.hue, reached(i) ? 1 : 0.35));
         });
         data.trips.forEach((t, i) => {
-          if (e.trips[i] < 1) return;
+          if (e.trips[i] < 0.95) return;
           const pt = project([t.lng, t.lat]);
           if (pt.front) dot(pt.x, pt.y, 3, colour(data.stops[t.from].hue));
         });
@@ -518,8 +517,9 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
     e.kick();
   }, [data, mode, active, focus, detour]);
 
-  const labelPlace =
-    mode === 'route' ? (detour !== null ? data.trips[detour]?.place : data.stops[active]?.place) : undefined;
+  const trip = mode === 'route' && detour !== null ? data.trips[detour] : undefined;
+  const stop = mode === 'route' ? data.stops[active] : undefined;
+  const label = trip ? { place: trip.place, note: String(trip.year) } : stop ? { place: stop.place, note: '' } : null;
 
   return (
     // Callers position the globe (e.g. absolute inset-0); it fills that box
@@ -539,9 +539,10 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
         aria-hidden="true"
         className="pointer-events-none absolute left-0 top-0 opacity-0 transition-opacity duration-300"
       >
-        {labelPlace && (
-          <span className="place-name absolute bottom-3 left-3 whitespace-nowrap rounded-full bg-bg/80 px-3 py-1 text-lg text-text-primary backdrop-blur">
-            {labelPlace}
+        {label && (
+          <span className="absolute bottom-3 left-3 flex items-baseline gap-2 whitespace-nowrap rounded-full bg-bg/80 px-3 py-1 backdrop-blur">
+            <span className="place-name text-lg text-text-primary">{label.place}</span>
+            {label.note && <span className="tnum text-xs text-text-muted">{label.note}</span>}
           </span>
         )}
       </div>

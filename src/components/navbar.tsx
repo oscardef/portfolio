@@ -4,63 +4,76 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { sections, siteConfig } from '@/lib/constants';
+import { navItems, siteConfig } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from './theme-toggle';
 
+type NavItem = { label: string; href: string; section?: string };
+
+const mobileItems: NavItem[] = [...navItems, { label: 'Contact', href: '/#contact', section: 'contact' }];
+
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [current, setCurrent] = useState<string | null>(null);
+  const [section, setSection] = useState<string | null>(null);
   const pathname = usePathname();
 
-  // Mark the section in the middle of the viewport as current
+  // On the home page, mark the section in the middle of the viewport
   useEffect(() => {
     if (pathname !== '/') return;
     const observer = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) if (entry.isIntersecting) setCurrent(entry.target.id);
+        for (const entry of entries) if (entry.isIntersecting) setSection(entry.target.id);
       },
       { rootMargin: '-45% 0px -50% 0px' }
     );
-    for (const s of sections) {
-      const el = document.getElementById(s.id);
+    for (const id of ['top', 'glance', 'work', 'route', 'places', 'about', 'contact']) {
+      const el = document.getElementById(id);
       if (el) observer.observe(el);
     }
     return () => observer.disconnect();
   }, [pathname]);
 
+  const isCurrent = (item: NavItem) =>
+    item.section ? pathname === '/' && section === item.section : pathname.startsWith(item.href);
+
   return (
     <header className="fixed left-0 right-0 top-0 z-40 border-b border-border/60 bg-bg/80 backdrop-blur-xl">
       <nav className="container-page flex h-16 items-center justify-between" aria-label="Main navigation">
         <Link
-          href="/#top"
+          href="/"
           className="text-lg font-semibold tracking-tight text-text-primary transition-colors hover:text-accent-light"
         >
           {siteConfig.name.split(' ')[0].toLowerCase()}
           <span className="text-accent">.</span>
         </Link>
 
-        <div className="hidden items-center gap-7 md:flex">
-          {sections.map((s) => (
+        <div className="hidden items-center gap-6 lg:flex">
+          {navItems.map((item) => (
             <Link
-              key={s.id}
-              href={`/#${s.id}`}
-              aria-current={current === s.id ? 'location' : undefined}
+              key={item.href}
+              href={item.href}
+              aria-current={isCurrent(item) ? ('section' in item ? 'location' : 'page') : undefined}
               className={cn(
                 'relative py-1 text-sm transition-colors',
-                current === s.id ? 'font-medium text-text-primary' : 'text-text-muted hover:text-text-primary'
+                isCurrent(item) ? 'font-medium text-text-primary' : 'text-text-muted hover:text-text-primary'
               )}
             >
-              {s.label}
-              {current === s.id && (
+              {item.label}
+              {isCurrent(item) && (
                 <span className="absolute -bottom-0.5 left-0 right-0 h-[2px] rounded-full bg-accent" />
               )}
             </Link>
           ))}
           <ThemeToggle />
+          <Link
+            href="/#contact"
+            className="rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover"
+          >
+            Contact
+          </Link>
         </div>
 
-        <div className="flex items-center gap-1 md:hidden">
+        <div className="flex items-center gap-1 lg:hidden">
           <ThemeToggle />
           <button
             type="button"
@@ -76,19 +89,21 @@ export function Navbar() {
       </nav>
 
       {isOpen && (
-        <div id="mobile-menu" className="border-t border-border/60 bg-bg/95 backdrop-blur-xl md:hidden">
-          <div className="container-page flex flex-col gap-4 py-4">
-            {sections.map((s) => (
+        <div id="mobile-menu" className="border-t border-border/60 bg-bg/95 backdrop-blur-xl lg:hidden">
+          <div className="container-page flex flex-col gap-1 py-3">
+            {mobileItems.map((item) => (
               <Link
-                key={s.id}
-                href={`/#${s.id}`}
+                key={item.href}
+                href={item.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  'py-1 text-sm transition-colors',
-                  current === s.id ? 'font-medium text-text-primary' : 'text-text-muted hover:text-text-primary'
+                  'rounded-lg px-2 py-2.5 text-[0.9375rem] transition-colors',
+                  isCurrent(item)
+                    ? 'font-medium text-text-primary'
+                    : 'text-text-secondary hover:text-text-primary'
                 )}
               >
-                {s.label}
+                {item.label}
               </Link>
             ))}
           </div>

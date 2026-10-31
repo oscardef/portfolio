@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
-import { ChevronLeft, ChevronRight, GraduationCap, Plane } from 'lucide-react';
+import { ChevronLeft, ChevronRight, GraduationCap, MapPin } from 'lucide-react';
 import type { JourneyChapter, JourneyItem } from '@/lib/journey';
 import type { GlobeData, GlobeTrip } from '@/lib/globe-data';
 import { cn } from '@/lib/utils';
@@ -14,7 +14,7 @@ const Globe = dynamic(() => import('./globe/globe').then((m) => m.Globe), { ssr:
 
 const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 const inWords = (n: number) => WORDS[n] ?? String(n);
-const typeOf = (item: JourneyItem) => item.id.split('-')[0];
+const typeOf = (item: JourneyItem) => item.type;
 
 // Where the globe's column sticks, in px from the top of the viewport (lg:top-20)
 const STICKY_TOP = 80;
@@ -168,7 +168,7 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
           <div
             ref={introRef}
             data-index={-1}
-            className="flex h-[28vh] items-end pb-10 lg:h-[105vh] lg:pb-[30vh]"
+            className="flex h-[24vh] items-end pb-10 lg:h-[80vh] lg:pb-[22vh]"
           >
             <p className="max-w-[40ch] text-text-muted lg:[opacity:calc((var(--settled,1)-0.75)*4)]">
               The whole route, from Bangkok in 2003 to Basel today. Keep scrolling to go place by place.
@@ -368,14 +368,7 @@ function RoleRow({
           <span className="text-lg font-semibold text-slate-900">{item.name.charAt(0)}</span>
         )}
       </div>
-      <RowText item={item}>
-        {trip !== null && (
-          <p className="hue mt-1.5 inline-flex items-center gap-1.5 text-xs font-medium">
-            <Plane size={13} aria-hidden="true" />
-            Side trip to {item.place}
-          </p>
-        )}
-      </RowText>
+      <RowText item={item} away={trip !== null} />
       <ChevronRight
         size={18}
         aria-hidden="true"
@@ -396,7 +389,7 @@ function StudyRow({ item }: { item: JourneyItem }) {
   );
 }
 
-function RowText({ item, children }: { item: JourneyItem; children?: React.ReactNode }) {
+function RowText({ item, away = false }: { item: JourneyItem; away?: boolean }) {
   return (
     <div className="min-w-0 flex-1">
       <div className="flex items-start justify-between gap-3">
@@ -404,12 +397,17 @@ function RowText({ item, children }: { item: JourneyItem; children?: React.React
           <p className="font-semibold leading-snug">{item.name}</p>
           <p className="text-sm text-text-muted">
             {item.detail}
+            {away && (
+              <span className="whitespace-nowrap">
+                {' '}
+                in <MapPin size={12} aria-hidden="true" className="hue mb-0.5 inline" /> {item.place}
+              </span>
+            )}
             <span className="tnum sm:hidden">, {item.period}</span>
           </p>
         </div>
         <span className="tnum hidden shrink-0 pt-0.5 text-sm text-text-muted sm:block">{item.period}</span>
       </div>
-      {children}
       <p className="mt-1.5 line-clamp-2 text-[0.9375rem] leading-snug text-text-secondary">{item.blurb}</p>
     </div>
   );

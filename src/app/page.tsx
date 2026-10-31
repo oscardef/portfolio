@@ -1,10 +1,13 @@
 import Image from 'next/image';
-import { Dumbbell, Github, Linkedin, Mail, Plane, UtensilsCrossed } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, Dumbbell, Github, Linkedin, Mail, Plane, UtensilsCrossed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EmailLink } from '@/components/email-link';
+import { AtAGlance } from '@/components/at-a-glance';
+import { ProjectCard, RoleRow } from '@/components/cards';
 import { RouteSection } from '@/components/route-section';
 import { PlacesSection } from '@/components/places-section';
-import { getJourney } from '@/lib/journey';
+import { getExperienceItems, getJourney, getProjectItems } from '@/lib/journey';
 import { getGlobeData } from '@/lib/globe-data';
 import { siteConfig } from '@/lib/constants';
 
@@ -43,7 +46,8 @@ const ROUTE_GRADIENT =
   'linear-gradient(140deg, oklch(0.78 0.13 75), oklch(0.72 0.15 20), oklch(0.68 0.15 320), oklch(0.7 0.13 260), oklch(0.78 0.12 190))';
 
 export default async function HomePage() {
-  const { chapters } = await getJourney();
+  const [{ chapters }, projects, roles] = await Promise.all([getJourney(), getProjectItems(), getExperienceItems()]);
+  const featured = projects.filter((p) => p.featured);
   const globe = getGlobeData();
 
   return (
@@ -77,8 +81,8 @@ export default async function HomePage() {
               Right now I’m in Basel, writing my master’s thesis at ETH Zurich.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Button href="/#route" icon="arrow">
-                Follow the route
+              <Button href="/#work" icon="arrow">
+                See my work
               </Button>
               <Button href="/#contact" variant="secondary">
                 Get in touch
@@ -130,6 +134,36 @@ export default async function HomePage() {
                   className="object-contain opacity-60 brightness-0 invert transition-opacity hover:opacity-100 [[data-theme=light]_&]:invert-0"
                   style={{ height: org.height * 0.85, width: 'auto' }}
                 />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <AtAGlance />
+
+      {/* ── Selected projects ── */}
+      <section id="work" aria-labelledby="work-title" className="py-20 md:py-28">
+        <div className="container-page">
+          <SectionHeader id="work-title" title="Selected projects" href="/projects" link={`All ${projects.length} projects`} />
+          <ul className="mt-10 grid gap-6 sm:grid-cols-2">
+            {featured.map((item) => (
+              <li key={item.id}>
+                <ProjectCard item={item} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ── Experience ── */}
+      <section id="experience" aria-labelledby="experience-title" className="py-20 md:py-28">
+        <div className="container-page">
+          <SectionHeader id="experience-title" title="Experience" href="/experience" link="Experience in detail" />
+          <ul className="mt-10 space-y-2.5">
+            {roles.map((item) => (
+              <li key={item.id}>
+                <RoleRow item={item} />
               </li>
             ))}
           </ul>
@@ -210,5 +244,22 @@ export default async function HomePage() {
         </div>
       </section>
     </>
+  );
+}
+
+function SectionHeader({ id, title, href, link }: { id: string; title: string; href: string; link: string }) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+      <h2 id={id} className="text-4xl font-semibold tracking-tight sm:text-5xl">
+        {title}
+      </h2>
+      <Link
+        href={href}
+        className="group inline-flex items-center gap-1.5 text-[0.9375rem] text-text-secondary transition-colors hover:text-text-primary"
+      >
+        {link}
+        <ArrowRight size={16} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />
+      </Link>
+    </div>
   );
 }

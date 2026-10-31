@@ -41,14 +41,14 @@ export default async function ProjectPage({ params }: PageProps) {
   if (!(await getProjectBySlug(slug))) notFound();
 
   return (
-    <div className="mx-auto max-w-[800px] pt-20 sm:pt-24">
+    <div className="mx-auto max-w-[800px] pb-20 pt-24 sm:pt-28">
       <Link
-        href="/#route"
+        href="/projects"
         className="mx-5 mb-6 inline-block text-sm text-ink-2 underline decoration-ink-3 underline-offset-4 hover:text-ink sm:mx-10"
       >
-        Back to the route
+        All projects
       </Link>
-      <div className="border-y border-rule bg-paper-raised sm:border-x">
+      <div className="overflow-hidden border-y border-rule bg-paper-raised sm:rounded-3xl sm:border-x">
         <ProjectDetail slug={slug} />
       </div>
     </div>

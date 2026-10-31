@@ -14,6 +14,11 @@ content/
 
 Each `.mdx` file = one page. The filename becomes the URL slug.
 
+Projects and experiences with a `chapter` also appear on the home page's route, under that place
+(`src/data/route.ts` lists the places, their notes and photos). A role whose `location` is somewhere
+other than its chapter's place (Securrency in Abu Dhabi, ASML in Veldhoven) is a side trip: add the
+place to `sideTrips` in `route.ts` and the globe makes a detour when that role is in view.
+
 ---
 
 ## Adding a New Project
@@ -30,9 +35,12 @@ content/projects/{slug}.mdx
 ---
 title: "Project Title"
 slug: "project-slug"            # Must match filename
+chapter: "lausanne"             # Route stop id from src/data/route.ts; omit to keep it off the route
+kind: "ml"                      # systems | ml | hardware | products | teaching (the /projects filters)
+blurb: "One line for cards on the home page and the route."
 date: "2025-01-15"              # YYYY-MM-DD, used for sorting
 type: "school"                  # school | personal | company
-featured: true                  # Show on home page (top 4 by date)
+featured: true                  # Shown under "Selected projects" on the home page, and first on /projects
 summary: "One-paragraph summary for cards and meta descriptions."
 tags: ["ml", "web"]             # From tag taxonomy (see below)
 stack: ["Python", "PyTorch"]    # Technologies used
@@ -116,6 +124,10 @@ content/experience/{slug}.mdx
 ---
 title: "Job Title"
 slug: "company-slug"            # Must match filename
+chapter: "london"               # Route stop id from src/data/route.ts
+kind: "systems"                 # systems | ml | hardware | products | teaching
+blurb: "One line for the route."
+logo: "/images/logos/company.svg"  # Shown on cards and on the role's page
 organization: "Company Name"
 location: "City, Country"
 startDate: "2024-01"            # YYYY-MM
@@ -222,7 +234,7 @@ These render as linked cards at the bottom of detail pages.
 
 ## Travel Data
 
-Travel entries appear as markers on the 3D globe and in the searchable travel list.  
+Travel entries appear on the "Places I've been" globe (visited countries lit, every place marked) and in its searchable list by country.  
 Data lives in `src/data/travel.ts`.
 
 ### Adding a place manually

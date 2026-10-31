@@ -1,23 +1,35 @@
 import { getAllExperiences, getAllProjects } from './content';
-import type { Kind } from './schemas';
+import type { Experience, Project, Kind } from './schemas';
 import { route, studyItems, hueOf, formatYears, type PlacePhoto } from '@/data/route';
+
+/**
+ * Projects, roles and studies as one kind of item, so the home page, the
+ * route, and the /projects and /experience pages can share cards.
+ */
+
+export type ItemType = 'project' | 'experience' | 'study';
 
 export interface JourneyItem {
   id: string;
+  type: ItemType;
+  slug: string;
   name: string;
   detail: string;
   place: string;
-  hue: number;
+  hue: number | null;
   period: string;
   sortKey: number;
   blurb: string;
+  summary: string;
+  highlights: string[];
   kind: Kind;
-  chapter: string;
+  chapter?: string;
   href?: string;
   image?: { src: string; alt: string };
   logo?: string;
   stack: string[];
   featured: boolean;
+  roleTypes: Experience['type'];
 }
 
 export interface JourneyChapter {
@@ -31,13 +43,7 @@ export interface JourneyChapter {
   items: JourneyItem[];
 }
 
-export interface KindGroup {
-  kind: Kind;
-  title: string;
-  items: JourneyItem[];
-}
-
-const KIND_TITLES: Record<Kind, string> = {
+export const KIND_TITLES: Record<Kind, string> = {
   systems: 'Systems and infrastructure',
   ml: 'Machine learning and research',
   hardware: 'Hardware and robotics',
@@ -45,8 +51,6 @@ const KIND_TITLES: Record<Kind, string> = {
   teaching: 'Teaching',
   study: 'Study',
 };
-
-const KIND_ORDER: Kind[] = ['systems', 'ml', 'hardware', 'products', 'teaching', 'study'];
 
 const MONTH = new Intl.DateTimeFormat('en-GB', { month: 'short', timeZone: 'UTC' });
 
@@ -63,71 +67,100 @@ function period(start: string, end: string): string {
   return `${a.month} ${a.year} – ${b.month} ${b.year}`;
 }
 
-function city(location: string | undefined, fallback: string): string {
-  return location?.split(',')[0]?.trim() || fallback;
+const placeOf = (chapter?: string) => route.find((s) => s.id === chapter)?.place ?? '';
+
+function city(location: string | undefined, chapter?: string): string {
+  return location?.split(',')[0]?.trim() || placeOf(chapter);
 }
 
-export async function getJourney(): Promise<{ chapters: JourneyChapter[]; groups: KindGroup[] }> {
-  const [projects, experiences] = await Promise.all([getAllProjects(), getAllExperiences()]);
-  const placeOf = (chapter: string) => route.find((s) => s.id === chapter)?.place ?? '';
+function fromExperience(e: Experience): JourneyItem {
+  return {
+    id: `experience-${e.slug}`,
+    type: 'experience',
+    slug: e.slug,
+    name: e.organization,
+    detail: e.title,
+    place: city(e.location, e.chapter),
+    hue: e.chapter ? hueOf(e.chapter) : null,
+    period: period(e.startDate, e.endDate),
+    sortKey: Date.parse(`${e.startDate}-01`),
+    blurb: e.blurb,
+    summary: e.summary,
+    highlights: e.highlights,
+    kind: e.kind,
+    chapter: e.chapter,
+    href: `/experience/${e.slug}`,
+    logo: e.logo,
+    stack: e.stack,
+    featured: false,
+    roleTypes: e.type,
+  };
+}
 
-  const items: JourneyItem[] = [
-    ...experiences
-      .filter((e) => e.chapter)
-      .map((e) => ({
-        id: `experience-${e.slug}`,
-        name: e.organization,
-        detail: e.title,
-        place: city(e.location, placeOf(e.chapter!)),
-        hue: hueOf(e.chapter!),
-        period: period(e.startDate, e.endDate),
-        sortKey: Date.parse(`${e.startDate}-01`),
-        blurb: e.blurb,
-        kind: e.kind,
-        chapter: e.chapter!,
-        href: `/experience/${e.slug}`,
-        logo: e.logo,
-        stack: e.stack,
-        featured: false,
-      })),
-    ...projects
-      .filter((p) => p.chapter)
-      .map((p) => {
-        const [name, ...rest] = p.title.split(':');
-        return {
-          id: `project-${p.slug}`,
-          name: name.trim(),
-          detail: rest.join(':').trim(),
-          place: city(p.location, placeOf(p.chapter!)),
-          hue: hueOf(p.chapter!),
-          period: String(new Date(p.date).getUTCFullYear()),
-          sortKey: Date.parse(p.date),
-          blurb: p.blurb,
-          kind: p.kind,
-          chapter: p.chapter!,
-          href: `/projects/${p.slug}`,
-          image: p.heroImage,
-          stack: p.stack,
-          featured: p.featured,
-        };
-      }),
-    ...studyItems.map((s) => ({
-      id: `study-${s.id}`,
-      name: s.title,
-      detail: s.org,
-      place: placeOf(s.chapter),
-      hue: hueOf(s.chapter),
-      period: s.period,
-      sortKey: Date.parse(`${s.period.slice(0, 4)}-09-01`),
-      blurb: s.blurb,
-      kind: 'study' as const,
-      chapter: s.chapter,
-      stack: [],
-      featured: false,
-    })),
-  ];
+function fromProject(p: Project): JourneyItem {
+  const [name, ...rest] = p.title.split(':');
+  return {
+    id: `project-${p.slug}`,
+    type: 'project',
+    slug: p.slug,
+    name: name.trim(),
+    detail: rest.join(':').trim(),
+    place: city(p.location, p.chapter),
+    hue: p.chapter ? hueOf(p.chapter) : null,
+    period: String(new Date(p.date).getUTCFullYear()),
+    sortKey: Date.parse(p.date),
+    blurb: p.blurb,
+    summary: p.summary,
+    highlights: p.highlights,
+    kind: p.kind,
+    chapter: p.chapter,
+    href: `/projects/${p.slug}`,
+    image: p.heroImage,
+    stack: p.stack,
+    featured: p.featured,
+    roleTypes: [],
+  };
+}
 
-  // By place: studies open each chapter, then everything else in order
+const studies: JourneyItem[] = studyItems.map((s) => ({
+  id: `study-${s.id}`,
+  type: 'study',
+  slug: s.id,
+  name: s.title,
+  detail: s.org,
+  place: placeOf(s.chapter),
+  hue: hueOf(s.chapter),
+  period: s.period,
+  sortKey: Date.parse(`${s.period.slice(0, 4)}-09-01`),
+  blurb: s.blurb,
+  summary: s.blurb,
+  highlights: [],
+  kind: 'study',
+  chapter: s.chapter,
+  stack: [],
+  featured: false,
+  roleTypes: [],
+}));
+
+const newestFirst = (a: JourneyItem, b: JourneyItem) => b.sortKey - a.sortKey;
+
+export async function getProjectItems(): Promise<JourneyItem[]> {
+  return (await getAllProjects()).map(fromProject).sort(newestFirst);
+}
+
+export async function getExperienceItems(): Promise<JourneyItem[]> {
+  return (await getAllExperiences()).map(fromExperience).sort(newestFirst);
+}
+
+export function getStudyItems(): JourneyItem[] {
+  return [...studies].sort(newestFirst);
+}
+
+// The route: one chapter per place lived, with what happened there
+export async function getJourney(): Promise<{ chapters: JourneyChapter[] }> {
+  const [projects, experiences] = await Promise.all([getProjectItems(), getExperienceItems()]);
+  const items = [...experiences, ...projects, ...studies].filter((i) => i.chapter);
+
   const chapters = route.map((stop) => ({
     id: stop.id,
     place: stop.place,
@@ -136,17 +169,8 @@ export async function getJourney(): Promise<{ chapters: JourneyChapter[]; groups
     note: stop.note,
     hue: hueOf(stop.id),
     photo: stop.photo,
-    items: items
-      .filter((i) => i.chapter === stop.id)
-      .sort((a, b) => Number(b.kind === 'study') - Number(a.kind === 'study') || a.sortKey - b.sortKey),
+    items: items.filter((i) => i.chapter === stop.id).sort((a, b) => a.sortKey - b.sortKey),
   }));
 
-  // By kind: newest first
-  const groups = KIND_ORDER.map((kind) => ({
-    kind,
-    title: KIND_TITLES[kind],
-    items: items.filter((i) => i.kind === kind).sort((a, b) => b.sortKey - a.sortKey),
-  })).filter((g) => g.items.length > 0);
-
-  return { chapters, groups };
+  return { chapters };
 }

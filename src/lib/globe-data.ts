@@ -22,6 +22,7 @@ export interface GlobeStop {
 export interface GlobeTrip {
   from: number; // index into stops
   place: string;
+  year: number;
   lng: number;
   lat: number;
 }
@@ -64,7 +65,7 @@ export function getGlobeData(): GlobeData {
 
   const trips = sideTrips.map((t) => {
     const [lng, lat] = coordsOf(t.place, t.country);
-    return { from: route.findIndex((s) => s.id === t.from), place: t.place, lng, lat };
+    return { from: route.findIndex((s) => s.id === t.from), place: t.place, year: t.year, lng, lat };
   });
 
   const lived: Record<string, number> = {};

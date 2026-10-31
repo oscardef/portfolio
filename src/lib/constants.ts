@@ -25,10 +25,11 @@ export const siteConfig = {
   ],
 } as const;
 
-// Sections of the home page, in order, for the navigation
-export const sections = [
-  { id: 'route', label: 'The route' },
-  { id: 'places', label: 'Places' },
-  { id: 'about', label: 'About' },
-  { id: 'contact', label: 'Contact' },
+// Navigation: the two index pages, then sections of the home page
+export const navItems = [
+  { label: 'Experience', href: '/experience' },
+  { label: 'Projects', href: '/projects' },
+  { label: 'The route', href: '/#route', section: 'route' },
+  { label: 'Places', href: '/#places', section: 'places' },
+  { label: 'About', href: '/#about', section: 'about' },
 ] as const;
