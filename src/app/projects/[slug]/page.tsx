@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ChevronLeft } from 'lucide-react';
 import { getProjectBySlug, getProjectSlugs } from '@/lib/content';
 import { ProjectDetail } from '@/components/detail';
 import { siteConfig } from '@/lib/constants';
@@ -41,15 +42,16 @@ export default async function ProjectPage({ params }: PageProps) {
   if (!(await getProjectBySlug(slug))) notFound();
 
   return (
-    <div className="mx-auto max-w-[800px] pb-20 pt-24 sm:pt-28">
-      <Link
-        href="/projects"
-        className="mx-5 mb-6 inline-block text-sm text-ink-2 underline decoration-ink-3 underline-offset-4 hover:text-ink sm:mx-10"
-      >
-        All projects
-      </Link>
-      <div className="overflow-hidden border-y border-rule bg-paper-raised sm:rounded-3xl sm:border-x">
-        <ProjectDetail slug={slug} />
+    <div className="container-page pb-24 pt-28 md:pb-32 md:pt-36">
+      <div className="mx-auto max-w-[68rem]">
+        <Link
+          href="/projects"
+          className="mb-8 inline-flex items-center gap-1 text-sm text-ink-2 transition-colors hover:text-ink"
+        >
+          <ChevronLeft size={16} aria-hidden="true" />
+          All projects
+        </Link>
+        <ProjectDetail slug={slug} page />
       </div>
     </div>
   );

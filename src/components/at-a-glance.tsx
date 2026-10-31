@@ -75,17 +75,24 @@ export function AtAGlance() {
 
         <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Card label="Now" className="lg:col-span-2" aside={<Org logo="/images/logos/eth.svg" name="ETH Zurich" />}>
-            <h3 className="text-2xl font-semibold tracking-tight">Master’s thesis at ETH Zurich</h3>
-            <p className="mt-3 max-w-[58ch] leading-relaxed text-text-secondary">
-              Diffusion language models for antibody design, in Prof. Sai Reddy’s Laboratory for Systems and
-              Synthetic Immunology in Basel. It’s the final part of my MSc in Computer Science at EPFL, supervised
-              there by Prof. Maria Brbic.
-            </p>
-            <p className="mt-3 leading-relaxed text-text-secondary">
-              The question: can a diffusion language model generate the most variable loop of an antibody,
-              conditioned on the rest of it, well enough to pass structural checks?
-            </p>
-            <p className="tnum mt-auto pt-4 text-sm text-text-muted">October 2026 to April 2027</p>
+            <div className="grid flex-1 gap-x-10 gap-y-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]">
+              <div className="flex flex-col">
+                <h3 className="text-2xl font-semibold tracking-tight">Master’s thesis at ETH Zurich</h3>
+                <p className="mt-3 max-w-[58ch] leading-relaxed text-text-secondary">
+                  Diffusion language models for antibody design, in Prof. Sai Reddy’s Laboratory for Systems and
+                  Synthetic Immunology in Basel. It’s the final part of my MSc in Computer Science at EPFL,
+                  supervised there by Prof. Maria Brbic.
+                </p>
+                <p className="tnum mt-auto pt-4 text-sm text-text-muted">October 2026 to April 2027</p>
+              </div>
+              <figure className="self-center border-l-2 border-accent/60 pl-5">
+                <figcaption className="text-sm text-text-muted">The question it asks</figcaption>
+                <blockquote className="place-name mt-2 text-[1.375rem] leading-snug text-text-primary">
+                  Can a diffusion language model generate the most variable loop of an antibody, conditioned on
+                  the rest of it, well enough to pass structural checks?
+                </blockquote>
+              </figure>
+            </div>
           </Card>
 
           <Card label="Most recently" aside={<Org logo="/images/logos/bloomberg.svg" name="Bloomberg" />}>

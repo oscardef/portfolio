@@ -165,6 +165,11 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
               {near && (
                 <Globe data={globe} mode="route" active={active} detour={detour} className="absolute inset-0" />
               )}
+              {/* Once the globe has settled, lines heading off-screen fade out before the chapters */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 right-0 hidden w-[30%] bg-[linear-gradient(to_right,transparent,var(--bg)_70%)] lg:block lg:opacity-[var(--settled,0)]"
+              />
             </div>
             <StopRail chapters={chapters} active={active} refs={chapterRefs} />
           </div>
@@ -289,7 +294,7 @@ function Chapter({ chapter, index, last, trips, onTrip, ref }: ChapterProps) {
           src={chapter.photo.src}
           alt={chapter.photo.alt}
           fill
-          sizes="(min-width: 1280px) 620px, (min-width: 1024px) 50vw, 100vw"
+          sizes="(min-width: 1280px) 720px, (min-width: 1024px) 50vw, 100vw"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />

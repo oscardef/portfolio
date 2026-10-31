@@ -31,6 +31,8 @@ npm run dev
 
 Projects go in `content/projects/<slug>.mdx`, experiences in `content/experience/<slug>.mdx`. See existing files for the expected frontmatter format. Hero images go in `public/images/projects/<slug>/hero.jpg`.
 
+The photos of places (`public/images/places`) and interests (`public/images/interests`) are freely licensed stand-ins from Wikimedia Commons. To use your own, replace a file under the same name and remove its credit (in `src/data/route.ts` for places, `src/app/page.tsx` for interests).
+
 Run `npm run build` after adding content — the build will fail if frontmatter doesn't match the schema.
 
 ## Scripts

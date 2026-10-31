@@ -2,14 +2,20 @@ import { Button } from '@/components/ui/button';
 
 export default function NotFound() {
   return (
-    <div className="mx-auto max-w-6xl px-6 pt-28 pb-20 text-center min-h-[60vh] flex flex-col items-center justify-center">
-      <h1 className="text-6xl font-bold text-text-primary mb-4">404</h1>
-      <p className="text-text-secondary text-lg mb-8">
-        This page doesn&apos;t exist. It may have moved, or the link is broken.
+    <div className="container-page flex min-h-[70vh] flex-col justify-center pb-24 pt-32">
+      <p className="tnum text-sm font-medium text-accent-light">404</p>
+      <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">This page doesn’t exist</h1>
+      <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-text-secondary">
+        It may have moved, or the link has a typo. Everything on the site is reachable from the home page.
       </p>
-      <Button href="/" icon="arrow">
-        Go Home
-      </Button>
+      <div className="mt-9 flex flex-wrap gap-3">
+        <Button href="/" icon="arrow">
+          Go to the home page
+        </Button>
+        <Button href="/projects" variant="secondary">
+          See all projects
+        </Button>
+      </div>
     </div>
   );
 }

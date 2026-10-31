@@ -43,3 +43,18 @@ redirecting `defrancesca.com`, replacing the stand-in place photos.
   wide screens; long text in the experience cards stays under 75ch.
 - ESLint ignores `.next.nosync`, the real build folder behind the `.next`
   symlink.
+
+## Second pass (31 Oct 2026)
+
+- **Route:** once the globe settles beside the chapters, a fade stops lines
+  heading off-screen from running under the chapter text.
+- **Now card:** the thesis question sits beside the description, set in the
+  serif used for place names, instead of leaving half the card empty.
+- **Project and experience pages** (as visited from the CV): title first,
+  a wider hero, and the facts in a sticky side column next to the write-up.
+  The sheet keeps its single column.
+- **Beyond the work:** the interests get photos, styled like the route's
+  places (stand-ins from Wikimedia Commons, credited on the page).
+- **404:** rewritten in the site's layout with a way back to the projects.
+- The teaching role says "hundreds of students", like the rest of the site.
+- Image `sizes` hints updated for the wider layout, so photos stay sharp.

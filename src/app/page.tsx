@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Dumbbell, Github, Linkedin, Mail, MapPin, Plane, UtensilsCrossed } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Mail, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EmailLink } from '@/components/email-link';
 import { AtAGlance } from '@/components/at-a-glance';
@@ -27,17 +27,38 @@ const socials = [
   { href: siteConfig.links.email, icon: Mail, label: 'Email' },
 ];
 
+// Stand-in photos from Wikimedia Commons, credited on the page; swap in
+// your own by replacing the files in public/images/interests
 const interests = [
-  { icon: Dumbbell, title: 'Health', text: 'Staying fit, mostly at the gym.' },
   {
-    icon: UtensilsCrossed,
-    title: 'Food',
-    text: 'Cooking at home, and trying new places, dishes and cuisines wherever I am.',
+    title: 'Health',
+    text: 'Staying fit, mostly at the gym.',
+    photo: {
+      src: '/images/interests/health.jpg',
+      alt: 'Racks of weight plates in a gym',
+      credit: 'Cobragym1, CC BY-SA 3.0',
+      href: 'https://commons.wikimedia.org/wiki/File:Weight_plates.jpg',
+    },
   },
   {
-    icon: Plane,
+    title: 'Food',
+    text: 'Cooking at home, and trying new places, dishes and cuisines wherever I am.',
+    photo: {
+      src: '/images/interests/food.jpg',
+      alt: 'A street food stall in Bangkok at night',
+      credit: 'Gerrit Phil Baumann, CC BY 3.0',
+      href: 'https://commons.wikimedia.org/wiki/File:Street_Food_Dinner_Bangkok_(80298455).jpeg',
+    },
+  },
+  {
     title: 'Travel',
     text: 'Ideally somewhere as different as possible from anywhere I’ve been before.',
+    photo: {
+      src: '/images/interests/travel.jpg',
+      alt: 'Yosemite Valley from Tunnel View',
+      credit: 'Diliff, CC BY-SA 3.0',
+      href: 'https://commons.wikimedia.org/wiki/File:Tunnel_View,_Yosemite_Valley,_Yosemite_NP_-_Diliff.jpg',
+    },
   },
 ];
 
@@ -184,38 +205,51 @@ export default async function HomePage() {
           <h2 id="about-title" className="text-4xl font-semibold tracking-tight sm:text-5xl">
             Beyond the work
           </h2>
-          <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-16">
-            <div className="max-w-[60ch] space-y-5 text-lg leading-relaxed text-text-secondary">
-              <p>
-                Growing up across six countries taught me to arrive somewhere unfamiliar and work out
-                quickly how it fits together. I do the same with every new codebase, team and field,
-                which is how I’ve ended up working on everything from message routing to antibody
-                design.
-              </p>
-              <p>
-                I tutor maths on the side. Between that and seven courses as a teaching assistant, I’ve
-                taught hundreds of students, and Mathium is my way of making the tutoring better.
-              </p>
-              <p>
-                I like building quickly with a good team: at LauzHack 2025 we took third place overall,
-                and second in the Huawei challenge, with an AI presentation coach built in under 48
-                hours. I speak English and Swedish natively.
-              </p>
-            </div>
-            <ul className="grid gap-4">
-              {interests.map(({ icon: Icon, title, text }) => (
-                <li key={title} className="flex gap-4 rounded-2xl border border-border bg-bg-card p-5 sm:p-6">
-                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-muted text-accent-light">
-                    <Icon size={20} aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold">{title}</h3>
-                    <p className="mt-1 text-text-secondary">{text}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+          <div className="mt-10 gap-16 text-lg leading-relaxed text-text-secondary lg:columns-2 [&>p]:mb-5 [&>p]:max-w-[60ch] [&>p]:break-inside-avoid">
+            <p>
+              Growing up across six countries taught me to arrive somewhere unfamiliar and work out
+              quickly how it fits together. I do the same with every new codebase, team and field,
+              which is how I’ve ended up working on everything from message routing to antibody
+              design.
+            </p>
+            <p>
+              I tutor maths on the side. Between that and seven courses as a teaching assistant, I’ve
+              taught hundreds of students, and Mathium is my way of making the tutoring better.
+            </p>
+            <p>
+              I like building quickly with a good team: at LauzHack 2025 we took third place overall,
+              and second in the Huawei challenge, with an AI presentation coach built in under 48
+              hours. I speak English and Swedish natively.
+            </p>
           </div>
+          <ul className="mt-10 grid gap-6 sm:grid-cols-3">
+            {interests.map(({ title, text, photo }) => (
+              <li key={title}>
+                <figure className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-bg-card">
+                  <Image
+                    src={photo.src}
+                    alt={photo.alt}
+                    fill
+                    sizes="(min-width: 1280px) 27rem, (min-width: 640px) 33vw, 100vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                  <figcaption className="absolute inset-x-0 bottom-0 p-5">
+                    <h3 className="place-name text-[2.25rem] leading-none text-white">{title}</h3>
+                  </figcaption>
+                  <a
+                    href={photo.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute right-2.5 top-2.5 rounded-full bg-black/40 px-2.5 py-0.5 text-[11px] text-white/75 backdrop-blur hover:text-white"
+                  >
+                    Photo: {photo.credit}
+                  </a>
+                </figure>
+                <p className="mt-3 leading-relaxed text-text-secondary">{text}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
