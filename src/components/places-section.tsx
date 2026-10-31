@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Search } from 'lucide-react';
+import { Minimize2, Search } from 'lucide-react';
 import type { GlobeData, GlobePlace } from '@/lib/globe-data';
 import { cn } from '@/lib/utils';
 
@@ -15,13 +15,14 @@ function normalise(s: string): string {
 interface CountryGroup {
   country: string;
   places: GlobePlace[];
-  centre: { lng: number; lat: number };
+  // Where to fly when the country is chosen: its places' centre, closer for compact countries
+  view: { lng: number; lat: number; zoom: number };
   home: boolean;
 }
 
 export function PlacesSection({ globe }: { globe: GlobeData }) {
   const [query, setQuery] = useState('');
-  const [focus, setFocus] = useState<{ lng: number; lat: number } | null>(null);
+  const [focus, setFocus] = useState<CountryGroup['view'] | null>(null);
   const [chosen, setChosen] = useState<string | null>(null);
   const [near, setNear] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -40,15 +41,18 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
     const byCountry = new Map<string, GlobePlace[]>();
     for (const p of globe.places) byCountry.set(p.country, [...(byCountry.get(p.country) ?? []), p]);
     return [...byCountry.entries()]
-      .map(([country, places]) => ({
-        country,
-        places: places.sort((a, b) => a.place.localeCompare(b.place)),
-        centre: {
-          lng: places.reduce((s, p) => s + p.lng, 0) / places.length,
-          lat: places.reduce((s, p) => s + p.lat, 0) / places.length,
-        },
-        home: places.some((p) => p.hue !== null),
-      }))
+      .map(([country, places]) => {
+        const lng = places.reduce((s, p) => s + p.lng, 0) / places.length;
+        const lat = places.reduce((s, p) => s + p.lat, 0) / places.length;
+        // Spread of the places in degrees, from the centre
+        const spread = Math.max(1, ...places.map((p) => Math.hypot((p.lng - lng) * Math.cos((lat * Math.PI) / 180), p.lat - lat)));
+        return {
+          country,
+          places: places.sort((a, b) => a.place.localeCompare(b.place)),
+          view: { lng, lat, zoom: Math.min(6, Math.max(1.8, 22 / spread)) },
+          home: places.some((p) => p.hue !== null),
+        };
+      })
       .sort((a, b) => b.places.length - a.places.length || a.country.localeCompare(b.country));
   }, [globe.places]);
 
@@ -62,8 +66,14 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
   const matches = visible.reduce((n, g) => n + g.places.length, 0);
 
   function choose(group: CountryGroup) {
+    if (chosen === group.country) return zoomOut();
     setChosen(group.country);
-    setFocus({ ...group.centre });
+    setFocus({ ...group.view });
+  }
+
+  function zoomOut() {
+    setChosen(null);
+    setFocus(null);
   }
 
   return (
@@ -80,6 +90,16 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
         <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14">
           <div className="relative aspect-square w-full lg:sticky lg:top-24 lg:self-start">
             {near && <Globe data={globe} mode="travel" focus={focus} className="absolute inset-0" />}
+            {chosen && (
+              <button
+                type="button"
+                onClick={zoomOut}
+                className="absolute bottom-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-border bg-bg/85 px-3.5 py-1.5 text-sm text-text-secondary backdrop-blur transition-colors hover:border-border-hover hover:text-text-primary"
+              >
+                <Minimize2 size={14} aria-hidden="true" />
+                Whole world
+              </button>
+            )}
           </div>
 
           <div>

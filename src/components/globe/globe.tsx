@@ -48,7 +48,7 @@ export interface GlobeProps {
   // Route mode: the stop in focus, or -1 for the whole route
   active?: number;
   // Travel mode: a place to turn to, e.g. when a country is chosen from the list
-  focus?: { lng: number; lat: number } | null;
+  focus?: { lng: number; lat: number; zoom?: number } | null;
   // Route mode: a side trip (index into data.trips) to fly out to from the place in focus
   detour?: number | null;
   className?: string;
@@ -418,7 +418,7 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
       moving = stepLegs(dt) || moving;
 
       const { mode, active } = e.props;
-      if (mode === 'travel' && !e.reduced && !e.dragging && now > e.idleUntil && !e.flight) {
+      if (mode === 'travel' && !e.reduced && !e.dragging && now > e.idleUntil && !e.flight && e.view.zoom < 1.2) {
         e.view = { ...e.view, lng: e.view.lng + dt * 4 };
         moving = true;
       }
@@ -510,7 +510,7 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
   useEffect(() => {
     const e = engine.current;
     e.props = { mode, active, detour };
-    const to = focus ? { lng: focus.lng, lat: focus.lat, zoom: 1.6 } : viewFor(data, mode, active, detour);
+    const to = focus ? { lng: focus.lng, lat: focus.lat, zoom: focus.zoom ?? 2.5 } : viewFor(data, mode, active, detour);
     const distance = geoDistance([e.view.lng, e.view.lat], [to.lng, to.lat]);
     e.flight = { from: e.view, to, start: performance.now(), duration: 1300 + 900 * Math.min(1, distance) };
     e.idleUntil = performance.now() + (focus ? 6000 : 0);
