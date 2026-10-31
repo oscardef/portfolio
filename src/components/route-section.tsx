@@ -151,7 +151,7 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
         {/* The globe stays in view while the chapters scroll past */}
         <div
           ref={columnRef}
-          className="sticky top-16 z-20 -mx-[clamp(1.25rem,6vw,5.5rem)] bg-bg/90 backdrop-blur-md lg:top-20 lg:mx-0 lg:self-start lg:bg-transparent lg:backdrop-blur-none"
+          className="sticky top-16 z-20 -mx-[var(--gutter)] bg-bg/90 backdrop-blur-md lg:top-20 lg:mx-0 lg:self-start lg:bg-transparent lg:backdrop-blur-none"
         >
           <div ref={stageRef} className="will-change-transform">
             <div className="relative h-[36vh] lg:-mx-[14%] lg:h-[calc(100vh-9rem)]">
@@ -212,7 +212,7 @@ function StopRail({
 }) {
   const current = chapters[active];
   return (
-    <div className="flex items-center justify-between gap-4 px-[clamp(1.25rem,6vw,5.5rem)] pb-3 pt-1 lg:px-0 lg:pb-0 lg:pt-4 lg:opacity-[var(--settled,1)]">
+    <div className="flex items-center justify-between gap-4 px-[var(--gutter)] pb-3 pt-1 lg:px-0 lg:pb-0 lg:pt-4 lg:opacity-[var(--settled,1)]">
       <p className="min-w-0 truncate text-sm text-text-secondary" aria-live="polite">
         {current ? (
           <>

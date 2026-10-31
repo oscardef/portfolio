@@ -157,12 +157,13 @@ html:has([data-sheet-open]) {
   letter-spacing: -0.01em;
 }
 
-/* The page's width: generous side margins that grow with the screen */
+/* The page's width: wide on big screens, with a gutter that grows with the screen */
 .container-page {
+  --gutter: clamp(1.25rem, 5vw, 4rem);
   width: 100%;
-  max-width: 76rem;
+  max-width: 90rem;
   margin-inline: auto;
-  padding-inline: clamp(1.25rem, 6vw, 5.5rem);
+  padding-inline: var(--gutter);
 }
 
 /* The globe's canvas fades out at its edges, so a zoomed-in view has no hard border */

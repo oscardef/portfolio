@@ -34,3 +34,12 @@ the knowledge hub and `applications/context`; nothing here invents a claim.
 
 Out of scope (not mine to decide): a CV download, an availability line,
 redirecting `defrancesca.com`, replacing the stand-in place photos.
+
+## Follow-up (31 Oct 2026)
+
+- **Wider page:** the container grows from 76rem to 90rem and the side gutter
+  tops out at 4rem instead of 5.5rem, so on a ~1500px screen the content is
+  about 1400px wide instead of 1040px. The hero name and portrait scale up on
+  wide screens; long text in the experience cards stays under 75ch.
+- ESLint ignores `.next.nosync`, the real build folder behind the `.next`
+  symlink.

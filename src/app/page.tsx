@@ -70,7 +70,7 @@ export default async function HomePage() {
               <MapPin size={15} aria-hidden="true" />
               Basel, Switzerland
             </p>
-            <h1 className="text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
+            <h1 className="text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl xl:text-[5.5rem]">
               Oscar
               <br />
               de Francesca
@@ -108,7 +108,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="hidden w-full max-w-[22rem] lg:block lg:justify-self-end">
+          <div className="hidden w-full max-w-[22rem] lg:block lg:justify-self-end xl:max-w-[26rem]">
             <div className="relative rounded-[30px] p-[2px] shadow-[0_30px_80px_-30px_rgb(109_114_246_/_0.45)]" style={{ background: ROUTE_GRADIENT }}>
               <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-bg-card">
                 <Image
@@ -116,7 +116,7 @@ export default async function HomePage() {
                   alt="Oscar de Francesca"
                   fill
                   priority
-                  sizes="(max-width: 1024px) 22rem, 26vw"
+                  sizes="(max-width: 1280px) 22rem, 26rem"
                   className="object-cover"
                 />
               </div>

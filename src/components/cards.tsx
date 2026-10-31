@@ -132,9 +132,9 @@ export function RoleCard({ item }: { item: JourneyItem }) {
               {item.place}
             </p>
           </div>
-          <p className="mt-4 leading-relaxed text-text-secondary">{item.summary}</p>
+          <p className="mt-4 max-w-[75ch] leading-relaxed text-text-secondary">{item.summary}</p>
           {item.highlights.length > 0 && (
-            <ul className="mt-4 space-y-1.5">
+            <ul className="mt-4 max-w-[75ch] space-y-1.5">
               {item.highlights.slice(0, 3).map((h) => (
                 <li key={h} className="flex gap-2.5 text-[0.9375rem] leading-relaxed text-text-secondary">
                   <span aria-hidden="true" className="mt-[0.6em] size-1.5 shrink-0 rounded-full bg-accent" />
