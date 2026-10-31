@@ -13,6 +13,7 @@ import { feature } from 'topojson-client';
 import type { GeometryCollection, Topology } from 'topojson-specification';
 import world from 'world-atlas/countries-110m.json';
 import type { GlobeData } from '@/lib/globe-data';
+import { oklchToRgba } from '@/lib/colour';
 
 /**
  * A night-side globe drawn on a canvas with d3-geo's orthographic
@@ -145,8 +146,18 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
     e.reduced = motion.matches;
     e.palette = readPalette(wrap);
 
-    const colour = (hue: number, alpha = 1) =>
-      `oklch(${e.palette!.routeL} ${e.palette!.routeC} ${hue} / ${alpha})`;
+    // Route colours as rgba(), computed once per hue and alpha; the palette
+    // changes with the theme, so the cache is keyed on it too
+    const colours = new Map<string, string>();
+    const colour = (hue: number, alpha = 1) => {
+      const key = `${e.palette!.routeL}/${e.palette!.routeC}/${hue}/${alpha}`;
+      let c = colours.get(key);
+      if (!c) {
+        c = oklchToRgba(parseFloat(e.palette!.routeL), parseFloat(e.palette!.routeC), hue, alpha);
+        colours.set(key, c);
+      }
+      return c;
+    };
 
     function resize() {
       const rect = wrap.getBoundingClientRect();

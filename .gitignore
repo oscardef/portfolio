@@ -8,3 +8,6 @@ out
 scripts/.build/
 scripts/__pycache__/
 *.pyc
+
+# iCloud Drive skips *.nosync; .next is a symlink to it (see README)
+.next.nosync

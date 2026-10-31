@@ -155,6 +155,13 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
         >
           <div ref={stageRef} className="will-change-transform">
             <div className="relative h-[36vh] lg:-mx-[14%] lg:h-[calc(100vh-9rem)]">
+              {/* A faint disc marks where the globe appears while its code loads */}
+              {!near && (
+                <div
+                  aria-hidden="true"
+                  className="absolute left-1/2 top-1/2 aspect-square h-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-border/60 bg-bg-card/40"
+                />
+              )}
               {near && (
                 <Globe data={globe} mode="route" active={active} detour={detour} className="absolute inset-0" />
               )}
@@ -266,7 +273,7 @@ function Chapter({ chapter, index, last, trips, onTrip, ref }: ChapterProps) {
       aria-labelledby={`place-${chapter.id}-title`}
       className={cn(
         'scroll-mt-[calc(36vh+5rem)] lg:scroll-mt-24',
-        brief ? 'pb-16 lg:min-h-[62vh]' : 'pb-20 lg:pb-28',
+        brief ? 'pb-14 lg:min-h-[48vh]' : 'pb-20 lg:pb-28',
         last && 'pb-24 lg:min-h-0 lg:pb-32'
       )}
       style={{ '--h': chapter.hue } as CSSProperties}
@@ -290,6 +297,7 @@ function Chapter({ chapter, index, last, trips, onTrip, ref }: ChapterProps) {
           <p className="tnum flex items-center gap-2 text-sm text-white/80">
             <span className="hue-bg size-2 rounded-full" aria-hidden="true" />
             {chapter.country}, {chapter.years}
+            {chapter.ages && <span className="text-white/60">· {chapter.ages}</span>}
           </p>
           <h3
             id={`place-${chapter.id}-title`}

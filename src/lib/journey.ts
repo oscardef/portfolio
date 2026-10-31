@@ -37,6 +37,8 @@ export interface JourneyChapter {
   place: string;
   country: string;
   years: string;
+  // "aged 4 to 7", for the chapters before university
+  ages?: string;
   note: string;
   hue: number;
   photo: PlacePhoto;
@@ -142,6 +144,10 @@ const studies: JourneyItem[] = studyItems.map((s) => ({
   roleTypes: [],
 }));
 
+const BORN = 2003;
+const agesAt = (start: number, end: number) =>
+  start === BORN ? `until age ${end - BORN}` : `aged ${start - BORN} to ${end - BORN}`;
+
 const newestFirst = (a: JourneyItem, b: JourneyItem) => b.sortKey - a.sortKey;
 
 export async function getProjectItems(): Promise<JourneyItem[]> {
@@ -166,6 +172,7 @@ export async function getJourney(): Promise<{ chapters: JourneyChapter[] }> {
     place: stop.place,
     country: stop.country,
     years: formatYears(stop.start, stop.end),
+    ages: stop.end !== undefined && stop.end <= 2021 ? agesAt(stop.start, stop.end) : undefined,
     note: stop.note,
     hue: hueOf(stop.id),
     photo: stop.photo,

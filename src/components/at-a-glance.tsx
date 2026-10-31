@@ -57,6 +57,14 @@ const focus = [
   },
 ];
 
+// The same groups the previous version of the site listed
+const toolbox: [string, string[]][] = [
+  ['Languages', ['C++', 'Python', 'TypeScript', 'C', 'Java', 'SQL', 'Bash', 'Haskell']],
+  ['Systems', ['Low latency', 'Concurrency', 'Distributed systems', 'Real-time', 'POSIX', 'Embedded (ESP32, FreeRTOS)']],
+  ['Machine learning', ['PyTorch', 'Hugging Face', 'LoRA / PEFT', 'DeepSpeed', 'NumPy', 'pandas', 'scikit-learn']],
+  ['Backend and tools', ['Kafka', 'Linux', 'Docker', 'PostgreSQL', 'FastAPI', 'Next.js', 'CMake', 'Git', 'CI/CD']],
+];
+
 export function AtAGlance() {
   return (
     <section id="glance" aria-labelledby="glance-title" className="py-20 md:py-28">
@@ -70,7 +78,12 @@ export function AtAGlance() {
             <h3 className="text-2xl font-semibold tracking-tight">Master’s thesis at ETH Zurich</h3>
             <p className="mt-3 max-w-[58ch] leading-relaxed text-text-secondary">
               Diffusion language models for antibody design, in Prof. Sai Reddy’s Laboratory for Systems and
-              Synthetic Immunology in Basel. It’s the final part of my MSc in Computer Science at EPFL.
+              Synthetic Immunology in Basel. It’s the final part of my MSc in Computer Science at EPFL, supervised
+              there by Prof. Maria Brbic.
+            </p>
+            <p className="mt-3 leading-relaxed text-text-secondary">
+              The question: can a diffusion language model generate the most variable loop of an antibody,
+              conditioned on the rest of it, well enough to pass structural checks?
             </p>
             <p className="tnum mt-auto pt-4 text-sm text-text-muted">October 2026 to April 2027</p>
           </Card>
@@ -139,6 +152,23 @@ export function AtAGlance() {
             <p className="leading-relaxed text-text-secondary">
               English and Swedish, both native. Swedish and American citizen.
             </p>
+          </Card>
+
+          <Card label="Toolbox" className="md:col-span-2 lg:col-span-3">
+            <dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
+              {toolbox.map(([group, tools]) => (
+                <div key={group}>
+                  <dt className="font-semibold">{group}</dt>
+                  <dd className="mt-2 flex flex-wrap gap-1.5">
+                    {tools.map((t) => (
+                      <span key={t} className="rounded-full border border-border px-2.5 py-0.5 text-sm text-text-secondary">
+                        {t}
+                      </span>
+                    ))}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </Card>
         </div>
       </div>

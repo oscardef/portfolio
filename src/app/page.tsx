@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Dumbbell, Github, Linkedin, Mail, Plane, UtensilsCrossed } from 'lucide-react';
+import { ArrowRight, Dumbbell, Github, Linkedin, Mail, MapPin, Plane, UtensilsCrossed } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EmailLink } from '@/components/email-link';
 import { AtAGlance } from '@/components/at-a-glance';
@@ -66,6 +66,10 @@ export default async function HomePage() {
                 <Image src="/images/portrait.jpg" alt="Oscar de Francesca" fill priority sizes="96px" className="object-cover" />
               </div>
             </div>
+            <p className="mb-5 flex items-center gap-2 text-sm font-medium text-accent-light">
+              <MapPin size={15} aria-hidden="true" />
+              Basel, Switzerland
+            </p>
             <h1 className="text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
               Oscar
               <br />
