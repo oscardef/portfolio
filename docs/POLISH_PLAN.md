@@ -96,3 +96,28 @@ Oscar's two lists that day, plus what followed from them.
 
 Still not mine to decide: a CV download, an availability or work-rights
 line.
+
+## Fourth pass (15 Nov 2026, evening)
+
+Oscar's notes after seeing the third pass live.
+
+- **Menu links scroll.** Projects and Experience go to their sections on
+  the home page, like the others, in the order the page has them. The
+  `/projects` and `/experience` pages stay, reached from "All 10 projects"
+  and "Experience in detail".
+- **Less space.** Every home section uses the `.section` class: 4.5rem
+  above and below on wide screens (was 7 to 8rem), 2.75rem on phones. A
+  menu link lands with the section's title just under the bar. The index
+  and detail pages start closer to the bar too.
+- **Selected projects** are six, in three columns of smaller cards (a
+  thumbnail row each on phones). The six are the four the CV links to
+  (OptiFlow, LLMs from scratch, solar forecasting, the research platform)
+  plus Mathium and the stock market simulation, chosen for software
+  engineering and quant developer roles. `featured: true` in a project's
+  frontmatter puts it there.
+- **Choosing a country** on the places globe flies in closer, framed on
+  the country's largest landmass plus any place visited off it, and
+  outlines it with a soft glow and a lighter fill. On phones the globe
+  now stays in view while the list scrolls.
+- **Short side trips** (Veldhoven from Groningen) zoom in far enough that
+  both ends sit well apart; the trip's dots show up on a lit country.

@@ -8,7 +8,7 @@ import { navItems, siteConfig } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from './theme-toggle';
 
-type NavItem = { label: string; href: string; section?: string };
+type NavItem = { label: string; href: string; section: string; page?: string };
 
 const mobileItems: NavItem[] = [...navItems, { label: 'Contact', href: '/#contact', section: 'contact' }];
 
@@ -26,7 +26,7 @@ export function Navbar() {
       },
       { rootMargin: '-45% 0px -50% 0px' }
     );
-    for (const id of ['top', 'glance', 'work', 'route', 'places', 'about', 'contact']) {
+    for (const id of ['top', 'glance', 'work', 'experience', 'route', 'places', 'about', 'contact']) {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     }
@@ -34,7 +34,7 @@ export function Navbar() {
   }, [pathname]);
 
   const isCurrent = (item: NavItem) =>
-    item.section ? pathname === '/' && section === item.section : pathname.startsWith(item.href);
+    pathname === '/' ? section === item.section : !!item.page && pathname.startsWith(item.page);
 
   return (
     <header className="fixed left-0 right-0 top-0 z-40 border-b border-border/60 bg-bg/80 backdrop-blur-xl">
@@ -52,7 +52,7 @@ export function Navbar() {
             <Link
               key={item.href}
               href={item.href}
-              aria-current={isCurrent(item) ? ('section' in item ? 'location' : 'page') : undefined}
+              aria-current={isCurrent(item) ? 'location' : undefined}
               className={cn(
                 'relative py-1 text-sm transition-colors',
                 isCurrent(item) ? 'font-medium text-text-primary' : 'text-text-muted hover:text-text-primary'

@@ -35,7 +35,7 @@ export default async function ExperiencePage() {
   const of = (...types: string[]) => roles.filter((r) => r.roleTypes.some((t) => types.includes(t)));
 
   return (
-    <div className="container-page pb-24 pt-32 md:pb-32 md:pt-40">
+    <div className="container-page pb-20 pt-24 md:pb-24 md:pt-28">
       <h1 className="text-5xl font-semibold tracking-tight sm:text-6xl">Experience</h1>
       <p className="mt-5 max-w-[58ch] text-lg leading-relaxed text-text-secondary">
         Where I’ve worked, researched, taught and studied, newest first. Open any role for the full story.

@@ -35,7 +35,50 @@ export function Stack({ items, max = 5 }: { items: string[]; max?: number }) {
   );
 }
 
-export function ProjectCard({ item, priority = false }: { item: JourneyItem; priority?: boolean }) {
+// On the home page: a row with a thumbnail on phones, a small card from tablet width up
+function CompactProjectCard({ item }: { item: JourneyItem }) {
+  return (
+    <Link
+      href={item.href!}
+      scroll={false}
+      className={cn(surface, 'group flex h-full overflow-hidden rounded-2xl sm:flex-col sm:rounded-3xl')}
+    >
+      {item.image && (
+        <div className="relative w-28 shrink-0 overflow-hidden border-r border-border bg-bg-secondary sm:aspect-[16/9] sm:w-auto sm:border-b sm:border-r-0">
+          <Image
+            src={item.image.src}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 30rem, (min-width: 640px) 50vw, 7rem"
+            className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+          />
+        </div>
+      )}
+      <div className="flex min-w-0 flex-1 flex-col p-3.5 sm:p-5">
+        <Where item={item} />
+        <h3 className="mt-1 font-semibold leading-snug tracking-tight sm:mt-2 sm:text-lg">{item.name}</h3>
+        {item.detail && <p className="hidden truncate text-sm text-text-muted sm:block">{item.detail}</p>}
+        <p className="mt-1 line-clamp-2 text-sm leading-snug text-text-secondary sm:mt-2.5 sm:line-clamp-3 sm:text-[0.9375rem] sm:leading-relaxed">
+          {item.blurb}
+        </p>
+        <div className="mt-auto hidden pt-4 sm:block">
+          <Stack items={item.stack} max={3} />
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+export function ProjectCard({
+  item,
+  priority = false,
+  compact = false,
+}: {
+  item: JourneyItem;
+  priority?: boolean;
+  compact?: boolean;
+}) {
+  if (compact) return <CompactProjectCard item={item} />;
   return (
     <Link href={item.href!} scroll={false} className={cn(surface, 'group flex h-full flex-col overflow-hidden rounded-3xl')}>
       {item.image && (

@@ -55,6 +55,8 @@ export interface GlobeProps {
   focus?: { lng: number; lat: number; zoom?: number } | null;
   // Route mode: a side trip (index into data.trips) to fly out to from the place in focus
   detour?: number | null;
+  // Travel mode: a country (by id) to outline as the one chosen
+  highlight?: string | null;
   className?: string;
 }
 
@@ -62,6 +64,9 @@ const OVERVIEW: View = { lng: 42, lat: 32, zoom: 1 };
 const TRAVEL: View = { lng: 15, lat: 28, zoom: 1 };
 const LEG_SECONDS_INTRO = 1.1;
 const LEG_SECONDS = 1.8;
+
+// The closest a side trip is shown. Beyond this the 1:110m country shapes look too coarse.
+const TRIP_ZOOM_MAX = 16;
 
 // How stiffly the camera follows its goal, in rad/s: turning, and zooming a touch behind it
 const TURN = 3.4;
@@ -73,11 +78,13 @@ function viewFor(data: GlobeData, mode: GlobeProps['mode'], active: number, deto
   if (mode === 'travel') return TRAVEL;
   const trip = detour === null ? undefined : data.trips[detour];
   if (trip) {
-    // Frame both ends of the side trip, closer for short hops
+    // Frame both ends of the side trip. A short hop gets a much closer view,
+    // so its two ends sit well apart instead of on top of each other.
     const home = data.stops[trip.from];
     const [lng, lat] = geoInterpolate([home.lng, home.lat], [trip.lng, trip.lat])(0.5);
     const distance = geoDistance([home.lng, home.lat], [trip.lng, trip.lat]);
-    return { lng, lat: lat - 1, zoom: Math.min(3.8, Math.max(1.5, 0.55 / distance)) };
+    const zoom = Math.min(TRIP_ZOOM_MAX, Math.max(1.5, 0.5 / distance));
+    return { lng, lat: lat - Math.min(1, 3.6 / zoom), zoom };
   }
   const stop = data.stops[active];
   if (!stop) return OVERVIEW;
@@ -129,6 +136,9 @@ interface Palette {
   stop: string;
   stopDim: string;
   home: string;
+  selected: string;
+  selectedGlow: string;
+  selectedFill: string;
   ring: string;
   place: string;
 }
@@ -153,12 +163,23 @@ function readPalette(el: Element, ctx: CanvasRenderingContext2D): Palette {
     stop: v('--globe-stop'),
     stopDim: v('--globe-stop-dim'),
     home: v('--globe-home'),
+    selected: v('--globe-selected'),
+    selectedGlow: v('--globe-selected-glow'),
+    selectedFill: v('--globe-selected-fill'),
     ring: v('--globe-ring'),
     place: v('--globe-place'),
   };
 }
 
-export function Globe({ data, mode, active = -1, focus = null, detour = null, className }: GlobeProps) {
+export function Globe({
+  data,
+  mode,
+  active = -1,
+  focus = null,
+  detour = null,
+  highlight = null,
+  className,
+}: GlobeProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
@@ -170,6 +191,8 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
     speed: { lng: 0, lat: 0, zoom: 0 },
     legs: data.stops.slice(1).map(() => 0),
     trips: data.trips.map(() => 0),
+    // The country outlined as chosen, fading in and out
+    lit: { id: null as string | null, alpha: 0, on: false },
     raf: 0,
     wake: 0,
     last: 0,
@@ -200,6 +223,7 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
     const livedCountries = COUNTRIES.filter((c) => lived.has(String(c.id)));
     const visitedCountries = COUNTRIES.filter((c) => visited.has(String(c.id)) && !lived.has(String(c.id)));
     const visitedStates = STATES.filter((s) => data.states.includes(s.properties.name));
+    const countryById = new Map(COUNTRIES.map((c) => [String(c.id), c]));
 
     // The section can enlarge the globe as it scrolls (--globe-boost on an ancestor)
     const readBoost = () => parseFloat(getComputedStyle(wrapper).getPropertyValue('--globe-boost')) || 0;
@@ -387,6 +411,27 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
           ctx.lineWidth = 0.6 * dpr;
           ctx.stroke();
         }
+        // The country chosen from the list: a lighter fill and an outline with a
+        // soft glow (two wide faint strokes under a crisp one)
+        const chosen = e.lit.id && e.lit.alpha > 0 ? countryById.get(e.lit.id) : undefined;
+        if (chosen) {
+          ctx.save();
+          ctx.globalAlpha = e.lit.alpha;
+          ctx.lineJoin = 'round';
+          ctx.beginPath();
+          path(chosen);
+          ctx.fillStyle = p.selectedFill;
+          ctx.fill();
+          ctx.strokeStyle = p.selectedGlow;
+          ctx.lineWidth = 10 * dpr;
+          ctx.stroke();
+          ctx.lineWidth = 5 * dpr;
+          ctx.stroke();
+          ctx.strokeStyle = p.selected;
+          ctx.lineWidth = 1.5 * dpr;
+          ctx.stroke();
+          ctx.restore();
+        }
       } else {
         const here = livedCountries.filter((c) => String(c.id) === activeStop?.countryId);
         fill(
@@ -422,11 +467,21 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         trace();
-        ctx.strokeStyle = p.routeGlow;
-        ctx.lineWidth = width * 3.4 * dpr;
-        ctx.stroke();
-        if (dashed) ctx.setLineDash([1, 6 * dpr]);
-        ctx.strokeStyle = p.route;
+        if (dashed) {
+          // Dots in the stop colour on a dark bed, so they show up on a lit country too
+          ctx.globalAlpha = 0.5;
+          ctx.strokeStyle = p.ring;
+          ctx.lineWidth = width * 3 * dpr;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+          ctx.setLineDash([1, 7 * dpr]);
+          ctx.strokeStyle = p.stop;
+        } else {
+          ctx.strokeStyle = p.routeGlow;
+          ctx.lineWidth = width * 3.4 * dpr;
+          ctx.stroke();
+          ctx.strokeStyle = p.route;
+        }
         ctx.lineWidth = width * dpr;
         ctx.stroke();
         ctx.restore();
@@ -448,7 +503,7 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
         // Side trips are dotted, to tell them from moves
         data.trips.forEach((t, i) => {
           const a = data.stops[t.from];
-          drawArc([a.lng, a.lat], [t.lng, t.lat], e.trips[i], 2.2, true);
+          drawArc([a.lng, a.lat], [t.lng, t.lat], e.trips[i], 2.6, true);
         });
       }
 
@@ -506,6 +561,14 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
 
       let moving = stepCamera(dt);
       moving = stepLegs(dt) || moving;
+
+      // The chosen country's outline fades in and out
+      const lit = e.lit.on ? 1 : 0;
+      if (e.lit.alpha !== lit) {
+        const step = dt * 3.5 * (lit > e.lit.alpha ? 1 : -1);
+        e.lit.alpha = e.reduced ? lit : Math.min(1, Math.max(0, e.lit.alpha + step));
+        moving = true;
+      }
 
       // Left alone and zoomed out, the travel globe turns slowly
       const { mode } = e.props;
@@ -634,13 +697,15 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
   useEffect(() => {
     const e = engine.current;
     e.props = { mode, active, detour };
+    if (highlight) e.lit = { id: highlight, alpha: e.lit.id === highlight ? e.lit.alpha : 0, on: true };
+    else e.lit.on = false;
     if (focus) e.goal = { lng: focus.lng, lat: focus.lat, zoom: focus.zoom ?? 2.5 };
     // Back to the whole world from wherever the globe has turned to
     else if (mode === 'travel') e.goal = { lng: e.view.lng, lat: TRAVEL.lat, zoom: TRAVEL.zoom };
     else e.goal = viewFor(data, mode, active, detour);
     e.idleUntil = performance.now() + (focus ? 6000 : 0);
     e.kick();
-  }, [data, mode, active, focus, detour]);
+  }, [data, mode, active, focus, detour, highlight]);
 
   const trip = mode === 'route' && detour !== null ? data.trips[detour] : undefined;
   const stop = mode === 'route' ? data.stops[active] : undefined;

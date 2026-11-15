@@ -17,23 +17,23 @@ const inWords = (n: number) => WORDS[n] ?? String(n);
 
 // What the globe's colours mean; the swatches use the globe's own colours
 const LEGEND = [
-  { label: 'Lived', swatch: 'bg-[var(--globe-lived)]' },
-  { label: 'Visited', swatch: 'bg-[var(--globe-visited)]' },
-  { label: 'US states visited', swatch: 'bg-[var(--globe-state)] ring-1 ring-inset ring-[var(--globe-state-border)]' },
+  { label: 'Lived', more: '', swatch: 'bg-[var(--globe-lived)]' },
+  { label: 'Visited', more: '', swatch: 'bg-[var(--globe-visited)]' },
+  // "visited" is dropped on phones so the legend stays on one line
+  { label: 'US states', more: ' visited', swatch: 'bg-[var(--globe-state)] ring-1 ring-inset ring-[var(--globe-state-border)]' },
 ];
 
 interface CountryGroup {
   country: string;
   places: GlobePlace[];
-  // Where to fly when the country is chosen: its places' centre, closer for compact countries
-  view: { lng: number; lat: number; zoom: number };
   home: boolean;
 }
 
 export function PlacesSection({ globe }: { globe: GlobeData }) {
   const [query, setQuery] = useState('');
-  const [focus, setFocus] = useState<CountryGroup['view'] | null>(null);
   const [chosen, setChosen] = useState<string | null>(null);
+  // The chosen country's frame: the globe flies there and outlines the country
+  const frame = chosen ? (globe.frames[chosen] ?? null) : null;
   const [near, setNear] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const inputId = useId();
@@ -51,18 +51,11 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
     const byCountry = new Map<string, GlobePlace[]>();
     for (const p of globe.places) byCountry.set(p.country, [...(byCountry.get(p.country) ?? []), p]);
     return [...byCountry.entries()]
-      .map(([country, places]) => {
-        const lng = places.reduce((s, p) => s + p.lng, 0) / places.length;
-        const lat = places.reduce((s, p) => s + p.lat, 0) / places.length;
-        // Spread of the places in degrees, from the centre
-        const spread = Math.max(1, ...places.map((p) => Math.hypot((p.lng - lng) * Math.cos((lat * Math.PI) / 180), p.lat - lat)));
-        return {
-          country,
-          places: places.sort((a, b) => a.place.localeCompare(b.place)),
-          view: { lng, lat, zoom: Math.min(6, Math.max(1.8, 22 / spread)) },
-          home: places.some((p) => p.home),
-        };
-      })
+      .map(([country, places]) => ({
+        country,
+        places: places.sort((a, b) => a.place.localeCompare(b.place)),
+        home: places.some((p) => p.home),
+      }))
       .sort((a, b) => b.places.length - a.places.length || a.country.localeCompare(b.country));
   }, [globe.places]);
 
@@ -75,19 +68,12 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
     .filter((g) => g.places.length > 0);
   const matches = visible.reduce((n, g) => n + g.places.length, 0);
 
-  function choose(group: CountryGroup) {
-    if (chosen === group.country) return zoomOut();
-    setChosen(group.country);
-    setFocus({ ...group.view });
-  }
-
-  function zoomOut() {
-    setChosen(null);
-    setFocus(null);
-  }
+  // Choosing the country already chosen lets go of it
+  const choose = (group: CountryGroup) => setChosen(chosen === group.country ? null : group.country);
+  const zoomOut = () => setChosen(null);
 
   return (
-    <section id="places" ref={sectionRef} aria-labelledby="places-title" className="py-24 md:py-32">
+    <section id="places" ref={sectionRef} aria-labelledby="places-title" className="section">
       <div className="container-page">
         <h2 id="places-title" className="text-4xl font-semibold tracking-tight sm:text-5xl">
           Places I’ve been
@@ -98,10 +84,18 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
           pick a country to fly there.
         </p>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14">
-          <div className="lg:sticky lg:top-24 lg:self-start">
-            <div className="relative aspect-square w-full lg:max-h-[calc(100vh-11rem)]">
-              {near && <Globe data={globe} mode="travel" focus={focus} className="absolute inset-0" />}
+        <div className="mt-6 grid gap-6 lg:mt-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14">
+          {/* The globe stays in view while the list scrolls, on phones too, so a
+              country chosen from the list can be seen being flown to */}
+          <div className="sticky top-16 z-20 -mx-[var(--gutter)] bg-bg px-[var(--gutter)] pb-2 lg:top-24 lg:mx-0 lg:self-start lg:bg-transparent lg:px-0 lg:pb-0">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 top-full h-5 bg-gradient-to-b from-bg to-transparent lg:hidden"
+            />
+            <div className="relative h-[38vh] w-full lg:aspect-square lg:h-auto lg:max-h-[calc(100vh-11rem)]">
+              {near && (
+                <Globe data={globe} mode="travel" focus={frame} highlight={frame?.id ?? null} className="absolute inset-0" />
+              )}
               {chosen && (
                 <button
                   type="button"
@@ -113,14 +107,20 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
                 </button>
               )}
             </div>
-            <ul className="mt-2 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-text-muted" aria-label="What the colours mean">
+            <ul
+              className="mt-1 flex flex-wrap items-center justify-center gap-x-3.5 gap-y-2 text-xs text-text-muted sm:gap-x-5 sm:text-sm lg:mt-2"
+              aria-label="What the colours mean"
+            >
               {LEGEND.map((item) => (
-                <li key={item.label} className="flex items-center gap-2">
+                <li key={item.label} className="flex items-center gap-1.5 sm:gap-2">
                   <span aria-hidden="true" className={cn('h-3 w-4 rounded-[4px]', item.swatch)} />
-                  {item.label}
+                  <span>
+                    {item.label}
+                    {item.more && <span className="hidden sm:inline">{item.more}</span>}
+                  </span>
                 </li>
               ))}
-              <li className="flex items-center gap-2">
+              <li className="flex items-center gap-1.5 sm:gap-2">
                 <span aria-hidden="true" className="size-1.5 rounded-full bg-[var(--globe-place)]" />
                 Places
               </li>

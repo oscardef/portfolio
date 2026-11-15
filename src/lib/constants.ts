@@ -25,10 +25,11 @@ export const siteConfig = {
   ],
 } as const;
 
-// Navigation: the two index pages, then sections of the home page
+// Navigation: every link scrolls to a section of the home page, in page order.
+// `page` is the index page that also counts as that item (/projects, /experience).
 export const navItems = [
-  { label: 'Experience', href: '/experience' },
-  { label: 'Projects', href: '/projects' },
+  { label: 'Projects', href: '/#work', section: 'work', page: '/projects' },
+  { label: 'Experience', href: '/#experience', section: 'experience', page: '/experience' },
   { label: 'The route', href: '/#route', section: 'route' },
   { label: 'Places', href: '/#places', section: 'places' },
   { label: 'About', href: '/#about', section: 'about' },

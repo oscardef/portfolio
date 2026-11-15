@@ -37,6 +37,9 @@
   --globe-lived: rgb(79 196 196 / 0.55);
   --globe-lived-active: rgb(125 226 220 / 0.92);
   --globe-home: #7fe3de;
+  --globe-selected: rgb(255 255 255 / 0.92);
+  --globe-selected-glow: rgb(180 184 255 / 0.22);
+  --globe-selected-fill: rgb(255 255 255 / 0.14);
   --globe-route: #c9ccff;
   --globe-route-glow: rgb(124 130 255 / 0.3);
   --globe-stop: #ffffff;
@@ -84,6 +87,9 @@
   --globe-lived: rgb(13 148 136 / 0.5);
   --globe-lived-active: rgb(15 118 110 / 0.85);
   --globe-home: #0f766e;
+  --globe-selected: rgb(48 55 201 / 0.95);
+  --globe-selected-glow: rgb(81 87 232 / 0.2);
+  --globe-selected-fill: rgb(81 87 232 / 0.16);
   --globe-route: #3f45d6;
   --globe-route-glow: rgb(81 87 232 / 0.22);
   --globe-stop: #3037c9;
@@ -163,6 +169,17 @@ html:has([data-sheet-open]) {
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.01em;
+}
+
+/* A section of the home page. Each has the same space above and below, and
+   a menu link lands with the section's title just under the bar instead of
+   leaving that space above it. (In a layer, so utilities can still adjust it.) */
+@layer components {
+  .section {
+    --section-pad: clamp(2.75rem, 5.5vw, 4.5rem);
+    padding-block: var(--section-pad);
+    scroll-margin-top: calc(1rem - var(--section-pad));
+  }
 }
 
 /* The page's width: wide on big screens, with a gutter that grows with the screen */

@@ -40,7 +40,7 @@ kind: "ml"                      # systems | ml | hardware | products | teaching 
 blurb: "One line for cards on the home page and the route."
 date: "2025-01-15"              # YYYY-MM-DD, used for sorting
 type: "school"                  # school | personal | company
-featured: true                  # Shown under "Selected projects" on the home page, and first on /projects
+featured: true                  # Shown under "Selected projects" on the home page (six fill its grid), and first on /projects
 summary: "One-paragraph summary for cards and meta descriptions."
 tags: ["ml", "web"]             # From tag taxonomy (see below)
 stack: ["Python", "PyTorch"]    # Technologies used

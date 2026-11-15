@@ -149,7 +149,7 @@ const groupLabel = 'text-sm font-medium text-text-muted';
 
 export function AtAGlance() {
   return (
-    <section id="glance" aria-labelledby="glance-title" className="py-20 md:py-28">
+    <section id="glance" aria-labelledby="glance-title" className="section">
       <div className="container-page">
         <h2 id="glance-title" className="text-4xl font-semibold tracking-tight sm:text-5xl">
           At a glance

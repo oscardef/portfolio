@@ -40,7 +40,7 @@ export default async function ExperiencePage({ params }: PageProps) {
   if (!(await getExperienceBySlug(slug))) notFound();
 
   return (
-    <div className="container-page pb-24 pt-28 md:pb-32 md:pt-36">
+    <div className="container-page pb-20 pt-24 md:pb-24 md:pt-28">
       <div className="mx-auto max-w-[68rem]">
         <Link
           href="/experience"

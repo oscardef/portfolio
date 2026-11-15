@@ -162,7 +162,7 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
   }, []);
 
   return (
-    <section id="route" ref={sectionRef} aria-labelledby="route-title" className="relative pt-24 md:pt-32">
+    <section id="route" ref={sectionRef} aria-labelledby="route-title" className="section relative">
       <div className="container-page text-left lg:text-center">
         <h2 id="route-title" className="text-4xl font-semibold tracking-tight sm:text-5xl">
           The route
@@ -215,7 +215,7 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
           <div
             ref={introRef}
             data-index={-1}
-            className="flex h-[24vh] items-end pb-10 lg:h-[80vh] lg:pb-[22vh]"
+            className="flex h-[24vh] items-end pb-10 lg:h-[64vh] lg:pb-[16vh]"
           >
             <p className="max-w-[40ch] text-text-muted lg:[opacity:calc((var(--settled,1)-0.75)*4)]">
               Every place I’ve lived, in order, from Bangkok in 2003 to Basel today. Keep scrolling to go
@@ -316,7 +316,7 @@ function Chapter({ chapter, index, last, trips, onTrip, ref }: ChapterProps) {
       className={cn(
         'scroll-mt-[calc(36vh+5rem)] lg:scroll-mt-24',
         brief ? 'pb-14 lg:min-h-[48vh]' : 'pb-20 lg:pb-28',
-        last && 'pb-24 lg:min-h-0 lg:pb-32'
+        last && 'pb-0 lg:min-h-0 lg:pb-0'
       )}
     >
       <figure

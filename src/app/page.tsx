@@ -63,7 +63,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ── Hero ── */}
-      <section id="top" aria-label="Introduction" className="relative overflow-hidden pt-32 md:pt-40">
+      <section id="top" aria-label="Introduction" className="relative overflow-hidden pt-28 md:pt-36">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div className="absolute -top-40 left-1/2 h-[640px] w-[640px] -translate-x-1/3 rounded-full bg-accent/[0.08] blur-3xl" />
           <div className="absolute right-0 top-40 h-[420px] w-[420px] rounded-full bg-accent/[0.05] blur-3xl" />
@@ -133,7 +133,7 @@ export default async function HomePage() {
         </div>
 
         {/* Logos */}
-        <div className="container-page relative mt-20 md:mt-28">
+        <div className="container-page relative mt-16 md:mt-24">
           <p className="text-center text-sm text-text-muted">Where I’ve worked and studied</p>
           <ul className="mt-7 flex flex-wrap items-center justify-center gap-x-10 gap-y-7 sm:gap-x-14">
             {organizations.map((org) => (
@@ -155,13 +155,13 @@ export default async function HomePage() {
       <AtAGlance />
 
       {/* ── Selected projects ── */}
-      <section id="work" aria-labelledby="work-title" className="py-20 md:py-28">
+      <section id="work" aria-labelledby="work-title" className="section">
         <div className="container-page">
           <SectionHeader id="work-title" title="Selected projects" href="/projects" link={`All ${projects.length} projects`} />
-          <ul className="mt-10 grid gap-6 sm:grid-cols-2">
+          <ul className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {featured.map((item) => (
               <li key={item.id}>
-                <ProjectCard item={item} />
+                <ProjectCard item={item} compact />
               </li>
             ))}
           </ul>
@@ -169,7 +169,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Experience ── */}
-      <section id="experience" aria-labelledby="experience-title" className="py-20 md:py-28">
+      <section id="experience" aria-labelledby="experience-title" className="section">
         <div className="container-page">
           <SectionHeader id="experience-title" title="Experience" href="/experience" link="Experience in detail" />
           <ul className="mt-10 space-y-2.5">
@@ -187,7 +187,7 @@ export default async function HomePage() {
       <PlacesSection globe={globe} />
 
       {/* ── Beyond the work ── */}
-      <section id="about" aria-labelledby="about-title" className="py-24 md:py-32">
+      <section id="about" aria-labelledby="about-title" className="section">
         <div className="container-page">
           <h2 id="about-title" className="text-4xl font-semibold tracking-tight sm:text-5xl">
             Beyond the work
@@ -233,7 +233,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Contact ── */}
-      <section id="contact" aria-labelledby="contact-title" className="pb-24 md:pb-32">
+      <section id="contact" aria-labelledby="contact-title" className="section">
         <div className="container-page">
           <div className="relative overflow-hidden rounded-[2rem] border border-border bg-bg-card">
             <div aria-hidden="true" className="pointer-events-none absolute inset-0">
