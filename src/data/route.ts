@@ -2,9 +2,9 @@
  * The route: every place Oscar has lived, in order.
  *
  * Drives the globe and the chapters of "The route". Coordinates come from
- * geocode-cache.json (see travel.ts for how to add a place). Photos are
- * freely licensed images from Wikimedia Commons, credited on the page;
- * swap in your own by replacing the files in public/images/places.
+ * geocode-cache.json (see travel.ts for how to add a place). The photos are
+ * free-to-use stand-ins (CC0, no credit needed); swap in your own by
+ * replacing the files in public/images/places.
  */
 
 import geocodeCache from './geocode-cache.json';
@@ -12,8 +12,6 @@ import geocodeCache from './geocode-cache.json';
 export interface PlacePhoto {
   src: string;
   alt: string;
-  credit: string;
-  href: string;
 }
 
 export interface RouteStop {
@@ -41,64 +39,45 @@ export interface StudyItem {
   org: string;
   period: string;
   blurb: string;
+  logo?: string;
 }
-
-const commons = (file: string) => `https://commons.wikimedia.org/wiki/File:${file}`;
 
 const photos: Record<string, PlacePhoto> = {
   bangkok: {
     src: '/images/places/bangkok.jpg',
-    alt: 'The Bangkok skyline at twilight',
-    credit: 'Sergei Gussev, CC BY 4.0',
-    href: commons('Twilight_over_the_modern_city_skyline_in_Ratchadamri_district,_Bangkok,_Thailand,_July_2019_-_Flickr_-_sergei.gussev.jpg'),
+    alt: 'The Bangkok skyline in evening light',
   },
   stockholm: {
     src: '/images/places/stockholm.jpg',
-    alt: 'Riddarholmen in Stockholm, seen across the water',
-    credit: 'Dronepicr, CC BY 3.0',
-    href: commons('Stockholm_Altstadt_Insel_(193365177).jpeg'),
+    alt: 'Södermalm’s waterfront in Stockholm, seen from Riddarholmen',
   },
   'al-ain': {
     src: '/images/places/al-ain.jpg',
-    alt: 'A path through the palm groves of the Al Ain Oasis',
-    credit: 'trolvag, CC BY-SA 3.0',
-    href: commons('Al_Ain_Oasis,_Al_Mutawaa_-_Abu_Dhabi_-_United_Arab_Emirates_-_panoramio.jpg'),
+    alt: 'The gate of a mud-brick fort in Al Ain',
   },
   egham: {
     src: '/images/places/egham.jpg',
     alt: 'The Founder’s Building of Royal Holloway in Egham',
-    credit: 'Diliff, CC BY-SA 3.0',
-    href: commons('Founder%27s_Building,_Royal_Holloway,_University_of_London_-_Diliff.jpg'),
   },
   dubai: {
     src: '/images/places/dubai.jpg',
     alt: 'The Dubai skyline at night, reflected in the water',
-    credit: 'Robert Bock, CC0',
-    href: commons('Dubai_skyline_unsplash.jpg'),
   },
   groningen: {
     src: '/images/places/groningen.jpg',
-    alt: 'The Martinitoren over the Grote Markt in Groningen',
-    credit: 'Wutsje, CC BY-SA 3.0',
-    href: commons('20100523_Grote_Markt_en_Martinitoren_Groningen_NL.jpg'),
+    alt: 'The Martinitoren at the end of the Oosterstraat in Groningen',
   },
   lausanne: {
     src: '/images/places/lausanne.jpg',
-    alt: 'Lake Geneva from the shore at Lausanne, with the Alps beyond',
-    credit: 'OlhaSolodenko, CC BY-SA 4.0',
-    href: commons('Lake_Geneva_in_Lausanne.jpg'),
+    alt: 'Boats on Lake Geneva at Lausanne, with the Alps beyond',
   },
   london: {
     src: '/images/places/london.jpg',
-    alt: 'Tower Bridge and the City of London at dusk',
-    credit: 'Diliff, CC BY 3.0',
-    href: commons('London_Thames_Sunset_panorama_-_Feb_2008.jpg'),
+    alt: 'The City of London across the Thames at dusk',
   },
   basel: {
     src: '/images/places/basel.jpg',
-    alt: 'Basel Minster above the Rhine, seen from the Mittlere Brücke',
-    credit: 'Michielverbeek, CC BY-SA 4.0',
-    href: commons('Basel,_de_Basler_M%C3%BCnster_vanaf_de_Mittlere_Br%C3%BCcke_KGS1597_IMG_1453_2022-05-14_20.11.jpg'),
+    alt: 'The Rhine running through Basel',
   },
 };
 
@@ -111,7 +90,7 @@ export const route: RouteStop[] = [
   { id: 'stockholm-2', place: 'Stockholm', country: 'Sweden', start: 2018, end: 2021, note: 'Back to Sweden to finish school.', photo: photos.stockholm },
   { id: 'groningen', place: 'Groningen', country: 'Netherlands', start: 2021, end: 2024, note: 'A computer science degree, three internships, and seven courses as a teaching assistant.', photo: photos.groningen },
   { id: 'lausanne', place: 'Lausanne', country: 'Switzerland', start: 2024, end: 2026, note: 'A master’s at EPFL, and the most varied projects yet: hardware, language models, a hackathon.', photo: photos.lausanne },
-  { id: 'london', place: 'London', country: 'United Kingdom', start: 2026, end: 2026, note: 'A placement at Bloomberg, building real-time messaging infrastructure.', photo: photos.london },
+  { id: 'london', place: 'London', country: 'United Kingdom', start: 2026, end: 2026, note: 'A six-month placement at Bloomberg, building real-time messaging infrastructure.', photo: photos.london },
   { id: 'basel', place: 'Basel', country: 'Switzerland', start: 2026, note: 'Master’s thesis at ETH Zurich, on generative models for antibodies.', photo: photos.basel },
 ];
 
@@ -121,9 +100,9 @@ export const sideTrips: SideTrip[] = [
 ];
 
 export const studyItems: StudyItem[] = [
-  { id: 'ib', chapter: 'stockholm-2', title: 'IB Diploma', org: 'International School of the Stockholm Region', period: '2018–2021', blurb: 'The International Baccalaureate diploma.' },
-  { id: 'bsc', chapter: 'groningen', title: 'BSc Computer Science', org: 'University of Groningen', period: '2021–2024', blurb: 'Graduated cum laude (8.6/10), with the Honours College programme.' },
-  { id: 'msc', chapter: 'lausanne', title: 'MSc Computer Science', org: 'EPFL', period: '2024–2027', blurb: 'A 5.4/6 average, with a minor in Management, Technology and Entrepreneurship. The thesis is at ETH Zurich.' },
+  { id: 'ib', chapter: 'stockholm-2', title: 'IB Diploma', org: 'International School of the Stockholm Region', period: '2018–2021', blurb: 'The International Baccalaureate diploma.', logo: '/images/logos/issr-mark.png' },
+  { id: 'bsc', chapter: 'groningen', title: 'BSc Computer Science', org: 'University of Groningen', period: '2021–2024', blurb: 'Graduated cum laude (8.6/10), with the Honours College programme.', logo: '/images/logos/ugroningen-crest.svg' },
+  { id: 'msc', chapter: 'lausanne', title: 'MSc Computer Science', org: 'EPFL', period: '2024–2027', blurb: 'A 5.4/6 average, with a minor in Management, Technology and Entrepreneurship. The thesis is at ETH Zurich.', logo: '/images/logos/epfl.svg' },
 ];
 
 // ── Coordinates ────────────────────────────────────────────────────
@@ -134,23 +113,6 @@ export function coordsOf(place: string, country: string): [number, number] {
   const hit = CACHE[`${place}, ${country}`];
   if (!hit) throw new Error(`[route] No coordinates for "${place}, ${country}". Run: npx tsx scripts/geocode.ts`);
   return [hit.lng, hit.lat];
-}
-
-// ── Colour ─────────────────────────────────────────────────────────
-// Each stop takes a hue from a ramp that runs from saffron (Bangkok)
-// through rose and violet to teal (the latest stop).
-
-const HUE_START = 75;
-const HUE_SPAN = 250;
-
-export function stopHue(index: number): number {
-  const t = route.length > 1 ? index / (route.length - 1) : 0;
-  return Math.round((((HUE_START - HUE_SPAN * t) % 360) + 360) % 360);
-}
-
-export function hueOf(stopId: string): number {
-  const index = route.findIndex((s) => s.id === stopId);
-  return stopHue(Math.max(index, 0));
 }
 
 export function formatYears(start: number, end?: number): string {

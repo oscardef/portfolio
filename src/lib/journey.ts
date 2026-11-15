@@ -1,6 +1,6 @@
 import { getAllExperiences, getAllProjects } from './content';
 import type { Experience, Project, Kind } from './schemas';
-import { route, studyItems, hueOf, formatYears, type PlacePhoto } from '@/data/route';
+import { route, studyItems, formatYears, type PlacePhoto } from '@/data/route';
 
 /**
  * Projects, roles and studies as one kind of item, so the home page, the
@@ -16,7 +16,6 @@ export interface JourneyItem {
   name: string;
   detail: string;
   place: string;
-  hue: number | null;
   period: string;
   sortKey: number;
   blurb: string;
@@ -40,7 +39,6 @@ export interface JourneyChapter {
   // "aged 4 to 7", for the chapters before university
   ages?: string;
   note: string;
-  hue: number;
   photo: PlacePhoto;
   items: JourneyItem[];
 }
@@ -83,7 +81,6 @@ function fromExperience(e: Experience): JourneyItem {
     name: e.organization,
     detail: e.title,
     place: city(e.location, e.chapter),
-    hue: e.chapter ? hueOf(e.chapter) : null,
     period: period(e.startDate, e.endDate),
     sortKey: Date.parse(`${e.startDate}-01`),
     blurb: e.blurb,
@@ -108,7 +105,6 @@ function fromProject(p: Project): JourneyItem {
     name: name.trim(),
     detail: rest.join(':').trim(),
     place: city(p.location, p.chapter),
-    hue: p.chapter ? hueOf(p.chapter) : null,
     period: String(new Date(p.date).getUTCFullYear()),
     sortKey: Date.parse(p.date),
     blurb: p.blurb,
@@ -131,7 +127,6 @@ const studies: JourneyItem[] = studyItems.map((s) => ({
   name: s.title,
   detail: s.org,
   place: placeOf(s.chapter),
-  hue: hueOf(s.chapter),
   period: s.period,
   sortKey: Date.parse(`${s.period.slice(0, 4)}-09-01`),
   blurb: s.blurb,
@@ -139,6 +134,7 @@ const studies: JourneyItem[] = studyItems.map((s) => ({
   highlights: [],
   kind: 'study',
   chapter: s.chapter,
+  logo: s.logo,
   stack: [],
   featured: false,
   roleTypes: [],
@@ -174,7 +170,6 @@ export async function getJourney(): Promise<{ chapters: JourneyChapter[] }> {
     years: formatYears(stop.start, stop.end),
     ages: stop.end !== undefined && stop.end <= 2021 ? agesAt(stop.start, stop.end) : undefined,
     note: stop.note,
-    hue: hueOf(stop.id),
     photo: stop.photo,
     items: items.filter((i) => i.chapter === stop.id).sort((a, b) => a.sortKey - b.sortKey),
   }));

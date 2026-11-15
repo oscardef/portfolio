@@ -42,12 +42,8 @@ function loadCache(): Cache {
 }
 
 function saveCache(cache: Cache) {
-  // Sort keys for stable diffs
-  const sorted: Cache = {};
-  for (const key of Object.keys(cache).sort()) {
-    sorted[key] = cache[key];
-  }
-  writeFileSync(CACHE_PATH, JSON.stringify(sorted, null, 2) + '\n');
+  // Existing entries keep their order and new ones go at the end, so a run only adds lines
+  writeFileSync(CACHE_PATH, JSON.stringify(cache, null, 2) + '\n');
 }
 
 // ── Nominatim lookup ───────────────────────────────────────────────
@@ -90,13 +86,13 @@ function getPlacesFromSource(): Array<{ place: string; country: string }> {
 
   const places: Array<{ place: string; country: string }> = [];
   // Match: { place: '...', country: '...' patterns in rawTravelData
-  // Skip lines that start with // (commented out entries)
+  // Skip comments: commented-out entries (//) and the examples in the file's header (* ...)
   const lines = src.split('\n');
   const regex = /place:\s*'([^']+)'.*?country:\s*'([^']+)'/;
-  
+
   for (const line of lines) {
     const trimmed = line.trim();
-    if (trimmed.startsWith('//')) continue;
+    if (trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('/*')) continue;
     const match = regex.exec(line);
     if (match) {
       places.push({ place: match[1], country: match[2] });

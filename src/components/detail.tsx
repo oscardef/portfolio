@@ -1,7 +1,6 @@
 import Image from 'next/image';
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { getExperienceBySlug, getProjectBySlug } from '@/lib/content';
-import { hueOf } from '@/data/route';
 import { cn } from '@/lib/utils';
 
 /**
@@ -51,7 +50,6 @@ export async function ProjectDetail({ slug, headingLevel = 1, page = false }: De
 
   return (
     <DetailLayout
-      hue={p.chapter ? hueOf(p.chapter) : null}
       meta={[p.location?.split(',')[0], String(new Date(p.date).getUTCFullYear())].filter(Boolean).join(', ')}
       title={p.title}
       headingLevel={headingLevel}
@@ -75,7 +73,6 @@ export async function ExperienceDetail({ slug, headingLevel = 1, page = false }:
 
   return (
     <DetailLayout
-      hue={e.chapter ? hueOf(e.chapter) : null}
       meta={`${e.location}, ${monthYear(e.startDate)} to ${monthYear(e.endDate)}`}
       title={`${e.title}, ${e.organization}`}
       headingLevel={headingLevel}
@@ -93,7 +90,6 @@ export async function ExperienceDetail({ slug, headingLevel = 1, page = false }:
 }
 
 interface DetailLayoutProps {
-  hue: number | null;
   meta: string;
   title: string;
   headingLevel: 1 | 2;
@@ -109,7 +105,6 @@ interface DetailLayoutProps {
 }
 
 function DetailLayout({
-  hue,
   meta,
   title,
   headingLevel,
@@ -141,7 +136,7 @@ function DetailLayout({
   );
 
   return (
-    <article className="@container" style={{ '--h': hue ?? 0 } as CSSProperties}>
+    <article className="@container">
       {!page && hero}
 
       <div className={page ? '' : 'px-5 pt-8 pb-16 sm:px-10'}>
@@ -150,10 +145,7 @@ function DetailLayout({
             <Image src={logo.src} alt={logo.alt} width={72} height={40} className="h-auto max-h-9 w-full object-contain" />
           </div>
         )}
-        <p className="flex items-center gap-2 text-sm text-ink-2">
-          {hue !== null && <span aria-hidden="true" className="hue-bg size-2 rounded-full" />}
-          <span className="tnum">{meta}</span>
-        </p>
+        <p className="tnum text-sm text-ink-2">{meta}</p>
         <Heading
           className={cn(
             'mt-3 text-balance font-semibold leading-[1.1] tracking-tight',
@@ -207,10 +199,7 @@ function DetailLayout({
 
           <div className="@4xl:col-start-1 @4xl:row-start-1">
             {highlights.length > 0 && (
-              <ul
-                className="mt-10 max-w-[64ch] space-y-3 border-l-2 pl-5 @4xl:mt-0"
-                style={{ borderColor: 'oklch(var(--route-l) var(--route-c) var(--h))' }}
-              >
+              <ul className="mt-10 max-w-[64ch] space-y-3 border-l-2 border-accent pl-5 @4xl:mt-0">
                 {highlights.map((h) => (
                   <li key={h} className="text-ink">
                     {h}

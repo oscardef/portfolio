@@ -120,6 +120,10 @@ const rawTravelData: TravelEntry[] = [
   { place: 'Austin',              country: 'USA', state: 'Texas',      startDate: '2026-02-20', endDate: '2026-02-23', purpose: 'travel', notes: 'Trip with Alina' },
   { place: 'Houston',             country: 'USA', state: 'Texas',      startDate: '2026-02-23', endDate: '2026-02-25', purpose: 'travel', notes: 'Trip with Alina' },
 
+  // Nov 2026 — Las Vegas for a family wedding, then a day in New York on the way home
+  { place: 'Las Vegas',           country: 'USA', state: 'Nevada',     startDate: '2026-11-07', endDate: '2026-11-12', purpose: 'travel', notes: 'Family wedding' },
+  { place: 'New York City',       country: 'USA', state: 'New York',   startDate: '2026-11-13', endDate: '2026-11-13', purpose: 'travel' },
+
   // ── Earlier trips ──
   { place: 'Venice',        country: 'Italy',       startDate: '2008',                        purpose: 'travel' },
   { place: 'Kyiv',          country: 'Ukraine',     startDate: '2011',                        purpose: 'travel' },

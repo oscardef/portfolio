@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Github, Linkedin, Mail, MapPin } from 'lucide-react';
+import { Fragment } from 'react';
+import { ArrowRight, ArrowUpRight, Github, Linkedin, Mail, MapPin, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { EmailLink } from '@/components/email-link';
+import { CopyEmailButton } from '@/components/copy-email';
 import { AtAGlance } from '@/components/at-a-glance';
 import { ProjectCard, RoleRow } from '@/components/cards';
 import { RouteSection } from '@/components/route-section';
@@ -27,44 +28,32 @@ const socials = [
   { href: siteConfig.links.email, icon: Mail, label: 'Email' },
 ];
 
-// Stand-in photos from Wikimedia Commons, credited on the page; swap in
-// your own by replacing the files in public/images/interests
+// Free-to-use stand-in photos (CC0, no credit needed); swap in your own by
+// replacing the files in public/images/interests
 const interests = [
   {
     title: 'Health',
     text: 'Staying fit, mostly at the gym.',
-    photo: {
-      src: '/images/interests/health.jpg',
-      alt: 'Racks of weight plates in a gym',
-      credit: 'Cobragym1, CC BY-SA 3.0',
-      href: 'https://commons.wikimedia.org/wiki/File:Weight_plates.jpg',
-    },
+    photo: { src: '/images/interests/health.jpg', alt: 'Hands gripping a barbell before a lift' },
   },
   {
     title: 'Food',
     text: 'Cooking at home, and trying new places, dishes and cuisines wherever I am.',
-    photo: {
-      src: '/images/interests/food.jpg',
-      alt: 'A street food stall in Bangkok at night',
-      credit: 'Gerrit Phil Baumann, CC BY 3.0',
-      href: 'https://commons.wikimedia.org/wiki/File:Street_Food_Dinner_Bangkok_(80298455).jpeg',
-    },
+    photo: { src: '/images/interests/food.jpg', alt: 'Fresh pasta coming out of a pasta machine' },
   },
   {
     title: 'Travel',
     text: 'Ideally somewhere as different as possible from anywhere I’ve been before.',
-    photo: {
-      src: '/images/interests/travel.jpg',
-      alt: 'Yosemite Valley from Tunnel View',
-      credit: 'Diliff, CC BY-SA 3.0',
-      href: 'https://commons.wikimedia.org/wiki/File:Tunnel_View,_Yosemite_Valley,_Yosemite_NP_-_Diliff.jpg',
-    },
+    photo: { src: '/images/interests/travel.jpg', alt: 'Yosemite Valley from Tunnel View' },
   },
 ];
 
-// The route's colours, from Bangkok to Basel, for the frame around the portrait
-const ROUTE_GRADIENT =
-  'linear-gradient(140deg, oklch(0.78 0.13 75), oklch(0.72 0.15 20), oklch(0.68 0.15 320), oklch(0.7 0.13 260), oklch(0.78 0.12 190))';
+// Ways to reach me, as shown in the contact panel
+const contacts: { label: string; value: string; href: string; icon: LucideIcon }[] = [
+  { label: 'Email', value: siteConfig.email, href: siteConfig.links.email, icon: Mail },
+  { label: 'LinkedIn', value: siteConfig.links.linkedin.replace(/^https:\/\/(www\.)?/, ''), href: siteConfig.links.linkedin, icon: Linkedin },
+  { label: 'GitHub', value: siteConfig.links.github.replace(/^https:\/\//, ''), href: siteConfig.links.github, icon: Github },
+];
 
 export default async function HomePage() {
   const [{ chapters }, projects, roles] = await Promise.all([getJourney(), getProjectItems(), getExperienceItems()]);
@@ -77,15 +66,13 @@ export default async function HomePage() {
       <section id="top" aria-label="Introduction" className="relative overflow-hidden pt-32 md:pt-40">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div className="absolute -top-40 left-1/2 h-[640px] w-[640px] -translate-x-1/3 rounded-full bg-accent/[0.08] blur-3xl" />
-          <div className="absolute right-0 top-40 h-[420px] w-[420px] rounded-full bg-[oklch(0.7_0.13_200_/_0.07)] blur-3xl" />
+          <div className="absolute right-0 top-40 h-[420px] w-[420px] rounded-full bg-accent/[0.05] blur-3xl" />
         </div>
 
         <div className="container-page relative grid items-center gap-14 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] lg:gap-16">
           <div>
-            <div className="mb-8 size-24 rounded-full p-[2px] lg:hidden" style={{ background: ROUTE_GRADIENT }}>
-              <div className="relative h-full w-full overflow-hidden rounded-full bg-bg-card">
-                <Image src="/images/portrait.jpg" alt="Oscar de Francesca" fill priority sizes="96px" className="object-cover" />
-              </div>
+            <div className="relative mb-8 size-24 overflow-hidden rounded-full bg-bg-card ring-1 ring-border-hover lg:hidden">
+              <Image src="/images/portrait.jpg" alt="Oscar de Francesca" fill priority sizes="96px" className="object-cover" />
             </div>
             <p className="mb-5 flex items-center gap-2 text-sm font-medium text-accent-light">
               <MapPin size={15} aria-hidden="true" />
@@ -102,7 +89,7 @@ export default async function HomePage() {
             </p>
             <p className="mt-5 max-w-[54ch] text-lg leading-relaxed text-text-secondary">
               I’ve built low-latency C++ at Bloomberg, firmware for RFID wristbands and language models
-              from scratch, and taught hundreds of students as a teaching assistant and maths tutor.
+              from scratch, and taught hundreds of students as a teaching assistant and mathematics tutor.
               Right now I’m in Basel, writing my master’s thesis at ETH Zurich.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -130,17 +117,17 @@ export default async function HomePage() {
           </div>
 
           <div className="hidden w-full max-w-[22rem] lg:block lg:justify-self-end xl:max-w-[26rem]">
-            <div className="relative rounded-[30px] p-[2px] shadow-[0_30px_80px_-30px_rgb(109_114_246_/_0.45)]" style={{ background: ROUTE_GRADIENT }}>
-              <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-bg-card">
-                <Image
-                  src="/images/portrait.jpg"
-                  alt="Oscar de Francesca"
-                  fill
-                  priority
-                  sizes="(max-width: 1280px) 22rem, 26rem"
-                  className="object-cover"
-                />
-              </div>
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-bg-card shadow-[0_30px_80px_-30px_rgb(109_114_246_/_0.5)]">
+              <Image
+                src="/images/portrait.jpg"
+                alt="Oscar de Francesca"
+                fill
+                priority
+                sizes="(max-width: 1280px) 22rem, 26rem"
+                className="object-cover"
+              />
+              {/* A hairline inside the edge, so the photo sits in the page instead of on it */}
+              <div aria-hidden="true" className="absolute inset-0 rounded-[28px] ring-1 ring-inset ring-white/15" />
             </div>
           </div>
         </div>
@@ -213,7 +200,7 @@ export default async function HomePage() {
               design.
             </p>
             <p>
-              I tutor maths on the side. Between that and seven courses as a teaching assistant, I’ve
+              I tutor mathematics on the side. Between that and seven courses as a teaching assistant, I’ve
               taught hundreds of students, and Mathium is my way of making the tutoring better.
             </p>
             <p>
@@ -237,14 +224,6 @@ export default async function HomePage() {
                   <figcaption className="absolute inset-x-0 bottom-0 p-5">
                     <h3 className="place-name text-[2.25rem] leading-none text-white">{title}</h3>
                   </figcaption>
-                  <a
-                    href={photo.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="absolute right-2.5 top-2.5 rounded-full bg-black/40 px-2.5 py-0.5 text-[11px] text-white/75 backdrop-blur hover:text-white"
-                  >
-                    Photo: {photo.credit}
-                  </a>
                 </figure>
                 <p className="mt-3 leading-relaxed text-text-secondary">{text}</p>
               </li>
@@ -256,27 +235,82 @@ export default async function HomePage() {
       {/* ── Contact ── */}
       <section id="contact" aria-labelledby="contact-title" className="pb-24 md:pb-32">
         <div className="container-page">
-          <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-bg-card via-bg-card to-accent/[0.08] p-8 sm:p-14">
-            <div aria-hidden="true" className="absolute right-0 top-0 h-80 w-80 -translate-y-1/2 translate-x-1/3 rounded-full bg-accent/[0.08] blur-3xl" />
-            <div className="relative">
-              <h2 id="contact-title" className="text-4xl font-semibold tracking-tight sm:text-5xl">
-                Get in touch
-              </h2>
-              <p className="mt-5 max-w-[52ch] text-lg text-text-secondary">
-                I’m always happy to hear from people, whether it’s about something on this page, an idea,
-                or an opportunity worth talking about. Email is the best way to reach me.
-              </p>
-              <div className="mt-10">
-                <EmailLink address={siteConfig.email} />
+          <div className="relative overflow-hidden rounded-[2rem] border border-border bg-bg-card">
+            <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+              <div className="absolute -left-40 -top-48 h-[30rem] w-[30rem] rounded-full bg-accent/[0.16] blur-3xl" />
+              <div className="absolute -bottom-56 -right-24 h-[28rem] w-[28rem] rounded-full bg-accent/[0.08] blur-3xl" />
+            </div>
+
+            <div className="relative grid gap-10 p-5 sm:p-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-center lg:gap-16 lg:p-16">
+              <div>
+                <div className="flex items-center gap-3.5">
+                  <span className="relative size-12 shrink-0 overflow-hidden rounded-full bg-bg ring-1 ring-border-hover">
+                    <Image src="/images/portrait.jpg" alt="" fill sizes="48px" className="object-cover" />
+                  </span>
+                  <div>
+                    <p className="font-semibold leading-tight">{siteConfig.name}</p>
+                    <p className="mt-0.5 flex items-center gap-1.5 text-sm text-text-muted">
+                      <MapPin size={13} aria-hidden="true" />
+                      Basel, Switzerland
+                    </p>
+                  </div>
+                </div>
+                <h2 id="contact-title" className="mt-8 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+                  Get in touch
+                </h2>
+                <p className="mt-5 max-w-[46ch] text-lg leading-relaxed text-text-secondary">
+                  I’m always happy to hear from people, whether it’s about something on this page, an idea, or
+                  an opportunity worth talking about. Email is the best way to reach me.
+                </p>
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <a
+                    href={siteConfig.links.email}
+                    className="group inline-flex items-center gap-2.5 rounded-full bg-accent px-6 py-3 font-medium text-white transition-colors hover:bg-accent-hover"
+                  >
+                    <Mail size={18} aria-hidden="true" />
+                    Send me an email
+                    <ArrowRight size={16} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />
+                  </a>
+                  <CopyEmailButton address={siteConfig.email} />
+                </div>
               </div>
-              <div className="mt-10 flex flex-wrap gap-3">
-                <Button href={siteConfig.links.linkedin} external variant="secondary" icon="external">
-                  LinkedIn
-                </Button>
-                <Button href={siteConfig.links.github} external variant="secondary" icon="external">
-                  GitHub
-                </Button>
-              </div>
+
+              <ul className="space-y-3">
+                {contacts.map(({ label, value, href, icon: Icon }) => {
+                  const external = !href.startsWith('mailto:');
+                  return (
+                    <li key={label}>
+                      <a
+                        href={href}
+                        target={external ? '_blank' : undefined}
+                        rel={external ? 'noopener noreferrer' : undefined}
+                        className="group flex items-center gap-3.5 rounded-2xl border border-border bg-bg/60 p-3.5 transition-colors hover:border-border-hover hover:bg-bg-card-hover sm:gap-4 sm:p-5"
+                      >
+                        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-muted text-accent-light sm:size-11">
+                          <Icon size={20} aria-hidden="true" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-sm text-text-muted">{label}</span>
+                          {/* If it has to wrap, it wraps after the @ or a slash */}
+                          <span className="block text-sm font-semibold [overflow-wrap:anywhere] sm:text-[1.0625rem]">
+                            {value.split(/(?<=[@/])/).map((part, i) => (
+                              <Fragment key={part}>
+                                {i > 0 && <wbr />}
+                                {part}
+                              </Fragment>
+                            ))}
+                          </span>
+                        </span>
+                        <ArrowUpRight
+                          size={18}
+                          aria-hidden="true"
+                          className="hidden shrink-0 text-text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-text-primary sm:block"
+                        />
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </div>
         </div>

@@ -259,7 +259,7 @@ This queries OpenStreetMap Nominatim (free, no key) and caches results in `src/d
 |-------|----------|--------|
 | `place` | ✓ | City, island, region — whatever you'd call it |
 | `country` | ✓ | Country name |
-| `state` | | US states only — shown alongside country |
+| `state` | | US states only — groups the place under its state in the list and lights that state on the globe (spell it as in `src/data/us-states-110m.json`, e.g. `California`; the build fails on a name it doesn't know) |
 | `startDate` | ✓ | `YYYY`, `YYYY-MM`, or `YYYY-MM-DD` |
 | `endDate` | | Omit for day trips or ongoing stays |
 | `purpose` | ✓ | `lived` · `travel` · `work` · `conference` · `study` |

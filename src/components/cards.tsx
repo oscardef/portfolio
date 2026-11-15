@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type { CSSProperties } from 'react';
-import { ChevronRight, GraduationCap } from 'lucide-react';
+import { ChevronRight, GraduationCap, MapPin } from 'lucide-react';
 import type { JourneyItem } from '@/lib/journey';
 import { cn } from '@/lib/utils';
 
@@ -10,13 +9,14 @@ import { cn } from '@/lib/utils';
  * /projects and /experience pages. Links open the item as a sheet.
  */
 
+// Hover states ease in slowly, so cards passing under the cursor while scrolling don't flash
 const surface =
-  'border border-border bg-bg-card transition-colors hover:border-border-hover hover:bg-bg-card-hover';
+  'border border-border bg-bg-card transition-colors duration-300 hover:border-border-hover hover:bg-bg-card-hover';
 
 function Where({ item }: { item: JourneyItem }) {
   return (
-    <p className="tnum flex items-center gap-2 text-sm text-text-muted" style={{ '--h': item.hue ?? 0 } as CSSProperties}>
-      {item.hue !== null && <span aria-hidden="true" className="hue-bg size-2 rounded-full" />}
+    <p className="tnum flex items-center gap-1.5 text-sm text-text-muted">
+      {item.place && <MapPin size={14} aria-hidden="true" className="shrink-0 text-accent-light" />}
       {[item.place, item.period].filter(Boolean).join(', ')}
     </p>
   );
@@ -103,6 +103,7 @@ export function RoleRow({ item }: { item: JourneyItem }) {
           {item.place}
           <span className="tnum sm:hidden">, {item.period}</span>
         </p>
+        <p className="mt-1 hidden text-[0.9375rem] leading-snug text-text-secondary sm:line-clamp-1">{item.blurb}</p>
       </div>
       <ChevronRight
         size={18}
@@ -159,9 +160,13 @@ export function RoleCard({ item }: { item: JourneyItem }) {
 export function StudyCard({ item }: { item: JourneyItem }) {
   return (
     <div className="flex gap-4 rounded-3xl border border-dashed border-border p-6">
-      <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-accent-muted text-accent-light">
-        <GraduationCap size={22} aria-hidden="true" />
-      </div>
+      {item.logo ? (
+        <Logo item={item} large />
+      ) : (
+        <div className="flex h-14 w-20 shrink-0 items-center justify-center rounded-xl bg-accent-muted text-accent-light">
+          <GraduationCap size={22} aria-hidden="true" />
+        </div>
+      )}
       <div className="min-w-0">
         <h3 className="text-lg font-semibold tracking-tight">{item.name}</h3>
         <p className="text-text-secondary">{item.detail}</p>

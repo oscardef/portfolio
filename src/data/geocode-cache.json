@@ -26,7 +26,7 @@
   },
   "Angkor Wat, Cambodia": {
     "lat": 13.4125,
-    "lng": 103.8670,
+    "lng": 103.867,
     "cc": "KH"
   },
   "Amstelveen, Netherlands": {
@@ -214,7 +214,7 @@
     "lng": 30.5234,
     "cc": "UA"
   },
-  "K\u00f6nigssee, Germany": {
+  "Königssee, Germany": {
     "lat": 47.5551052,
     "lng": 12.9765672,
     "cc": "DE"
@@ -222,6 +222,11 @@
   "Las Vegas, USA": {
     "lat": 36.1699,
     "lng": -115.1398,
+    "cc": "US"
+  },
+  "New York City, USA": {
+    "lat": 40.7127281,
+    "lng": -74.0060152,
     "cc": "US"
   },
   "Lausanne, Switzerland": {
@@ -280,7 +285,7 @@
     "cc": "US"
   },
   "Muscat, Oman": {
-    "lat": 23.5880,
+    "lat": 23.588,
     "lng": 58.3829,
     "cc": "OM"
   },
@@ -289,14 +294,14 @@
     "lng": 11.5753822,
     "cc": "DE"
   },
-  "M\u00e1laga, Spain": {
+  "Málaga, Spain": {
     "lat": 36.7213028,
     "lng": -4.4216366,
     "cc": "ES"
   },
   "New Delhi, India": {
     "lat": 28.6139,
-    "lng": 77.2090,
+    "lng": 77.209,
     "cc": "IN"
   },
   "Naxos, Greece": {
@@ -306,10 +311,10 @@
   },
   "Olympia, Greece": {
     "lat": 37.6388,
-    "lng": 21.6300,
+    "lng": 21.63,
     "cc": "GR"
   },
-  "Nyn\u00e4shamn, Sweden": {
+  "Nynäshamn, Sweden": {
     "lat": 58.9056457,
     "lng": 17.9470987,
     "cc": "SE"
@@ -360,7 +365,7 @@
     "cc": "DE"
   },
   "Seaside, USA": {
-    "lat": 30.3210,
+    "lat": 30.321,
     "lng": -86.1343,
     "cc": "US"
   },
@@ -399,12 +404,12 @@
     "lng": 18.0686,
     "cc": "SE"
   },
-  "Str\u00e4ngn\u00e4s, Sweden": {
+  "Strängnäs, Sweden": {
     "lat": 59.3763155,
     "lng": 17.0268194,
     "cc": "SE"
   },
-  "S\u00f6derk\u00f6ping, Sweden": {
+  "Söderköping, Sweden": {
     "lat": 58.4823802,
     "lng": 16.3216224,
     "cc": "SE"
@@ -414,7 +419,7 @@
     "lng": -16.6214471,
     "cc": "ES"
   },
-  "Tren\u010d\u00edn, Slovakia": {
+  "Trenčín, Slovakia": {
     "lat": 48.8922719,
     "lng": 18.0387465,
     "cc": "SK"

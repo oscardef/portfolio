@@ -8,23 +8,33 @@ import {
   geoOrthographic,
   geoPath,
   geoRotation,
+  type GeoPermissibleObjects,
 } from 'd3-geo';
-import { feature } from 'topojson-client';
+import { feature, mesh } from 'topojson-client';
 import type { GeometryCollection, Topology } from 'topojson-specification';
 import world from 'world-atlas/countries-110m.json';
+import usStates from '@/data/us-states-110m.json';
 import type { GlobeData } from '@/lib/globe-data';
-import { oklchToRgba } from '@/lib/colour';
 
 /**
  * A night-side globe drawn on a canvas with d3-geo's orthographic
- * projection. Countries lived in glow in their route colour; legs of the
- * route lift off the surface and draw themselves; the camera flies between
- * places. It only animates while on screen, and holds still for anyone who
- * prefers reduced motion.
+ * projection. Two colours carry the meaning: teal for countries lived in,
+ * the accent for countries visited, with the US states visited lit again
+ * inside the United States. Legs of the route lift off the surface and draw
+ * themselves. The camera follows its goal on a spring, so a new goal
+ * mid-flight bends the motion instead of restarting it. The canvas only
+ * redraws while something moves, and holds still for anyone who prefers
+ * reduced motion.
  */
 
 const topology = world as unknown as Topology<{ countries: GeometryCollection }>;
 const COUNTRIES = feature(topology, topology.objects.countries).features;
+
+// US states at the same 1:110m scale as the countries (Natural Earth, public domain)
+const statesTopology = usStates as unknown as Topology<{ states: GeometryCollection<{ name: string }> }>;
+const STATES = feature(statesTopology, statesTopology.objects.states).features;
+const STATE_BORDERS = mesh(statesTopology, statesTopology.objects.states, (a, b) => a !== b);
+
 const SPHERE = { type: 'Sphere' } as const;
 const GRATICULE = geoGraticule10();
 
@@ -34,13 +44,6 @@ interface View {
   lng: number;
   lat: number;
   zoom: number;
-}
-
-interface Flight {
-  from: View;
-  to: View;
-  start: number;
-  duration: number;
 }
 
 export interface GlobeProps {
@@ -59,6 +62,10 @@ const OVERVIEW: View = { lng: 42, lat: 32, zoom: 1 };
 const TRAVEL: View = { lng: 15, lat: 28, zoom: 1 };
 const LEG_SECONDS_INTRO = 1.1;
 const LEG_SECONDS = 1.8;
+
+// How stiffly the camera follows its goal, in rad/s: turning, and zooming a touch behind it
+const TURN = 3.4;
+const ZOOM = 2.9;
 
 const isEurope = (lng: number, lat: number) => lng > -12 && lng < 32 && lat > 36;
 
@@ -79,37 +86,75 @@ function viewFor(data: GlobeData, mode: GlobeProps['mode'], active: number, deto
     : { lng: stop.lng, lat: stop.lat - 3, zoom: 1.9 };
 }
 
-const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+// One step of a critically damped spring: it never overshoots, and its speed
+// carries over when the goal moves
+function spring(x: number, v: number, goal: number, omega: number, dt: number): [number, number] {
+  const d = x - goal;
+  const t = (v + omega * d) * dt;
+  const decay = Math.exp(-omega * dt);
+  return [goal + (d + t) * decay, (v - omega * t) * decay];
+}
+
+// An angle in degrees brought into [-180, 180)
+const wrap = (deg: number) => ((((deg + 180) % 360) + 360) % 360) - 180;
+
+// A CSS colour at other opacities, for the stops of a gradient. The canvas
+// normalises whatever notation the stylesheet ends up with (the build may
+// rewrite it) to #rrggbb or rgba(r, g, b, a), which is easy to take apart.
+function fades(ctx: CanvasRenderingContext2D, colour: string, scales: number[]): string[] {
+  ctx.fillStyle = '#000';
+  ctx.fillStyle = colour;
+  const normal = String(ctx.fillStyle);
+  const [r, g, b, a = 1] = normal.startsWith('#')
+    ? [1, 3, 5].map((i) => parseInt(normal.slice(i, i + 2), 16))
+    : (normal.match(/[\d.]+/g) ?? []).map(Number);
+  return scales.map((k) => `rgba(${r}, ${g}, ${b}, ${(a * k).toFixed(3)})`);
+}
 
 interface Palette {
   oceanHi: string;
   oceanLo: string;
-  glow: string;
+  // The atmosphere's colour at the globe's edge, part-way out, and where it ends
+  halo: string[];
   graticule: string;
   land: string;
   border: string;
   visited: string;
+  state: string;
+  stateBorder: string;
+  lived: string;
+  livedActive: string;
+  route: string;
+  routeGlow: string;
+  stop: string;
+  stopDim: string;
+  home: string;
   ring: string;
   place: string;
-  routeL: string;
-  routeC: string;
 }
 
-function readPalette(el: Element): Palette {
+function readPalette(el: Element, ctx: CanvasRenderingContext2D): Palette {
   const s = getComputedStyle(el);
   const v = (name: string) => s.getPropertyValue(name).trim();
   return {
     oceanHi: v('--globe-ocean-hi'),
     oceanLo: v('--globe-ocean-lo'),
-    glow: v('--globe-glow'),
+    halo: fades(ctx, v('--globe-glow'), [1, 0.3, 0]),
     graticule: v('--globe-graticule'),
     land: v('--globe-land'),
     border: v('--globe-border'),
     visited: v('--globe-visited'),
+    state: v('--globe-state'),
+    stateBorder: v('--globe-state-border'),
+    lived: v('--globe-lived'),
+    livedActive: v('--globe-lived-active'),
+    route: v('--globe-route'),
+    routeGlow: v('--globe-route-glow'),
+    stop: v('--globe-stop'),
+    stopDim: v('--globe-stop-dim'),
+    home: v('--globe-home'),
     ring: v('--globe-ring'),
     place: v('--globe-place'),
-    routeL: v('--route-l') || '0.78',
-    routeC: v('--route-c') || '0.13',
   };
 }
 
@@ -121,15 +166,18 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
   // Everything the animation loop mutates lives here, outside React state
   const engine = useRef({
     view: viewFor(data, mode, active, detour),
-    flight: null as Flight | null,
+    goal: viewFor(data, mode, active, detour),
+    speed: { lng: 0, lat: 0, zoom: 0 },
     legs: data.stops.slice(1).map(() => 0),
     trips: data.trips.map(() => 0),
     raf: 0,
+    wake: 0,
     last: 0,
     visible: false,
     reduced: false,
     dragging: false,
     idleUntil: 0,
+    boost: 0,
     palette: null as Palette | null,
     size: { w: 0, h: 0, dpr: 1 },
     props: { mode, active, detour },
@@ -140,32 +188,31 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
   useEffect(() => {
     const e = engine.current;
     const canvas = canvasRef.current!;
-    const wrap = wrapRef.current!;
+    const wrapper = wrapRef.current!;
     const ctx = canvas.getContext('2d')!;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     e.reduced = motion.matches;
-    e.palette = readPalette(wrap);
+    e.palette = readPalette(wrapper, ctx);
 
-    // Route colours as rgba(), computed once per hue and alpha; the palette
-    // changes with the theme, so the cache is keyed on it too
-    const colours = new Map<string, string>();
-    const colour = (hue: number, alpha = 1) => {
-      const key = `${e.palette!.routeL}/${e.palette!.routeC}/${hue}/${alpha}`;
-      let c = colours.get(key);
-      if (!c) {
-        c = oklchToRgba(parseFloat(e.palette!.routeL), parseFloat(e.palette!.routeC), hue, alpha);
-        colours.set(key, c);
-      }
-      return c;
-    };
+    // The shapes that light up, picked out once
+    const lived = new Set(data.lived);
+    const visited = new Set(data.visited);
+    const livedCountries = COUNTRIES.filter((c) => lived.has(String(c.id)));
+    const visitedCountries = COUNTRIES.filter((c) => visited.has(String(c.id)) && !lived.has(String(c.id)));
+    const visitedStates = STATES.filter((s) => data.states.includes(s.properties.name));
+
+    // The section can enlarge the globe as it scrolls (--globe-boost on an ancestor)
+    const readBoost = () => parseFloat(getComputedStyle(wrapper).getPropertyValue('--globe-boost')) || 0;
 
     function resize() {
-      const rect = wrap.getBoundingClientRect();
+      const rect = wrapper.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       e.size = { w: rect.width, h: rect.height, dpr };
+      e.boost = readBoost();
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
-      draw(performance.now());
+      draw();
+      if (rect.width && rect.height) canvas.style.opacity = '1';
     }
 
     // Targets for the legs of the route given the current props
@@ -178,6 +225,40 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
     function tripTarget(t: number): number {
       const { mode, detour } = e.props;
       return mode === 'route' && detour === t ? 1 : 0;
+    }
+
+    // Move the camera towards its goal; returns true while it is still moving
+    function stepCamera(dt: number): boolean {
+      const { view, goal, speed } = e;
+      const turn = wrap(goal.lng - view.lng);
+      const rest = () => {
+        e.view = { lng: view.lng + turn, lat: goal.lat, zoom: goal.zoom };
+        e.speed = { lng: 0, lat: 0, zoom: 0 };
+      };
+      if (e.reduced) {
+        const moved = turn !== 0 || goal.lat !== view.lat || goal.zoom !== view.zoom;
+        rest();
+        return moved;
+      }
+
+      // A long way to go: pull back for the flight, and come in on arrival
+      const remaining = geoDistance([view.lng, view.lat], [goal.lng, goal.lat]);
+      const cruise = Math.max(goal.zoom / (1 + remaining * 1.1), Math.min(goal.zoom, 1));
+
+      const [lng, vLng] = spring(view.lng, speed.lng, view.lng + turn, TURN, dt);
+      const [lat, vLat] = spring(view.lat, speed.lat, goal.lat, TURN, dt);
+      const [z, vZoom] = spring(Math.log(view.zoom), speed.zoom, Math.log(cruise), ZOOM, dt);
+      e.view = { lng, lat, zoom: Math.exp(z) };
+      e.speed = { lng: vLng, lat: vLat, zoom: vZoom };
+
+      const arrived =
+        Math.abs(turn) < 0.02 &&
+        Math.abs(goal.lat - lat) < 0.02 &&
+        Math.abs(z - Math.log(goal.zoom)) < 0.002 &&
+        Math.abs(vLng) + Math.abs(vLat) < 0.05 &&
+        Math.abs(vZoom) < 0.005;
+      if (arrived) rest();
+      return !arrived;
     }
 
     // Advance leg animations; returns true while anything is still moving
@@ -218,14 +299,13 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
       return moving;
     }
 
-    function draw(now: number) {
+    function draw() {
       const { w, h, dpr } = e.size;
       if (!w || !h || !e.palette) return;
       const p = e.palette;
       const cx = (w / 2) * dpr;
       const cy = (h / 2) * dpr;
-      const boost = parseFloat(getComputedStyle(wrap).getPropertyValue('--globe-boost')) || 0;
-      const R = (Math.min(w, h) / 2) * 0.8 * e.view.zoom * (1 + boost) * dpr;
+      const R = (Math.min(w, h) / 2) * 0.8 * e.view.zoom * (1 + e.boost) * dpr;
       const projection = geoOrthographic()
         .translate([cx, cy])
         .scale(R)
@@ -246,20 +326,35 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
         return { x: cx + r * X, y: cy - r * Y, visible, front: Z >= 0 };
       };
 
+      const fill = (shapes: GeoPermissibleObjects[], colour: string) => {
+        if (shapes.length === 0) return;
+        ctx.beginPath();
+        for (const s of shapes) path(s);
+        ctx.fillStyle = colour;
+        ctx.fill();
+      };
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Atmosphere and ocean
-      ctx.save();
+      // Atmosphere: a halo that fades out from the edge of the globe
+      const reach = 72 * dpr;
+      const halo = ctx.createRadialGradient(cx, cy, R * 0.985, cx, cy, R + reach);
+      halo.addColorStop(0, p.halo[0]);
+      halo.addColorStop(0.4, p.halo[1]);
+      halo.addColorStop(1, p.halo[2]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, R + reach, 0, Math.PI * 2);
+      ctx.fillStyle = halo;
+      ctx.fill();
+
+      // Ocean
       ctx.beginPath();
       path(SPHERE);
-      ctx.shadowColor = p.glow;
-      ctx.shadowBlur = 70 * dpr;
       const ocean = ctx.createRadialGradient(cx - R * 0.35, cy - R * 0.45, R * 0.05, cx, cy, R);
       ocean.addColorStop(0, p.oceanHi);
       ocean.addColorStop(1, p.oceanLo);
       ctx.fillStyle = ocean;
       ctx.fill();
-      ctx.restore();
 
       ctx.beginPath();
       path(GRATICULE);
@@ -279,81 +374,89 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
       ctx.lineWidth = 0.6 * dpr;
       ctx.stroke();
 
-      for (const c of COUNTRIES) {
-        const id = String(c.id);
-        const livedHue = data.lived[id];
-        let fill: string | null = null;
-        if (mode === 'travel') {
-          if (livedHue !== undefined) fill = colour(livedHue, 0.5);
-          else if (data.visited.includes(id)) fill = p.visited;
-        } else if (livedHue !== undefined) {
-          const here = activeStop?.countryId === id;
-          fill = colour(livedHue, here ? 0.62 : 0.4);
+      if (mode === 'travel') {
+        fill(visitedCountries, p.visited);
+        fill(livedCountries, p.lived);
+        // The United States is lit as a whole; the states visited are lit again
+        // on top, with the state lines drawn so they read as states
+        if (visitedStates.length > 0) {
+          fill(visitedStates, p.state);
+          ctx.beginPath();
+          path(STATE_BORDERS);
+          ctx.strokeStyle = p.stateBorder;
+          ctx.lineWidth = 0.6 * dpr;
+          ctx.stroke();
         }
-        if (!fill) continue;
-        ctx.beginPath();
-        path(c);
-        ctx.fillStyle = fill;
-        ctx.fill();
+      } else {
+        const here = livedCountries.filter((c) => String(c.id) === activeStop?.countryId);
+        fill(
+          livedCountries.filter((c) => !here.includes(c)),
+          p.lived
+        );
+        fill(here, p.livedActive);
       }
 
-      // Legs of the route, lifted off the surface
-      const drawArc = (a: LngLat, b: LngLat, progress: number, hueA: number, hueB: number, width: number) => {
+      // Legs of the route, lifted off the surface. A wide soft stroke under a
+      // crisp one stands in for a glow (canvas shadows are slow to draw).
+      const drawArc = (a: LngLat, b: LngLat, progress: number, width: number, dashed = false) => {
         if (progress <= 0) return;
         const interpolate = geoInterpolate(a, b);
         const lift = 0.03 + 0.3 * (geoDistance(a, b) / Math.PI);
         const steps = Math.max(8, Math.ceil(72 * progress));
-        const start = project(a);
-        const end = project(interpolate(progress), lift * Math.sin(Math.PI * progress));
-        const stroke = ctx.createLinearGradient(start.x, start.y, end.x, end.y);
-        stroke.addColorStop(0, colour(hueA));
-        stroke.addColorStop(1, colour(hueB));
-        ctx.save();
-        ctx.strokeStyle = stroke;
-        ctx.lineWidth = width * dpr;
-        ctx.lineCap = 'round';
-        ctx.shadowColor = colour(hueB, 0.7);
-        ctx.shadowBlur = 10 * dpr;
-        ctx.beginPath();
-        let pen = false;
-        for (let s = 0; s <= steps; s++) {
-          const t = (progress * s) / steps;
-          const pt = project(interpolate(t), lift * Math.sin(Math.PI * t));
-          if (!pt.visible) {
-            pen = false;
-            continue;
+        const trace = () => {
+          ctx.beginPath();
+          let pen = false;
+          for (let s = 0; s <= steps; s++) {
+            const t = (progress * s) / steps;
+            const pt = project(interpolate(t), lift * Math.sin(Math.PI * t));
+            if (!pt.visible) {
+              pen = false;
+              continue;
+            }
+            if (pen) ctx.lineTo(pt.x, pt.y);
+            else ctx.moveTo(pt.x, pt.y);
+            pen = true;
           }
-          if (pen) ctx.lineTo(pt.x, pt.y);
-          else ctx.moveTo(pt.x, pt.y);
-          pen = true;
-        }
+        };
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        trace();
+        ctx.strokeStyle = p.routeGlow;
+        ctx.lineWidth = width * 3.4 * dpr;
         ctx.stroke();
+        if (dashed) ctx.setLineDash([1, 6 * dpr]);
+        ctx.strokeStyle = p.route;
+        ctx.lineWidth = width * dpr;
+        ctx.stroke();
+        ctx.restore();
+        const end = project(interpolate(progress), lift * Math.sin(Math.PI * progress));
         if (progress < 1 && end.visible) {
           ctx.beginPath();
           ctx.arc(end.x, end.y, 3 * dpr, 0, Math.PI * 2);
-          ctx.fillStyle = colour(hueB);
+          ctx.fillStyle = p.stop;
           ctx.fill();
         }
-        ctx.restore();
       };
 
       if (mode === 'route') {
         for (let i = 0; i < e.legs.length; i++) {
           const a = data.stops[i];
           const b = data.stops[i + 1];
-          drawArc([a.lng, a.lat], [b.lng, b.lat], e.legs[i], a.hue, b.hue, 2.2);
+          drawArc([a.lng, a.lat], [b.lng, b.lat], e.legs[i], 2);
         }
+        // Side trips are dotted, to tell them from moves
         data.trips.forEach((t, i) => {
           const a = data.stops[t.from];
-          drawArc([a.lng, a.lat], [t.lng, t.lat], e.trips[i], a.hue, a.hue, detour === i ? 2.8 : 1.6);
+          drawArc([a.lng, a.lat], [t.lng, t.lat], e.trips[i], 2.2, true);
         });
       }
 
       // Places
-      const dot = (x: number, y: number, r: number, fill: string) => {
+      const dot = (x: number, y: number, r: number, colour: string) => {
         ctx.beginPath();
         ctx.arc(x, y, r * dpr, 0, Math.PI * 2);
-        ctx.fillStyle = fill;
+        ctx.fillStyle = colour;
         ctx.fill();
         ctx.lineWidth = 1.5 * dpr;
         ctx.strokeStyle = p.ring;
@@ -361,82 +464,67 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
       };
 
       if (mode === 'travel') {
-        // Trips as white dots, then homes on top in their route colour
-        const ordered = [...data.places].sort((a, b) => Number(a.hue !== null) - Number(b.hue !== null));
-        for (const place of ordered) {
-          const pt = project([place.lng, place.lat]);
-          if (!pt.front) continue;
-          if (place.hue === null) dot(pt.x, pt.y, 2.4, p.place);
-          else dot(pt.x, pt.y, 3.8, colour(place.hue));
+        // Places visited as small dots, then homes on top, larger
+        for (const home of [false, true]) {
+          for (const place of data.places) {
+            if (place.home !== home) continue;
+            const pt = project([place.lng, place.lat]);
+            if (pt.front) dot(pt.x, pt.y, home ? 4 : 2.3, home ? p.home : p.place);
+          }
         }
       } else {
         const reached = (i: number) => active < 0 || i <= active;
         data.stops.forEach((s, i) => {
           const pt = project([s.lng, s.lat]);
           if (!pt.front) return;
-          dot(pt.x, pt.y, reached(i) ? 4 : 3, colour(s.hue, reached(i) ? 1 : 0.35));
+          dot(pt.x, pt.y, i === active ? 5 : reached(i) ? 4 : 3, reached(i) ? p.stop : p.stopDim);
         });
         data.trips.forEach((t, i) => {
           if (e.trips[i] < 0.95) return;
           const pt = project([t.lng, t.lat]);
-          if (pt.front) dot(pt.x, pt.y, 3, colour(data.stops[t.from].hue));
+          if (pt.front) dot(pt.x, pt.y, 3.5, p.stop);
         });
       }
 
-      // The place in focus: a pulsing ring and a label
+      // The place in focus: its label and pulsing ring follow it (the ring is CSS)
       const label = labelRef.current;
       const focusPoint = activeTrip ?? activeStop;
-      if (focusPoint && activeStop) {
-        const pt = project([focusPoint.lng, focusPoint.lat]);
-        if (pt.front) {
-          if (!e.reduced) {
-            const phase = (now / 1600) % 1;
-            ctx.beginPath();
-            ctx.arc(pt.x, pt.y, (5 + 16 * phase) * dpr, 0, Math.PI * 2);
-            ctx.strokeStyle = colour(activeStop.hue, 0.9 * (1 - phase));
-            ctx.lineWidth = 2 * dpr;
-            ctx.stroke();
-          }
-          if (label) {
-            label.style.opacity = '1';
-            label.style.transform = `translate(${pt.x / dpr}px, ${pt.y / dpr}px)`;
-          }
-        } else if (label) {
+      if (label) {
+        const pt = focusPoint && activeStop ? project([focusPoint.lng, focusPoint.lat]) : null;
+        if (pt?.front) {
+          label.style.opacity = '1';
+          label.style.transform = `translate(${(pt.x / dpr).toFixed(1)}px, ${(pt.y / dpr).toFixed(1)}px)`;
+        } else {
           label.style.opacity = '0';
         }
-      } else if (label) {
-        label.style.opacity = '0';
       }
     }
 
     function tick(now: number) {
       const dt = Math.min(0.05, (now - e.last) / 1000);
       e.last = now;
-      let moving = false;
 
-      if (e.flight) {
-        const f = e.flight;
-        const t = e.reduced ? 1 : Math.min(1, (now - f.start) / f.duration);
-        const k = ease(t);
-        const [lng, lat] = geoInterpolate([f.from.lng, f.from.lat], [f.to.lng, f.to.lat])(k);
-        const distance = geoDistance([f.from.lng, f.from.lat], [f.to.lng, f.to.lat]);
-        const dip = Math.min(0.35, distance * 0.45) * Math.sin(Math.PI * k);
-        e.view = { lng, lat, zoom: (f.from.zoom + (f.to.zoom - f.from.zoom) * k) * (1 - dip) };
-        if (t >= 1) e.flight = null;
-        else moving = true;
-      }
-
+      let moving = stepCamera(dt);
       moving = stepLegs(dt) || moving;
 
-      const { mode, active } = e.props;
-      if (mode === 'travel' && !e.reduced && !e.dragging && now > e.idleUntil && !e.flight && e.view.zoom < 1.2) {
-        e.view = { ...e.view, lng: e.view.lng + dt * 4 };
-        moving = true;
+      // Left alone and zoomed out, the travel globe turns slowly
+      const { mode } = e.props;
+      if (mode === 'travel' && !e.reduced && !e.dragging && !moving && e.goal.zoom < 1.2) {
+        if (now > e.idleUntil) {
+          const turn = dt * 4;
+          e.view = { ...e.view, lng: e.view.lng + turn };
+          e.goal = { ...e.goal, lng: e.goal.lng + turn };
+          moving = true;
+        } else if (!e.wake) {
+          e.wake = window.setTimeout(() => {
+            e.wake = 0;
+            e.kick();
+          }, e.idleUntil - now + 20);
+        }
       }
-      const pulsing = mode === 'route' && active >= 0 && !e.reduced;
 
-      draw(now);
-      e.raf = (moving || pulsing) && e.visible ? requestAnimationFrame(tick) : 0;
+      draw();
+      e.raf = moving && e.visible ? requestAnimationFrame(tick) : 0;
     }
 
     e.kick = () => {
@@ -446,22 +534,32 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
     };
 
     const resizeObserver = new ResizeObserver(resize);
-    resizeObserver.observe(wrap);
+    resizeObserver.observe(wrapper);
 
     const visibility = new IntersectionObserver(([entry]) => {
       e.visible = entry.isIntersecting;
       if (e.visible) e.kick();
     });
-    visibility.observe(wrap);
+    visibility.observe(wrapper);
 
     const themeObserver = new MutationObserver(() => {
-      e.palette = readPalette(wrap);
-      draw(performance.now());
+      e.palette = readPalette(wrapper, ctx);
+      draw();
     });
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
+    // The route's globe changes size as its section scrolls into place: at
+    // most one redraw a frame, and only when the size really changed
+    let scrollFrame = 0;
     const onScroll = () => {
-      if (e.visible && !e.raf) requestAnimationFrame((now) => draw(now));
+      if (e.props.mode !== 'route' || !e.visible || scrollFrame) return;
+      scrollFrame = requestAnimationFrame(() => {
+        scrollFrame = 0;
+        const boost = readBoost();
+        if (boost === e.boost) return;
+        e.boost = boost;
+        if (!e.raf) draw();
+      });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
@@ -473,12 +571,14 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
 
     // Dragging spins the globe in travel mode
     let dragFrom: { x: number; y: number; view: View } | null = null;
+    let dragFrame = 0;
     const onDown = (ev: PointerEvent) => {
       if (e.props.mode !== 'travel') return;
       dragFrom = { x: ev.clientX, y: ev.clientY, view: e.view };
       e.dragging = true;
-      e.flight = null;
+      e.speed = { lng: 0, lat: 0, zoom: 0 };
       canvas.setPointerCapture(ev.pointerId);
+      canvas.style.cursor = 'grabbing';
     };
     const onMove = (ev: PointerEvent) => {
       if (!dragFrom) return;
@@ -488,12 +588,21 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
         lng: dragFrom.view.lng - (ev.clientX - dragFrom.x) * k,
         lat: Math.max(-60, Math.min(70, dragFrom.view.lat + (ev.clientY - dragFrom.y) * k)),
       };
-      draw(performance.now());
+      // The goal follows the hand, so letting go doesn't pull the globe back
+      e.goal = { ...e.goal, lng: e.view.lng, lat: e.view.lat };
+      if (!dragFrame && !e.raf) {
+        dragFrame = requestAnimationFrame(() => {
+          dragFrame = 0;
+          draw();
+        });
+      }
     };
     const onUp = () => {
+      if (!dragFrom) return;
       dragFrom = null;
       e.dragging = false;
       e.idleUntil = performance.now() + 4000;
+      canvas.style.cursor = 'grab';
       e.kick();
     };
     canvas.addEventListener('pointerdown', onDown);
@@ -504,7 +613,11 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
     resize();
     return () => {
       cancelAnimationFrame(e.raf);
+      cancelAnimationFrame(scrollFrame);
+      cancelAnimationFrame(dragFrame);
+      window.clearTimeout(e.wake);
       e.raf = 0;
+      e.wake = 0;
       resizeObserver.disconnect();
       visibility.disconnect();
       themeObserver.disconnect();
@@ -517,13 +630,14 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
     };
   }, [data]);
 
-  // New focus: fly there
+  // A new place in focus: point the camera's goal at it and let the spring do the rest
   useEffect(() => {
     const e = engine.current;
     e.props = { mode, active, detour };
-    const to = focus ? { lng: focus.lng, lat: focus.lat, zoom: focus.zoom ?? 2.5 } : viewFor(data, mode, active, detour);
-    const distance = geoDistance([e.view.lng, e.view.lat], [to.lng, to.lat]);
-    e.flight = { from: e.view, to, start: performance.now(), duration: 1300 + 900 * Math.min(1, distance) };
+    if (focus) e.goal = { lng: focus.lng, lat: focus.lat, zoom: focus.zoom ?? 2.5 };
+    // Back to the whole world from wherever the globe has turned to
+    else if (mode === 'travel') e.goal = { lng: e.view.lng, lat: TRAVEL.lat, zoom: TRAVEL.zoom };
+    else e.goal = viewFor(data, mode, active, detour);
     e.idleUntil = performance.now() + (focus ? 6000 : 0);
     e.kick();
   }, [data, mode, active, focus, detour]);
@@ -537,7 +651,7 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
     <div ref={wrapRef} className={className}>
       <canvas
         ref={canvasRef}
-        className="globe-fade absolute inset-0 h-full w-full"
+        className="globe-fade absolute inset-0 h-full w-full opacity-0 transition-opacity duration-700"
         style={{
           touchAction: mode === 'travel' ? 'pan-y' : 'auto',
           cursor: mode === 'travel' ? 'grab' : 'default',
@@ -551,10 +665,13 @@ export function Globe({ data, mode, active = -1, focus = null, detour = null, cl
         className="pointer-events-none absolute left-0 top-0 opacity-0 transition-opacity duration-300"
       >
         {label && (
-          <span className="absolute bottom-3 left-3 flex items-baseline gap-2 whitespace-nowrap rounded-full bg-bg/80 px-3 py-1 backdrop-blur">
-            <span className="place-name text-lg text-text-primary">{label.place}</span>
-            {label.note && <span className="tnum text-xs text-text-muted">{label.note}</span>}
-          </span>
+          <>
+            <span className="globe-pulse" />
+            <span className="absolute bottom-3 left-3 flex items-baseline gap-2 whitespace-nowrap rounded-full bg-bg/80 px-3 py-1 backdrop-blur">
+              <span className="place-name text-lg text-text-primary">{label.place}</span>
+              {label.note && <span className="tnum text-xs text-text-muted">{label.note}</span>}
+            </span>
+          </>
         )}
       </div>
     </div>

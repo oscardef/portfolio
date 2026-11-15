@@ -12,6 +12,16 @@ function normalise(s: string): string {
   return s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 }
 
+const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+const inWords = (n: number) => WORDS[n] ?? String(n);
+
+// What the globe's colours mean; the swatches use the globe's own colours
+const LEGEND = [
+  { label: 'Lived', swatch: 'bg-[var(--globe-lived)]' },
+  { label: 'Visited', swatch: 'bg-[var(--globe-visited)]' },
+  { label: 'US states visited', swatch: 'bg-[var(--globe-state)] ring-1 ring-inset ring-[var(--globe-state-border)]' },
+];
+
 interface CountryGroup {
   country: string;
   places: GlobePlace[];
@@ -50,7 +60,7 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
           country,
           places: places.sort((a, b) => a.place.localeCompare(b.place)),
           view: { lng, lat, zoom: Math.min(6, Math.max(1.8, 22 / spread)) },
-          home: places.some((p) => p.hue !== null),
+          home: places.some((p) => p.home),
         };
       })
       .sort((a, b) => b.places.length - a.places.length || a.country.localeCompare(b.country));
@@ -60,7 +70,7 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
   const visible = groups
     .map((g) => ({
       ...g,
-      places: g.places.filter((p) => !q || normalise(`${p.place} ${p.country}`).includes(q)),
+      places: g.places.filter((p) => !q || normalise(`${p.place} ${p.state ?? ''} ${p.country}`).includes(q)),
     }))
     .filter((g) => g.places.length > 0);
   const matches = visible.reduce((n, g) => n + g.places.length, 0);
@@ -83,23 +93,38 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
           Places I’ve been
         </h2>
         <p className="mt-4 max-w-[56ch] text-lg text-text-secondary">
-          {globe.places.length} places in {groups.length} countries. I like going somewhere as different as
-          possible from anywhere I’ve been before. Drag the globe, or pick a country to fly there.
+          {globe.places.length} places in {groups.length} countries so far, the ones I’ve lived in included
+          {globe.states.length > 0 && `, and ${inWords(globe.states.length)} US states`}. Drag the globe, or
+          pick a country to fly there.
         </p>
 
         <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14">
-          <div className="relative aspect-square w-full lg:sticky lg:top-24 lg:self-start">
-            {near && <Globe data={globe} mode="travel" focus={focus} className="absolute inset-0" />}
-            {chosen && (
-              <button
-                type="button"
-                onClick={zoomOut}
-                className="absolute bottom-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-border bg-bg/85 px-3.5 py-1.5 text-sm text-text-secondary backdrop-blur transition-colors hover:border-border-hover hover:text-text-primary"
-              >
-                <Minimize2 size={14} aria-hidden="true" />
-                Whole world
-              </button>
-            )}
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <div className="relative aspect-square w-full lg:max-h-[calc(100vh-11rem)]">
+              {near && <Globe data={globe} mode="travel" focus={focus} className="absolute inset-0" />}
+              {chosen && (
+                <button
+                  type="button"
+                  onClick={zoomOut}
+                  className="absolute bottom-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-border bg-bg/85 px-3.5 py-1.5 text-sm text-text-secondary backdrop-blur transition-colors hover:border-border-hover hover:text-text-primary"
+                >
+                  <Minimize2 size={14} aria-hidden="true" />
+                  Whole world
+                </button>
+              )}
+            </div>
+            <ul className="mt-2 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-text-muted" aria-label="What the colours mean">
+              {LEGEND.map((item) => (
+                <li key={item.label} className="flex items-center gap-2">
+                  <span aria-hidden="true" className={cn('h-3 w-4 rounded-[4px]', item.swatch)} />
+                  {item.label}
+                </li>
+              ))}
+              <li className="flex items-center gap-2">
+                <span aria-hidden="true" className="size-1.5 rounded-full bg-[var(--globe-place)]" />
+                Places
+              </li>
+            </ul>
           </div>
 
           <div>
@@ -120,7 +145,7 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
                 spellCheck={false}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Find a city or country"
+                placeholder="Find a city, country or US state"
                 className="w-full rounded-full border border-border bg-bg-card py-2.5 pl-10 pr-4 text-[0.9375rem] placeholder:text-text-muted focus-visible:border-border-hover"
               />
             </div>
@@ -144,14 +169,31 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
                       <span>
                         {g.country}
                         {g.home && (
-                          <span className="ml-2 align-middle text-xs font-normal text-text-muted">lived</span>
+                          <span className="ml-2 rounded-full bg-[var(--lived-muted)] px-2 py-0.5 align-middle text-xs font-medium text-[var(--lived)]">
+                            lived
+                          </span>
                         )}
                       </span>
                       <span className="tnum text-xs font-normal text-text-muted">{g.places.length}</span>
                     </button>
-                    <p className="mt-1 text-[0.9375rem] leading-relaxed text-text-secondary">
-                      {g.places.map((p) => p.place).join(', ')}
-                    </p>
+                    {g.places.some((p) => p.state) ? (
+                      // US places, a line per state
+                      <ul className="mt-1 space-y-0.5 text-[0.9375rem] leading-relaxed text-text-secondary">
+                        {[...new Set(g.places.map((p) => p.state ?? ''))].sort().map((state) => (
+                          <li key={state}>
+                            {state && <span className="font-medium text-text-primary">{state}: </span>}
+                            {g.places
+                              .filter((p) => (p.state ?? '') === state)
+                              .map((p) => p.place)
+                              .join(', ')}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-1 text-[0.9375rem] leading-relaxed text-text-secondary">
+                        {g.places.map((p) => p.place).join(', ')}
+                      </p>
+                    )}
                   </li>
                 ))}
               </ul>

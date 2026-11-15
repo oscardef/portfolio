@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { ChevronLeft, ChevronRight, GraduationCap, MapPin } from 'lucide-react';
 import type { JourneyChapter, JourneyItem } from '@/lib/journey';
 import type { GlobeData, GlobeTrip } from '@/lib/globe-data';
@@ -18,6 +18,11 @@ const typeOf = (item: JourneyItem) => item.type;
 
 // Where the globe's column sticks, in px from the top of the viewport (lg:top-20)
 const STICKY_TOP = 80;
+
+// How long a side trip's row must be rested on (scrolling) or pointed at
+// (hovering) before the globe flies out to it, in ms
+const TRIP_DWELL = 500;
+const TRIP_HOVER = 220;
 
 export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; globe: GlobeData }) {
   const [active, setActive] = useState(-1);
@@ -63,20 +68,40 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
     return () => observer.disconnect();
   }, []);
 
+  // A side trip shows on the globe when its row rests in the middle of the
+  // screen for a moment; rows scrolled straight past leave the globe alone
   useEffect(() => {
     const beats = sectionRef.current?.querySelectorAll<HTMLElement>('[data-beat]') ?? [];
+    let pending: Element | null = null;
+    let timer = 0;
+    const cancel = () => {
+      window.clearTimeout(timer);
+      pending = null;
+    };
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
+          if (!entry.isIntersecting) {
+            if (entry.target === pending) cancel();
+            continue;
+          }
+          cancel();
           const trip = (entry.target as HTMLElement).dataset.trip;
-          setScrollTrip(trip === undefined ? null : Number(trip));
+          if (trip === undefined) {
+            setScrollTrip(null);
+          } else {
+            pending = entry.target;
+            timer = window.setTimeout(() => setScrollTrip(Number(trip)), TRIP_DWELL);
+          }
         }
       },
       { rootMargin: '-45% 0px -50% 0px' }
     );
     beats.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    return () => {
+      cancel();
+      observer.disconnect();
+    };
   }, []);
 
   // On wide screens the globe starts centred under the heading and slides
@@ -105,6 +130,10 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
         p = Math.min(1, Math.max(0, (STICKY_TOP + 40 - r.top) / (r.height * 0.6)));
       }
       const k = p * p * (3 - 2 * p); // smoothstep
+      // Above the first chapter the whole route shows, however the page got
+      // here (a jump from the menu doesn't pass the intro through the middle)
+      const first = chapterRefs.current[0];
+      if (first && first.getBoundingClientRect().top > window.innerHeight / 2) setActive(-1);
       stage.style.transform = `translateX(${(shift * (1 - k)).toFixed(1)}px)`;
       grid.style.setProperty('--settled', k.toFixed(3));
       stage.style.setProperty('--globe-boost', (0.22 * (1 - k)).toFixed(3));
@@ -138,9 +167,9 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
         <h2 id="route-title" className="text-4xl font-semibold tracking-tight sm:text-5xl">
           The route
         </h2>
-        <p className="mt-4 max-w-[54ch] text-lg text-text-secondary lg:mx-auto">
-          {inWords(cities).replace(/^./, (c) => c.toUpperCase())} cities in {inWords(countries)} countries so
-          far, and what I did in each. Scroll to follow it place by place; open anything to read more.
+        <p className="mt-4 max-w-[56ch] text-lg text-text-secondary lg:mx-auto">
+          Everywhere I’ve lived: {inWords(cities)} cities in {inWords(countries)} countries so far. Scroll to
+          follow it from one home to the next, with what I studied, built and worked on in each.
         </p>
       </div>
 
@@ -151,8 +180,14 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
         {/* The globe stays in view while the chapters scroll past */}
         <div
           ref={columnRef}
-          className="sticky top-16 z-20 -mx-[var(--gutter)] bg-bg/90 backdrop-blur-md lg:top-20 lg:mx-0 lg:self-start lg:bg-transparent lg:backdrop-blur-none"
+          className="sticky top-16 z-20 -mx-[var(--gutter)] bg-bg lg:top-20 lg:mx-0 lg:self-start lg:bg-transparent"
         >
+          {/* On small screens the chapters slide under the globe; a short fade softens the edge
+              (a solid panel scrolls more smoothly on phones than a blurred one) */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-full h-5 bg-gradient-to-b from-bg to-transparent lg:hidden"
+          />
           <div ref={stageRef} className="will-change-transform">
             <div className="relative h-[36vh] lg:-mx-[14%] lg:h-[calc(100vh-9rem)]">
               {/* A faint disc marks where the globe appears while its code loads */}
@@ -183,7 +218,8 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
             className="flex h-[24vh] items-end pb-10 lg:h-[80vh] lg:pb-[22vh]"
           >
             <p className="max-w-[40ch] text-text-muted lg:[opacity:calc((var(--settled,1)-0.75)*4)]">
-              The whole route, from Bangkok in 2003 to Basel today. Keep scrolling to go place by place.
+              Every place I’ve lived, in order, from Bangkok in 2003 to Basel today. Keep scrolling to go
+              place by place.
             </p>
           </div>
           {chapters.map((chapter, i) => (
@@ -228,7 +264,7 @@ function StopRail({
           <span className="tnum">2003 to today</span>
         )}
       </p>
-      <ol className="flex shrink-0 items-center gap-1.5" aria-label="Places on the route">
+      <ol className="flex shrink-0 items-center gap-1.5" aria-label="Places I’ve lived, in order">
         {chapters.map((c, i) => (
           <li key={c.id}>
             <button
@@ -237,13 +273,14 @@ function StopRail({
               aria-current={i === active ? 'step' : undefined}
               onClick={() => refs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
               className="group flex h-6 items-center"
-              style={{ '--h': c.hue } as CSSProperties}
             >
               <span
                 className={cn(
-                  'hue-bg block rounded-full transition-all duration-300',
-                  i === active ? 'h-2.5 w-6' : 'size-2 opacity-50 group-hover:opacity-100',
-                  active >= 0 && i > active && 'opacity-25'
+                  'block h-2 rounded-full transition-all duration-500 ease-out',
+                  i === active
+                    ? 'w-6 bg-accent-light'
+                    : 'w-2 bg-text-muted group-hover:bg-text-primary',
+                  i !== active && (active >= 0 && i > active ? 'opacity-35' : 'opacity-80')
                 )}
               />
             </button>
@@ -281,7 +318,6 @@ function Chapter({ chapter, index, last, trips, onTrip, ref }: ChapterProps) {
         brief ? 'pb-14 lg:min-h-[48vh]' : 'pb-20 lg:pb-28',
         last && 'pb-24 lg:min-h-0 lg:pb-32'
       )}
-      style={{ '--h': chapter.hue } as CSSProperties}
     >
       <figure
         data-beat
@@ -299,8 +335,7 @@ function Chapter({ chapter, index, last, trips, onTrip, ref }: ChapterProps) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
         <figcaption className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-          <p className="tnum flex items-center gap-2 text-sm text-white/80">
-            <span className="hue-bg size-2 rounded-full" aria-hidden="true" />
+          <p className="tnum text-sm text-white/80">
             {chapter.country}, {chapter.years}
             {chapter.ages && <span className="text-white/60">· {chapter.ages}</span>}
           </p>
@@ -311,14 +346,6 @@ function Chapter({ chapter, index, last, trips, onTrip, ref }: ChapterProps) {
             {chapter.place}
           </h3>
         </figcaption>
-        <a
-          href={chapter.photo.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute right-2.5 top-2.5 rounded-full bg-black/40 px-2.5 py-0.5 text-[11px] text-white/75 backdrop-blur hover:text-white"
-        >
-          Photo: {chapter.photo.credit}
-        </a>
       </figure>
 
       <p className="mt-5 max-w-[56ch] text-lg leading-relaxed text-text-secondary">{chapter.note}</p>
@@ -352,7 +379,7 @@ function Chapter({ chapter, index, last, trips, onTrip, ref }: ChapterProps) {
 }
 
 const rowClass =
-  'group flex items-center gap-4 rounded-2xl border border-border bg-bg-card p-3.5 pr-4 transition-colors hover:border-border-hover hover:bg-bg-card-hover sm:p-4';
+  'group flex items-center gap-4 rounded-2xl border border-border bg-bg-card p-3.5 pr-4 transition-colors duration-300 hover:border-border-hover hover:bg-bg-card-hover sm:p-4';
 
 function RoleRow({
   item,
@@ -363,24 +390,25 @@ function RoleRow({
   trip: number | null;
   onTrip: (trip: number | null) => void;
 }) {
+  // Pointing at a side trip flies the globe out to it, but only once the
+  // pointer has settled: a cursor passing over while scrolling doesn't count
+  const timer = useRef(0);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+  const show = (delay: number) => {
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => onTrip(trip), delay);
+  };
+  const hide = () => {
+    window.clearTimeout(timer.current);
+    onTrip(null);
+  };
   const hover =
     trip === null
       ? {}
-      : {
-          onMouseEnter: () => onTrip(trip),
-          onMouseLeave: () => onTrip(null),
-          onFocus: () => onTrip(trip),
-          onBlur: () => onTrip(null),
-        };
+      : { onMouseEnter: () => show(TRIP_HOVER), onMouseLeave: hide, onFocus: () => show(0), onBlur: hide };
   return (
     <Link href={item.href!} scroll={false} className={rowClass} {...hover}>
-      <div className="flex h-11 w-12 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 sm:w-[4.25rem] sm:px-2">
-        {item.logo ? (
-          <Image src={item.logo} alt="" width={56} height={32} className="h-auto max-h-7 w-full object-contain" />
-        ) : (
-          <span className="text-lg font-semibold text-slate-900">{item.name.charAt(0)}</span>
-        )}
-      </div>
+      <LogoTile item={item} />
       <RowText item={item} away={trip !== null} />
       <ChevronRight
         size={18}
@@ -394,10 +422,28 @@ function RoleRow({
 function StudyRow({ item }: { item: JourneyItem }) {
   return (
     <div className="flex items-center gap-4 rounded-2xl border border-dashed border-border p-3.5 pr-4 sm:p-4">
-      <div className="flex h-11 w-12 shrink-0 items-center justify-center rounded-xl bg-accent-muted sm:w-[4.25rem] text-accent-light">
-        <GraduationCap size={20} aria-hidden="true" />
-      </div>
+      <LogoTile item={item} />
       <RowText item={item} />
+    </div>
+  );
+}
+
+// The organisation's logo on a white tile, so logos drawn for light pages stay legible
+function LogoTile({ item }: { item: JourneyItem }) {
+  if (!item.logo) {
+    return (
+      <div className="flex h-11 w-12 shrink-0 items-center justify-center rounded-xl bg-accent-muted text-accent-light sm:w-[4.25rem]">
+        {item.type === 'study' ? (
+          <GraduationCap size={20} aria-hidden="true" />
+        ) : (
+          <span className="text-lg font-semibold">{item.name.charAt(0)}</span>
+        )}
+      </div>
+    );
+  }
+  return (
+    <div className="flex h-11 w-12 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 sm:w-[4.25rem] sm:px-2">
+      <Image src={item.logo} alt="" width={56} height={32} className="h-auto max-h-8 w-full object-contain" />
     </div>
   );
 }
@@ -413,7 +459,7 @@ function RowText({ item, away = false }: { item: JourneyItem; away?: boolean }) 
             {away && (
               <span className="whitespace-nowrap">
                 {' '}
-                in <MapPin size={12} aria-hidden="true" className="hue mb-0.5 inline" /> {item.place}
+                in <MapPin size={12} aria-hidden="true" className="mb-0.5 inline text-accent-light" /> {item.place}
               </span>
             )}
             <span className="tnum sm:hidden">, {item.period}</span>
@@ -489,7 +535,7 @@ function ProjectStrip({ items, place }: { items: JourneyItem[]; place: string })
       </div>
       <ul
         ref={listRef}
-        className="mt-3 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="mt-3 flex snap-x snap-proximity gap-4 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={fade ? { maskImage: fade, WebkitMaskImage: fade } : undefined}
       >
         {items.map((item) => (
@@ -497,7 +543,7 @@ function ProjectStrip({ items, place }: { items: JourneyItem[]; place: string })
             <Link
               href={item.href!}
               scroll={false}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg-card transition-colors hover:border-border-hover hover:bg-bg-card-hover"
+              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg-card transition-colors duration-300 hover:border-border-hover hover:bg-bg-card-hover"
             >
               {item.image && (
                 <div className="relative aspect-[16/10] overflow-hidden border-b border-border bg-bg-secondary">

@@ -58,3 +58,41 @@ redirecting `defrancesca.com`, replacing the stand-in place photos.
 - **404:** rewritten in the site's layout with a way back to the projects.
 - The teaching role says "hundreds of students", like the rest of the site.
 - Image `sizes` hints updated for the wider layout, so photos stay sharp.
+
+## Third pass (15 Nov 2026)
+
+Oscar's two lists that day, plus what followed from them.
+
+- **No rainbow:** the route's hue ramp is gone. The portrait has a plain
+  hairline frame, and the stop markers and social image use the accent.
+  The globes use two colours: teal for places lived, the accent for places
+  visited (Oscar: the map may use more colours where it helps).
+- **At a glance:** each card's label is a heading with an icon; Education
+  shows the EPFL and Groningen logos; languages and citizenship are two
+  short lists with flags; Recognition is a list.
+- **Wording:** "maths" is "mathematics" everywhere; Bloomberg is described
+  as a six-month placement.
+- **The route** keeps its name; its subheading says it is everywhere Oscar
+  has lived. The IB Diploma, BSc and MSc rows show logos (ISSR's from the
+  file Oscar sent, cropped to its letters so it reads in a small tile).
+- **Smoother scrolling:** the globe's camera follows a spring, so a new
+  place mid-flight bends the motion instead of restarting it. Side trips
+  only fly out when their row is rested on (500 ms) or pointed at (220 ms),
+  not when scrolled past. The canvas no longer redraws on every scroll
+  event or runs a permanent loop for the pulsing ring (now CSS), and it
+  draws without canvas shadows. Hover states ease in over 300 ms.
+- **Places globe:** US states are drawn; the whole country is lit and the
+  states visited are lit again on top. A legend says what the colours mean.
+  The November 2026 trip (Las Vegas, New York City) is added.
+- **Photos:** the credits are off the photos. The stand-ins were swapped
+  for CC0 (public domain) photos, which need no credit, until Oscar's own
+  replace them.
+- **Contact:** rebuilt as a panel with a portrait, an email button, a copy
+  button and rows for email, LinkedIn and GitHub.
+- **Experience list:** each role shows its one-line summary; small logo
+  tiles use marks that stay legible.
+- **`scripts/geocode.ts`** no longer picks up the examples in `travel.ts`'s
+  header or re-sorts the cache, so a run only adds the new places.
+
+Still not mine to decide: a CV download, an availability or work-rights
+line.

@@ -22,16 +22,25 @@
   --accent-light: #b4b8ff;
   --accent-muted: rgb(109 114 246 / 0.16);
 
-  --route-l: 0.78;
-  --route-c: 0.13;
-
+  /* Two colours on the globes: teal for places lived, the accent for places visited */
+  --lived: #63d2cd;
+  --lived-muted: rgb(79 196 196 / 0.14);
   --globe-ocean-hi: #1a2843;
   --globe-ocean-lo: #0a1020;
-  --globe-glow: rgb(109 114 246 / 0.32);
+  --globe-glow: rgb(109 114 246 / 0.3);
   --globe-graticule: rgb(255 255 255 / 0.045);
   --globe-land: rgb(148 163 184 / 0.13);
   --globe-border: rgb(148 163 184 / 0.22);
-  --globe-visited: rgb(139 144 255 / 0.42);
+  --globe-visited: rgb(124 130 255 / 0.3);
+  --globe-state: rgb(150 156 255 / 0.42);
+  --globe-state-border: rgb(226 230 255 / 0.3);
+  --globe-lived: rgb(79 196 196 / 0.55);
+  --globe-lived-active: rgb(125 226 220 / 0.92);
+  --globe-home: #7fe3de;
+  --globe-route: #c9ccff;
+  --globe-route-glow: rgb(124 130 255 / 0.3);
+  --globe-stop: #ffffff;
+  --globe-stop-dim: rgb(201 204 255 / 0.4);
   --globe-ring: #0c1220;
   --globe-place: rgb(255 255 255 / 0.85);
 
@@ -61,16 +70,24 @@
   --accent-light: #6d72f6;
   --accent-muted: rgb(81 87 232 / 0.1);
 
-  --route-l: 0.57;
-  --route-c: 0.15;
-
+  --lived: #0f766e;
+  --lived-muted: rgb(13 148 136 / 0.12);
   --globe-ocean-hi: #ffffff;
   --globe-ocean-lo: #e3e8f0;
-  --globe-glow: rgb(81 87 232 / 0.18);
+  --globe-glow: rgb(81 87 232 / 0.16);
   --globe-graticule: rgb(20 24 32 / 0.05);
   --globe-land: rgb(71 85 105 / 0.14);
   --globe-border: rgb(71 85 105 / 0.22);
-  --globe-visited: rgb(81 87 232 / 0.32);
+  --globe-visited: rgb(81 87 232 / 0.24);
+  --globe-state: rgb(81 87 232 / 0.4);
+  --globe-state-border: rgb(255 255 255 / 0.7);
+  --globe-lived: rgb(13 148 136 / 0.5);
+  --globe-lived-active: rgb(15 118 110 / 0.85);
+  --globe-home: #0f766e;
+  --globe-route: #3f45d6;
+  --globe-route-glow: rgb(81 87 232 / 0.22);
+  --globe-stop: #3037c9;
+  --globe-stop-dim: rgb(81 87 232 / 0.35);
   --globe-ring: #ffffff;
   --globe-place: rgb(20 24 32 / 0.7);
 
@@ -141,15 +158,6 @@ html:has([data-sheet-open]) {
   font-variant-numeric: tabular-nums;
 }
 
-/* A place's colour on the route: set --h to its hue */
-.hue {
-  color: oklch(var(--route-l) var(--route-c) var(--h));
-}
-
-.hue-bg {
-  background-color: oklch(var(--route-l) var(--route-c) var(--h));
-}
-
 .place-name {
   font-family: var(--font-serif);
   font-style: italic;
@@ -200,6 +208,39 @@ html:has([data-sheet-open]) {
   }
   to {
     opacity: 1;
+  }
+}
+
+/* The ring that pulses around the place in focus on the globe */
+@keyframes globe-pulse {
+  from {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.25);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.globe-pulse {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 2px solid var(--globe-route);
+  opacity: 0;
+  animation: globe-pulse 1.8s var(--ease-out) infinite;
+}
+
+/* The "now" marker: a dot with a slow ping behind it */
+@keyframes ping-soft {
+  75%,
+  100% {
+    opacity: 0;
+    transform: scale(2.4);
   }
 }
 

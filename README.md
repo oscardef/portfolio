@@ -24,6 +24,10 @@ npm run dev
 
 - `/` is one page: an introduction and summary, selected projects, experience, then "The route" (a
   scroll-driven globe of every place lived, `src/data/route.ts`), places visited, interests and contact.
+- The globes use two colours: teal for places lived and the accent for places visited. On the places
+  globe the United States is lit as a whole and the states visited are lit again on top: give a US
+  entry in `src/data/travel.ts` a `state` and that state lights up (shapes in
+  `src/data/us-states-110m.json`, from Natural Earth).
 - `/projects` and `/experience` list everything. Projects and roles open as sheets over whichever page
   you're on (intercepting routes in `src/app/@sheet`) and render as full pages when visited directly.
 
@@ -31,7 +35,9 @@ npm run dev
 
 Projects go in `content/projects/<slug>.mdx`, experiences in `content/experience/<slug>.mdx`. See existing files for the expected frontmatter format. Hero images go in `public/images/projects/<slug>/hero.jpg`.
 
-The photos of places (`public/images/places`) and interests (`public/images/interests`) are freely licensed stand-ins from Wikimedia Commons. To use your own, replace a file under the same name and remove its credit (in `src/data/route.ts` for places, `src/app/page.tsx` for interests).
+The photos of places (`public/images/places`) and interests (`public/images/interests`) are stand-ins released under CC0 (public domain), so they need no credit. To use your own, replace a file under the same name (places are 1600 px wide, interests 1200 px) and update its `alt` text in `src/data/route.ts` or `src/app/page.tsx`.
+
+Logos live in `public/images/logos`. Small tiles use a mark where the full logo would be too small to read (`ugroningen-crest.svg`, `researchable-mark.svg`, `securrency-mark.png`, `issr-mark.png`). Degree logos are set with `logo` on the entries in `studyItems` in `src/data/route.ts`.
 
 Run `npm run build` after adding content — the build will fail if frontmatter doesn't match the schema.
 

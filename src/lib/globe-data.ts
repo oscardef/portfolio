@@ -1,7 +1,8 @@
 import { feature } from 'topojson-client';
 import type { GeometryCollection, Topology } from 'topojson-specification';
 import world from 'world-atlas/countries-110m.json';
-import { route, sideTrips, coordsOf, stopHue } from '@/data/route';
+import usStates from '@/data/us-states-110m.json';
+import { route, sideTrips, coordsOf } from '@/data/route';
 import { travelData } from '@/data/travel';
 
 /**
@@ -16,7 +17,6 @@ export interface GlobeStop {
   countryId?: string;
   lng: number;
   lat: number;
-  hue: number;
 }
 
 export interface GlobeTrip {
@@ -30,17 +30,19 @@ export interface GlobeTrip {
 export interface GlobePlace {
   place: string;
   country: string;
+  state?: string; // US places only
   lng: number;
   lat: number;
-  hue: number | null; // route colour for places lived; null for trips
+  home: boolean; // a place lived in, as opposed to visited
 }
 
 export interface GlobeData {
   stops: GlobeStop[];
   trips: GlobeTrip[];
   places: GlobePlace[];
-  lived: Record<string, number>; // country id -> hue of the latest stop there
+  lived: string[]; // country ids
   visited: string[]; // country ids
+  states: string[]; // US states visited, by name as in us-states-110m.json
 }
 
 // Names in travel.ts that differ from Natural Earth's
@@ -50,6 +52,7 @@ const COUNTRY_ALIASES: Record<string, string> = {
 };
 
 type CountriesTopology = Topology<{ countries: GeometryCollection<{ name: string }> }>;
+type StatesTopology = Topology<{ states: GeometryCollection<{ name: string }> }>;
 
 export function getGlobeData(): GlobeData {
   const topology = world as unknown as CountriesTopology;
@@ -58,9 +61,9 @@ export function getGlobeData(): GlobeData {
   );
   const countryId = (name: string) => idByName.get(COUNTRY_ALIASES[name] ?? name);
 
-  const stops = route.map((s, i) => {
+  const stops = route.map((s) => {
     const [lng, lat] = coordsOf(s.place, s.country);
-    return { id: s.id, place: s.place, countryId: countryId(s.country), lng, lat, hue: stopHue(i) };
+    return { id: s.id, place: s.place, countryId: countryId(s.country), lng, lat };
   });
 
   const trips = sideTrips.map((t) => {
@@ -68,15 +71,9 @@ export function getGlobeData(): GlobeData {
     return { from: route.findIndex((s) => s.id === t.from), place: t.place, year: t.year, lng, lat };
   });
 
-  const lived: Record<string, number> = {};
-  route.forEach((s, i) => {
-    const id = countryId(s.country);
-    if (id) lived[id] = stopHue(i);
-  });
+  const lived = [...new Set(route.map((s) => countryId(s.country)).filter((id): id is string => !!id))];
 
-  const homeHue = new Map<string, number>();
-  route.forEach((s, i) => homeHue.set(`${s.place}, ${s.country}`, stopHue(i)));
-  sideTrips.forEach((t) => homeHue.set(`${t.place}, ${t.country}`, stopHue(route.findIndex((s) => s.id === t.from))));
+  const homes = new Set([...route, ...sideTrips].map((s) => `${s.place}, ${s.country}`));
 
   const seen = new Set<string>();
   const places: GlobePlace[] = [];
@@ -84,10 +81,27 @@ export function getGlobeData(): GlobeData {
     const key = `${t.place}, ${t.country}`;
     if (seen.has(key) || t.countryCode === '??') continue;
     seen.add(key);
-    places.push({ place: t.place, country: t.country, lng: t.lng, lat: t.lat, hue: homeHue.get(key) ?? null });
+    places.push({
+      place: t.place,
+      country: t.country,
+      ...(t.state ? { state: t.state } : {}),
+      lng: t.lng,
+      lat: t.lat,
+      home: homes.has(key),
+    });
   }
 
   const visited = [...new Set(travelData.map((t) => countryId(t.country)).filter((id): id is string => !!id))];
 
-  return { stops, trips, places, lived, visited };
+  // US states come from the `state` field in travel.ts; a name the map doesn't know is a typo
+  const statesTopology = usStates as unknown as StatesTopology;
+  const stateNames = new Set(
+    feature(statesTopology, statesTopology.objects.states).features.map((f) => f.properties.name)
+  );
+  const states = [...new Set(travelData.filter((t) => t.country === 'USA' && t.state).map((t) => t.state!))];
+  for (const s of states) {
+    if (!stateNames.has(s)) throw new Error(`[globe] "${s}" in travel.ts is not a US state on the map`);
+  }
+
+  return { stops, trips, places, lived, visited, states };
 }

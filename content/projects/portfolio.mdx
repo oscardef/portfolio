@@ -32,8 +32,8 @@ The site you're looking at. Instead of separate pages for experience and project
 
 ## How It Works
 
-- **The globe** is drawn on a canvas with d3-geo's orthographic projection and Natural Earth country shapes. Each leg of the route is a great-circle arc lifted off the surface; the camera eases between places and zooms in on Europe, where the stops are close together.
-- **Scrolling drives it.** Each chapter reports when it crosses the middle of the screen, and the globe flies there. Side trips, like a summer in Abu Dhabi during my Groningen years, get their own detour when you reach them.
+- **The globe** is drawn on a canvas with d3-geo's orthographic projection and Natural Earth country shapes. Each leg of the route is a great-circle arc lifted off the surface; the camera follows each new place on a spring, so changing direction mid-flight stays smooth, and zooms in on Europe, where the stops are close together.
+- **Scrolling drives it.** Each chapter reports when it crosses the middle of the screen, and the globe flies there. Side trips, like a summer in Abu Dhabi during my Groningen years, get their own detour when you pause on them.
 - **Performance:** the globe's code and map data load only as you approach the section, it stops drawing when off screen, and it holds still for anyone who prefers reduced motion.
 - **Sheets:** projects and roles open over the page through Next.js intercepting routes. The URL changes, the page keeps its place, and the same URL renders a full page when visited directly.
 - **Content** lives in MDX files with frontmatter validated by Zod at build time; a `chapter` field attaches each project or role to a place.

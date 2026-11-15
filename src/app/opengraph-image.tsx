@@ -6,8 +6,8 @@ export const alt = 'Oscar de Francesca, software engineer';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-// The route's colours, from Bangkok to Basel, as hex (Satori can't read oklch)
-const ROUTE = ['#e0a64a', '#e57a8a', '#c58bd9', '#8f9bf0', '#4fc4c4'];
+// The site's accent, as hex
+const ACCENT = '#6d72f6';
 
 export default function Image() {
   const portrait = readFileSync(path.join(process.cwd(), 'public/images/portrait.jpg')).toString('base64');
@@ -36,18 +36,17 @@ export default function Image() {
             and Europe.
           </div>
           <div style={{ display: 'flex', alignItems: 'center', marginTop: 44 }}>
-            {ROUTE.map((c) => (
-              <div key={c} style={{ width: 34, height: 6, borderRadius: 3, background: c, marginRight: 8 }} />
-            ))}
-            <div style={{ fontSize: 24, color: '#8a95a8', marginLeft: 14 }}>oscar.defrancesca.com</div>
+            <div style={{ width: 44, height: 6, borderRadius: 3, background: ACCENT, marginRight: 18 }} />
+            <div style={{ fontSize: 24, color: '#8a95a8' }}>oscar.defrancesca.com</div>
           </div>
         </div>
         <div
           style={{
             display: 'flex',
-            padding: 5,
-            borderRadius: 40,
-            background: `linear-gradient(140deg, ${ROUTE.join(', ')})`,
+            padding: 2,
+            borderRadius: 37,
+            background: 'rgba(255, 255, 255, 0.16)',
+            boxShadow: '0 30px 90px -20px rgba(109, 114, 246, 0.55)',
           }}
         >
           <img
