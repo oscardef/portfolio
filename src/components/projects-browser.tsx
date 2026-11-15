@@ -63,10 +63,10 @@ export function ProjectsBrowser({ items }: { items: JourneyItem[] }) {
         })}
       </div>
 
-      <ul className="mt-10 grid gap-6 sm:grid-cols-2">
-        {shown.map((item, i) => (
+      <ul className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+        {shown.map((item) => (
           <li key={item.id}>
-            <ProjectCard item={item} priority={i < 2} />
+            <ProjectCard item={item} compact />
           </li>
         ))}
       </ul>

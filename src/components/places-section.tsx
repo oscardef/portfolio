@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { Minimize2, Search } from 'lucide-react';
+import { ChevronDown, Minimize2, Search } from 'lucide-react';
 import type { GlobeData, GlobePlace } from '@/lib/globe-data';
 import { cn } from '@/lib/utils';
 
@@ -11,6 +11,9 @@ const Globe = dynamic(() => import('./globe/globe').then((m) => m.Globe), { ssr:
 function normalise(s: string): string {
   return s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 }
+
+// How many countries a phone lists before "Show all"
+const PHONE_COUNTRIES = 8;
 
 const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
 const inWords = (n: number) => WORDS[n] ?? String(n);
@@ -32,6 +35,8 @@ interface CountryGroup {
 export function PlacesSection({ globe }: { globe: GlobeData }) {
   const [query, setQuery] = useState('');
   const [chosen, setChosen] = useState<string | null>(null);
+  // Phones start with the countries with the most places; the rest unfold on request
+  const [showAll, setShowAll] = useState(false);
   // The chosen country's frame: the globe flies there and outlines the country
   const frame = chosen ? (globe.frames[chosen] ?? null) : null;
   const [near, setNear] = useState(false);
@@ -67,6 +72,8 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
     }))
     .filter((g) => g.places.length > 0);
   const matches = visible.reduce((n, g) => n + g.places.length, 0);
+  // A search always shows everything it finds
+  const collapsed = !showAll && !q;
 
   // Choosing the country already chosen lets go of it
   const choose = (group: CountryGroup) => setChosen(chosen === group.country ? null : group.country);
@@ -93,6 +100,13 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
               className="pointer-events-none absolute inset-x-0 top-full h-5 bg-gradient-to-b from-bg to-transparent lg:hidden"
             />
             <div className="relative h-[38vh] w-full lg:aspect-square lg:h-auto lg:max-h-[calc(100vh-11rem)]">
+              {/* A faint disc marks where the globe appears while its code loads */}
+              {!near && (
+                <div
+                  aria-hidden="true"
+                  className="absolute left-1/2 top-1/2 aspect-square h-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-border/60 bg-bg-card/40"
+                />
+              )}
               {near && (
                 <Globe data={globe} mode="travel" focus={frame} highlight={frame?.id ?? null} className="absolute inset-0" />
               )}
@@ -155,8 +169,11 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
 
             {visible.length > 0 ? (
               <ul className="mt-2 grid gap-x-8 sm:grid-cols-2">
-                {visible.map((g) => (
-                  <li key={g.country} className="border-t border-border py-3">
+                {visible.map((g, i) => (
+                  <li
+                    key={g.country}
+                    className={cn('border-t border-border py-3', collapsed && i >= PHONE_COUNTRIES && 'hidden sm:block')}
+                  >
                     <button
                       type="button"
                       onClick={() => choose(g)}
@@ -199,6 +216,16 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
               </ul>
             ) : (
               <p className="mt-4 text-text-secondary">No places match “{query}”. Try a country name instead.</p>
+            )}
+            {collapsed && visible.length > PHONE_COUNTRIES && (
+              <button
+                type="button"
+                onClick={() => setShowAll(true)}
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-bg-card py-3 text-[0.9375rem] font-medium transition-colors hover:border-border-hover hover:bg-bg-card-hover sm:hidden"
+              >
+                Show all {visible.length} countries
+                <ChevronDown size={16} aria-hidden="true" />
+              </button>
             )}
           </div>
         </div>

@@ -138,7 +138,10 @@ export function RoleRow({ item }: { item: JourneyItem }) {
         <div className="flex items-baseline justify-between gap-3">
           <p className="min-w-0 font-semibold leading-snug">
             {item.detail}
-            <span className="font-normal text-text-muted"> at {item.name}</span>
+            <span className="block font-normal text-text-secondary sm:inline sm:text-text-muted">
+              <span className="hidden sm:inline"> at </span>
+              {item.name}
+            </span>
           </p>
           <span className="tnum hidden shrink-0 text-sm text-text-muted sm:block">{item.period}</span>
         </div>

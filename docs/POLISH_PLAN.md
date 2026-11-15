@@ -121,3 +121,31 @@ Oscar's notes after seeing the third pass live.
   now stays in view while the list scrolls.
 - **Short side trips** (Veldhoven from Groningen) zoom in far enough that
   both ends sit well apart; the trip's dots show up on a lit country.
+
+## Fifth pass (16 Nov 2026)
+
+Oscar: "any other polish you deem good", with full freedom.
+
+- **Bug: a menu link worked only once.** After "Projects", the address ended
+  in `#work`, so a second click was a link to where the page already was
+  and did nothing. `SectionLinks` now scrolls on every click (and the logo
+  scrolls to the top).
+- **Bug: closing a project or role jumped the page.** With a hash in the
+  address, going back from a sheet scrolled to that section again. The
+  address is now kept free of hashes; a shared `/#places` link still works
+  and drops its hash once the page has scrolled.
+- **Smooth scrolling moved from CSS to script**, so opening another page or
+  a deep link no longer animates from wherever the last page was.
+- **Contrast:** white on the accent was 3.9:1; the dark theme's accent is a
+  shade deeper (4.7:1). The light theme's pale accent text and "lived" tags
+  now pass 4.5:1 too. An axe audit of the home page is clean in both themes.
+- **Beyond the work:** an opening line set large, three short notes with
+  headings (linking to Mathium and the LauzHack project), and the interest
+  photos carrying their own captions.
+- **Phones:** four selected projects, then "All 10 projects"; the links to
+  the full lists sit under their lists as buttons; roles put the
+  organisation on its own line; the country list starts with eight and
+  unfolds; the menu has larger rows, a "Get in touch" button and closes on
+  a tap outside or Escape.
+- `/projects` uses the same compact cards as the home page.
+- The places globe shows a placeholder disc while its code loads.

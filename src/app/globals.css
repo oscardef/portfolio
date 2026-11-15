@@ -17,8 +17,9 @@
   --text-secondary: #b0bacb;
   --text-muted: #8a95a8;
 
-  --accent: #6d72f6;
-  --accent-hover: #8b90ff;
+  /* White text on the accent reaches 4.5:1 (it was 3.9:1 on #6d72f6) */
+  --accent: #5d62f0;
+  --accent-hover: #6f74f7;
   --accent-light: #b4b8ff;
   --accent-muted: rgb(109 114 246 / 0.16);
 
@@ -70,10 +71,11 @@
 
   --accent: #5157e8;
   --accent-hover: #3f45d6;
-  --accent-light: #6d72f6;
+  /* As text on the page's light grey this needs 4.5:1, so it matches the accent here */
+  --accent-light: #4f55e6;
   --accent-muted: rgb(81 87 232 / 0.1);
 
-  --lived: #0f766e;
+  --lived: #0c635d;
   --lived-muted: rgb(13 148 136 / 0.12);
   --globe-ocean-hi: #ffffff;
   --globe-ocean-lo: #e3e8f0;
@@ -130,8 +132,9 @@
 }
 
 /* ── Base ──────────────────────────────────────────────────────────── */
+/* Section links scroll smoothly from script (see section-links.tsx); the page
+   itself doesn't, so a new page or a deep link opens where it should at once */
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: 5rem;
   -webkit-text-size-adjust: 100%;
 }
@@ -288,9 +291,6 @@ html:has([data-sheet-open]) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   *,
   *::before,
   *::after {

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Fragment } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { ArrowRight, ArrowUpRight, Github, Linkedin, Mail, MapPin, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CopyEmailButton } from '@/components/copy-email';
@@ -47,6 +47,44 @@ const interests = [
     photo: { src: '/images/interests/travel.jpg', alt: 'Yosemite Valley from Tunnel View' },
   },
 ];
+
+// "Beyond the work": what follows from the opening line, in three short notes
+const noteLink = 'text-text-primary underline decoration-border-hover underline-offset-4 hover:decoration-text-primary';
+const notes: { title: string; text: ReactNode }[] = [
+  {
+    title: 'Starting somewhere new',
+    text: 'I do the same with every new codebase, team and field. It’s how I’ve ended up working on everything from message routing to antibody design.',
+  },
+  {
+    title: 'Teaching',
+    text: (
+      <>
+        I tutor mathematics on the side. Between that and seven courses as a teaching assistant, I’ve taught
+        hundreds of students, and{' '}
+        <Link href="/projects/mathium" scroll={false} className={noteLink}>
+          Mathium
+        </Link>{' '}
+        is my way of making the tutoring better.
+      </>
+    ),
+  },
+  {
+    title: 'Building with a team',
+    text: (
+      <>
+        I like building quickly with a good team. At LauzHack 2025 we took third place overall, and second in
+        the Huawei challenge, with{' '}
+        <Link href="/projects/showcaise" scroll={false} className={noteLink}>
+          an AI presentation coach
+        </Link>{' '}
+        built in under 48 hours.
+      </>
+    ),
+  },
+];
+
+// How many selected projects a phone shows before "All projects"
+const PHONE_PROJECTS = 4;
 
 // Ways to reach me, as shown in the contact panel
 const contacts: { label: string; value: string; href: string; icon: LucideIcon }[] = [
@@ -159,12 +197,14 @@ export default async function HomePage() {
         <div className="container-page">
           <SectionHeader id="work-title" title="Selected projects" href="/projects" link={`All ${projects.length} projects`} />
           <ul className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-            {featured.map((item) => (
-              <li key={item.id}>
+            {featured.map((item, i) => (
+              // Phones start with the first four; the rest are a tap away
+              <li key={item.id} className={i >= PHONE_PROJECTS ? 'hidden sm:block' : undefined}>
                 <ProjectCard item={item} compact />
               </li>
             ))}
           </ul>
+          <MoreLink href="/projects">All {projects.length} projects</MoreLink>
         </div>
       </section>
 
@@ -172,13 +212,14 @@ export default async function HomePage() {
       <section id="experience" aria-labelledby="experience-title" className="section">
         <div className="container-page">
           <SectionHeader id="experience-title" title="Experience" href="/experience" link="Experience in detail" />
-          <ul className="mt-10 space-y-2.5">
+          <ul className="mt-8 space-y-2.5 sm:mt-10">
             {roles.map((item) => (
               <li key={item.id}>
                 <RoleRow item={item} />
               </li>
             ))}
           </ul>
+          <MoreLink href="/experience">Experience in detail</MoreLink>
         </div>
       </section>
 
@@ -192,27 +233,26 @@ export default async function HomePage() {
           <h2 id="about-title" className="text-4xl font-semibold tracking-tight sm:text-5xl">
             Beyond the work
           </h2>
-          <div className="mt-10 gap-16 text-lg leading-relaxed text-text-secondary lg:columns-2 [&>p]:mb-5 [&>p]:max-w-[60ch] [&>p]:break-inside-avoid">
-            <p>
-              Growing up across six countries taught me to arrive somewhere unfamiliar and work out
-              quickly how it fits together. I do the same with every new codebase, team and field,
-              which is how I’ve ended up working on everything from message routing to antibody
-              design.
+          <div className="mt-8 grid gap-x-16 gap-y-8 sm:mt-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+            {/* The thought the rest follows from, set large */}
+            <p className="place-name max-w-[26ch] text-[1.75rem] leading-[1.2] text-text-primary sm:text-[2.125rem] lg:pt-3 lg:text-[2.5rem]">
+              Growing up across six countries taught me to arrive somewhere unfamiliar and work out quickly how
+              it fits together.
             </p>
-            <p>
-              I tutor mathematics on the side. Between that and seven courses as a teaching assistant, I’ve
-              taught hundreds of students, and Mathium is my way of making the tutoring better.
-            </p>
-            <p>
-              I like building quickly with a good team: at LauzHack 2025 we took third place overall,
-              and second in the Huawei challenge, with an AI presentation coach built in under 48
-              hours. I speak English and Swedish natively.
-            </p>
+            <dl className="divide-y divide-border border-y border-border">
+              {notes.map(({ title, text }) => (
+                <div key={title} className="grid gap-x-8 gap-y-1.5 py-5 sm:grid-cols-[13rem_minmax(0,1fr)]">
+                  <dt className="font-semibold">{title}</dt>
+                  <dd className="leading-relaxed text-text-secondary">{text}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
-          <ul className="mt-10 grid gap-6 sm:grid-cols-3">
+
+          <ul className="mt-8 grid gap-3 sm:mt-12 sm:grid-cols-3 sm:gap-5">
             {interests.map(({ title, text, photo }) => (
               <li key={title}>
-                <figure className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-bg-card">
+                <figure className="relative aspect-[5/2] overflow-hidden rounded-2xl border border-border bg-bg-card sm:aspect-[4/3]">
                   <Image
                     src={photo.src}
                     alt={photo.alt}
@@ -220,12 +260,14 @@ export default async function HomePage() {
                     sizes="(min-width: 1280px) 27rem, (min-width: 640px) 33vw, 100vw"
                     className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                  <figcaption className="absolute inset-x-0 bottom-0 p-5">
-                    <h3 className="place-name text-[2.25rem] leading-none text-white">{title}</h3>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent sm:via-black/25" />
+                  <figcaption className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                    <h3 className="place-name text-[1.875rem] leading-none text-white sm:text-[2.25rem]">{title}</h3>
+                    <p className="mt-1.5 max-w-[36ch] text-sm leading-snug text-white/85 sm:mt-2 sm:text-[0.9375rem]">
+                      {text}
+                    </p>
                   </figcaption>
                 </figure>
-                <p className="mt-3 leading-relaxed text-text-secondary">{text}</p>
               </li>
             ))}
           </ul>
@@ -325,13 +367,27 @@ function SectionHeader({ id, title, href, link }: { id: string; title: string; h
       <h2 id={id} className="text-4xl font-semibold tracking-tight sm:text-5xl">
         {title}
       </h2>
+      {/* On phones this link sits under the list instead (MoreLink) */}
       <Link
         href={href}
-        className="group inline-flex items-center gap-1.5 text-[0.9375rem] text-text-secondary transition-colors hover:text-text-primary"
+        className="group hidden items-center gap-1.5 text-[0.9375rem] text-text-secondary transition-colors hover:text-text-primary sm:inline-flex"
       >
         {link}
         <ArrowRight size={16} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />
       </Link>
     </div>
+  );
+}
+
+// The way on to a full list, as a full-width button under the list on phones
+function MoreLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-border bg-bg-card py-3 text-[0.9375rem] font-medium transition-colors hover:border-border-hover hover:bg-bg-card-hover sm:hidden"
+    >
+      {children}
+      <ArrowRight size={16} aria-hidden="true" />
+    </Link>
   );
 }

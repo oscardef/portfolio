@@ -4,6 +4,7 @@ import { Instrument_Sans, Instrument_Serif } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
+import { SectionLinks } from '@/components/section-links';
 import { siteConfig } from '@/lib/constants';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -162,6 +163,7 @@ export default function RootLayout({ children, sheet }: { children: ReactNode; s
           <Footer />
         </div>
         {sheet}
+        <SectionLinks />
         <Analytics />
         <SpeedInsights />
       </body>

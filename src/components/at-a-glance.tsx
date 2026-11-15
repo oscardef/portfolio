@@ -246,7 +246,7 @@ export function AtAGlance() {
           </Card>
 
           <Card label="Languages and citizenship" icon={Languages}>
-            <dl className="grid grid-cols-2 gap-x-6">
+            <dl className="grid grid-cols-[auto_auto] justify-between gap-x-4 whitespace-nowrap sm:justify-start sm:gap-x-12">
               <div>
                 <dt className={groupLabel}>Languages</dt>
                 <dd className="mt-2">
