@@ -12,16 +12,14 @@ import { PlacesSection } from '@/components/places-section';
 import { getExperienceItems, getJourney, getProjectItems } from '@/lib/journey';
 import { getGlobeData } from '@/lib/globe-data';
 import { siteConfig } from '@/lib/constants';
-import { route, studyItems } from '@/data/route';
 
-// The logos under the hero. A company opens its role; a university, whose
-// degree has no page of its own, scrolls to its chapter on the route.
-const organizations: (Omit<Org, 'href' | 'note'> & { study?: string })[] = [
+// The logos under the hero
+const organizations: Org[] = [
   { name: 'ETH Zurich', logo: '/images/logos/eth.svg', width: 120, height: 20 },
   { name: 'Bloomberg', logo: '/images/logos/bloomberg.svg', width: 130, height: 28 },
-  { name: 'EPFL', logo: '/images/logos/epfl.svg', width: 80, height: 28, study: 'msc' },
+  { name: 'EPFL', logo: '/images/logos/epfl.svg', width: 80, height: 28 },
   { name: 'ASML', logo: '/images/logos/asml.svg', width: 100, height: 28 },
-  { name: 'University of Groningen', logo: '/images/logos/ugroningen.svg', width: 160, height: 36, study: 'bsc' },
+  { name: 'University of Groningen', logo: '/images/logos/ugroningen.svg', width: 160, height: 36 },
   { name: 'Researchable', logo: '/images/logos/researchable.svg', width: 130, height: 28 },
   { name: 'Securrency', logo: '/images/logos/securrency.png', width: 150, height: 52 },
 ];
@@ -102,17 +100,6 @@ export default async function HomePage() {
   const featured = projects.filter((p) => p.featured);
   const globe = getGlobeData();
 
-  // What each logo opens, and the line shown for it
-  const orgs: Org[] = organizations.map(({ study, ...org }) => {
-    const degree = studyItems.find((s) => s.id === study);
-    if (degree) {
-      const place = route.find((stop) => stop.id === degree.chapter)!.place;
-      return { ...org, href: `/#place-${degree.chapter}`, note: `${degree.title}, ${place}, ${degree.period}` };
-    }
-    const role = roles.find((r) => r.name === org.name)!;
-    return { ...org, href: role.href!, note: `${role.detail}, ${role.place}, ${role.period}` };
-  });
-
   return (
     <>
       {/* ── Hero ── */}
@@ -188,7 +175,7 @@ export default async function HomePage() {
         {/* Logos */}
         <div className="container-page relative mt-16 md:mt-24">
           <p className="text-center text-sm text-text-muted">Where I’ve worked and studied</p>
-          <OrgStrip items={orgs} />
+          <OrgStrip items={organizations} />
         </div>
       </section>
 

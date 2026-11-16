@@ -30,8 +30,6 @@ export function SectionLinks() {
       const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
       const href = link?.getAttribute('href');
       if (!href || link?.getAttribute('target') === '_blank') return;
-      // Parts of the page that handle their own links (the logo row)
-      if (link?.closest('[data-own-clicks]')) return;
 
       const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         ? 'auto'

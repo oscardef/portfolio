@@ -237,3 +237,13 @@ and anything else worth doing.
   pressed, since touch screens get no hover feedback; a long press on a logo
   no longer opens iOS's image preview; the 404 page offers the search.
 - Structured data now lists languages and citizenship.
+
+## Logo row, simplified (17 Nov 2026)
+
+Oscar, after trying the seventh pass on his phone: the glow looked bad, and
+tap-to-open with hold-to-glow felt strange; the simple brightening was enough.
+
+- The logos are back to the plain effect: 60% white, full white when pointed
+  at with a mouse. On a phone a tap does the same (a second tap, or a tap on
+  another logo, moves it). No glow, no captions, no links, no animation.
+- The two-column grid on phones stays.
