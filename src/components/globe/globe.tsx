@@ -835,20 +835,21 @@ export function Globe({
         }}
         aria-hidden="true"
       />
-      <div
-        ref={labelRef}
-        aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-0 opacity-0 transition-opacity duration-300"
-      >
-        {label && (
-          <>
-            <span className="globe-pulse" />
-            <span className="absolute bottom-3 left-3 flex items-baseline gap-2 whitespace-nowrap rounded-full bg-bg/80 px-3 py-1 backdrop-blur">
-              <span className="place-name text-lg text-text-primary">{label.place}</span>
-              {label.note && <span className="tnum text-xs text-text-muted">{label.note}</span>}
-            </span>
-          </>
-        )}
+      {/* The label and ring of the place in focus, clipped to the globe's box.
+          Mid-flight that place can be far outside the box, and on a phone the
+          label would otherwise make the whole page wider than the screen. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div ref={labelRef} className="absolute left-0 top-0 opacity-0 transition-opacity duration-300">
+          {label && (
+            <>
+              <span className="globe-pulse" />
+              <span className="absolute bottom-3 left-3 flex items-baseline gap-2 whitespace-nowrap rounded-full bg-bg/80 px-3 py-1 backdrop-blur">
+                <span className="place-name text-lg text-text-primary">{label.place}</span>
+                {label.note && <span className="tnum text-xs text-text-muted">{label.note}</span>}
+              </span>
+            </>
+          )}
+        </div>
       </div>
       {/* Names the country under the pointer */}
       <div

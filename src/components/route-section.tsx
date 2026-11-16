@@ -19,6 +19,40 @@ const typeOf = (item: JourneyItem) => item.type;
 // Where the globe's column sticks, in px from the top of the viewport (lg:top-20)
 const STICKY_TOP = 80;
 
+// Where on the screen something counts as the thing being read.
+//  - Side by side (wide screens): the middle of the screen.
+//  - Stacked (phones and tablets): the globe is pinned over the top half, so
+//    the middle of what is left below it. With the screen's middle, a chapter
+//    only took over once it had slid under the globe, on its way out.
+// `line` is that height as a share of the screen: a chapter takes over when
+// its top passes it. `band` is a thin strip ending at the line, as an
+// IntersectionObserver rootMargin: a side trip's row has to rest in it.
+const WIDE = '(min-width: 1024px)';
+const READING = {
+  wide: { band: '-45% 0px -50% 0px', line: 0.5 },
+  stacked: { band: '-72% 0px -24% 0px', line: 0.76 },
+};
+
+// Watches elements as they cross the reading band, and starts again with the
+// other band when the layout switches between stacked and side by side
+function watchReadingBand(targets: Iterable<Element>, callback: IntersectionObserverCallback): () => void {
+  const wide = window.matchMedia(WIDE);
+  let observer: IntersectionObserver | null = null;
+  const start = () => {
+    observer?.disconnect();
+    observer = new IntersectionObserver(callback, {
+      rootMargin: (wide.matches ? READING.wide : READING.stacked).band,
+    });
+    for (const el of targets) observer.observe(el);
+  };
+  start();
+  wide.addEventListener('change', start);
+  return () => {
+    wide.removeEventListener('change', start);
+    observer?.disconnect();
+  };
+}
+
 // How long a side trip's row must be rested on (scrolling) or pointed at
 // (hovering) before the globe flies out to it, in ms
 const TRIP_DWELL = 500;
@@ -52,24 +86,8 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
     return () => observer.disconnect();
   }, []);
 
-  // The chapter crossing the middle of the screen is the one in focus;
-  // the intro stretch above the first chapter keeps the whole route in view
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) setActive(Number((entry.target as HTMLElement).dataset.index));
-        }
-      },
-      { rootMargin: '-45% 0px -50% 0px' }
-    );
-    if (introRef.current) observer.observe(introRef.current);
-    chapterRefs.current.forEach((el) => el && observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
-  // A side trip shows on the globe when its row rests in the middle of the
-  // screen for a moment; rows scrolled straight past leave the globe alone
+  // A side trip shows on the globe when its row rests in the reading band
+  // for a moment; rows scrolled straight past leave the globe alone
   useEffect(() => {
     const beats = sectionRef.current?.querySelectorAll<HTMLElement>('[data-beat]') ?? [];
     let pending: Element | null = null;
@@ -78,40 +96,39 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
       window.clearTimeout(timer);
       pending = null;
     };
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) {
-            if (entry.target === pending) cancel();
-            continue;
-          }
-          cancel();
-          const trip = (entry.target as HTMLElement).dataset.trip;
-          if (trip === undefined) {
-            setScrollTrip(null);
-          } else {
-            pending = entry.target;
-            timer = window.setTimeout(() => setScrollTrip(Number(trip)), TRIP_DWELL);
-          }
+    const stop = watchReadingBand(beats, (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) {
+          if (entry.target === pending) cancel();
+          continue;
         }
-      },
-      { rootMargin: '-45% 0px -50% 0px' }
-    );
-    beats.forEach((el) => observer.observe(el));
+        cancel();
+        const trip = (entry.target as HTMLElement).dataset.trip;
+        if (trip === undefined) {
+          setScrollTrip(null);
+        } else {
+          pending = entry.target;
+          timer = window.setTimeout(() => setScrollTrip(Number(trip)), TRIP_DWELL);
+        }
+      }
+    });
     return () => {
       cancel();
-      observer.disconnect();
+      stop();
     };
   }, []);
 
-  // On wide screens the globe starts centred under the heading and slides
-  // left into its column as the intro stretch scrolls past
+  // Two things follow the scroll position. The chapter in focus is the last
+  // one whose top has passed the reading line; above the first chapter the
+  // whole route shows. And on wide screens the globe starts centred under the
+  // heading and slides left into its column as the intro stretch scrolls past.
   useEffect(() => {
+    const section = sectionRef.current!;
     const grid = gridRef.current!;
     const column = columnRef.current!;
     const stage = stageRef.current!;
     const intro = introRef.current!;
-    const wide = window.matchMedia('(min-width: 1024px)');
+    const wide = window.matchMedia(WIDE);
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let shift = 0;
     let frame = 0;
@@ -130,10 +147,22 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
         p = Math.min(1, Math.max(0, (STICKY_TOP + 40 - r.top) / (r.height * 0.6)));
       }
       const k = p * p * (3 - 2 * p); // smoothstep
-      // Above the first chapter the whole route shows, however the page got
-      // here (a jump from the menu doesn't pass the intro through the middle)
-      const first = chapterRefs.current[0];
-      if (first && first.getBoundingClientRect().top > window.innerHeight / 2) setActive(-1);
+      // The chapter in focus, worked out from where the chapters are instead of
+      // from enter and leave events, so it is right however the page got here:
+      // a slow scroll, a jump from the menu, a tap on the timeline
+      // (The smaller of the two heights: on phones innerHeight grows when the
+      // page is zoomed out, and the layout's height doesn't.)
+      const screen = Math.min(window.innerHeight, document.documentElement.clientHeight);
+      const bounds = section.getBoundingClientRect();
+      if (bounds.bottom > 0 && bounds.top < screen) {
+        const line = (wide.matches ? READING.wide : READING.stacked).line * screen;
+        let current = -1;
+        for (const [i, chapter] of chapterRefs.current.entries()) {
+          if (!chapter || chapter.getBoundingClientRect().top > line) break;
+          current = i;
+        }
+        setActive(current);
+      }
       stage.style.transform = `translateX(${(shift * (1 - k)).toFixed(1)}px)`;
       grid.style.setProperty('--settled', k.toFixed(3));
       stage.style.setProperty('--globe-boost', (0.22 * (1 - k)).toFixed(3));
@@ -214,7 +243,6 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
           {/* The intro stretch: the whole route stays up while the globe settles */}
           <div
             ref={introRef}
-            data-index={-1}
             className="flex h-[24vh] items-end pb-10 lg:h-[64vh] lg:pb-[16vh]"
           >
             <p className="max-w-[40ch] text-text-muted lg:[opacity:calc((var(--settled,1)-0.75)*4)]">
@@ -226,7 +254,6 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
             <Chapter
               key={chapter.id}
               chapter={chapter}
-              index={i}
               last={i === chapters.length - 1}
               trips={globe.trips}
               onTrip={setHoverTrip}
@@ -296,14 +323,13 @@ function StopRail({
 
 interface ChapterProps {
   chapter: JourneyChapter;
-  index: number;
   last: boolean;
   trips: GlobeTrip[];
   onTrip: (trip: number | null) => void;
   ref: (el: HTMLElement | null) => void;
 }
 
-function Chapter({ chapter, index, last, trips, onTrip, ref }: ChapterProps) {
+function Chapter({ chapter, last, trips, onTrip, ref }: ChapterProps) {
   const byDate = (a: JourneyItem, b: JourneyItem) => a.sortKey - b.sortKey;
   const studies = chapter.items.filter((i) => typeOf(i) === 'study');
   const roles = chapter.items.filter((i) => typeOf(i) === 'experience').sort(byDate);
@@ -313,7 +339,6 @@ function Chapter({ chapter, index, last, trips, onTrip, ref }: ChapterProps) {
   return (
     <article
       ref={ref}
-      data-index={index}
       id={`place-${chapter.id}`}
       aria-labelledby={`place-${chapter.id}-title`}
       className={cn(

@@ -195,3 +195,20 @@ New:
   citizenship (Oscar's go-ahead, 16 Nov 2026). No CV download (his call).
 - "Systems" in At a glance opens the Bloomberg role, the strongest systems
   work, instead of a filter with one coursework project.
+
+## Route on phones (17 Nov 2026)
+
+Oscar: on a phone the globe only moved on to a place once that place was
+being scrolled away.
+
+- The trigger was the middle of the screen, which on phones sits under the
+  pinned globe, so a chapter took over only as it slid out of sight. On
+  phones and tablets the line is now at 76% of the screen's height, the
+  middle of the space below the globe; side by side it is still the middle.
+- The chapter in focus is worked out from where the chapters are on each
+  scroll, not from enter and leave events, so it is right after a jump from
+  the menu or a tap on the timeline too.
+- A second cause, found while testing: mid-flight the globe's place label
+  could sit far outside its box, which made the whole page wider than a
+  phone's screen for a moment and threw the trigger off. The label is now
+  clipped to the globe's box.
