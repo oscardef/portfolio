@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { getExperienceBySlug, getExperienceSlugs } from '@/lib/content';
-import { ExperienceDetail } from '@/components/detail';
-import { siteConfig } from '@/lib/constants';
+import { AuthorStrip, ExperienceDetail } from '@/components/detail';
+import { pageMetadata } from '@/lib/metadata';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -22,17 +22,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!data) return {};
 
   const { frontmatter } = data;
-  return {
+  return pageMetadata({
     title: `${frontmatter.title} at ${frontmatter.organization}`,
     description: `${frontmatter.summary} Part of Oscar de Francesca's experience at ${frontmatter.organization}.`,
-    alternates: { canonical: `${siteConfig.url}/experience/${slug}` },
-    openGraph: {
-      title: `${frontmatter.title} at ${frontmatter.organization} · Oscar de Francesca`,
-      description: frontmatter.summary,
-      type: 'article',
-      authors: ['Oscar de Francesca'],
-    },
-  };
+    path: `/experience/${slug}`,
+    type: 'article',
+    image: false, // drawn by opengraph-image.tsx beside this file
+  });
 }
 
 export default async function ExperiencePage({ params }: PageProps) {
@@ -50,6 +46,7 @@ export default async function ExperiencePage({ params }: PageProps) {
           All experience
         </Link>
         <ExperienceDetail slug={slug} page />
+        <AuthorStrip />
       </div>
     </div>
   );

@@ -30,6 +30,11 @@ export function Sheet({ label, href, children }: { label: string; href: string; 
     };
   }, [close]);
 
+  // A link inside the sheet swaps its content; start the new item at the top
+  useEffect(() => {
+    panel.current?.scrollTo(0, 0);
+  }, [href]);
+
   return (
     <>
       <ViewTransition enter="fade-in" exit="fade-out" default="none">

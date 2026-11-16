@@ -241,7 +241,8 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
   );
 }
 
-// A row of stops under the globe: where you are on the route, and a way to jump
+// A timeline under the globe: one segment per place lived, as wide as the
+// years spent there. It shows where you are on the route and jumps on a click.
 function StopRail({
   chapters,
   active,
@@ -253,7 +254,7 @@ function StopRail({
 }) {
   const current = chapters[active];
   return (
-    <div className="flex items-center justify-between gap-4 px-[var(--gutter)] pb-3 pt-1 lg:px-0 lg:pb-0 lg:pt-4 lg:opacity-[var(--settled,1)]">
+    <div className="px-[var(--gutter)] pb-2 pt-1 lg:px-0 lg:pb-0 lg:pt-4 lg:opacity-[var(--settled,1)]">
       <p className="min-w-0 truncate text-sm text-text-secondary" aria-live="polite">
         {current ? (
           <>
@@ -264,23 +265,25 @@ function StopRail({
           <span className="tnum">2003 to today</span>
         )}
       </p>
-      <ol className="flex shrink-0 items-center gap-1.5" aria-label="Places I’ve lived, in order">
+      <ol className="mt-1 flex items-center gap-1" aria-label="Places I’ve lived, in order, sized by the years I lived there">
         {chapters.map((c, i) => (
-          <li key={c.id}>
+          <li key={c.id} className="min-w-2.5 basis-0" style={{ flexGrow: c.span }}>
             <button
               type="button"
+              title={`${c.place}, ${c.years}`}
               aria-label={`${c.place}, ${c.years}`}
               aria-current={i === active ? 'step' : undefined}
               onClick={() => refs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-              className="group flex h-6 items-center"
+              className="group flex h-6 w-full items-center"
             >
               <span
                 className={cn(
-                  'block h-2 rounded-full transition-all duration-500 ease-out',
+                  'block h-1.5 w-full rounded-full transition-colors duration-500',
                   i === active
-                    ? 'w-6 bg-accent-light'
-                    : 'w-2 bg-text-muted group-hover:bg-text-primary',
-                  i !== active && (active >= 0 && i > active ? 'opacity-35' : 'opacity-80')
+                    ? 'bg-[var(--lived)]'
+                    : active < 0 || i < active
+                      ? 'bg-[var(--lived)]/45 group-hover:bg-[var(--lived)]/80'
+                      : 'bg-border-hover group-hover:bg-text-muted'
                 )}
               />
             </button>

@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import { ProjectsBrowser } from '@/components/projects-browser';
 import { getProjectItems } from '@/lib/journey';
-import { siteConfig } from '@/lib/constants';
+import { pageMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Projects',
   description:
     'Projects by Oscar de Francesca across systems, machine learning, hardware and products: from a GPT-2 built from scratch to RFID wristbands for Decathlon.',
-  alternates: { canonical: `${siteConfig.url}/projects` },
-};
+  path: '/projects',
+});
 
 export default async function ProjectsPage() {
   // Featured work first, then newest; this site itself goes last

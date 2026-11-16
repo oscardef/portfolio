@@ -148,7 +148,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-html:has([data-sheet-open]) {
+html:has([data-sheet-open]),
+html:has([data-lightbox-open]) {
   overflow: hidden;
 }
 
@@ -319,14 +320,14 @@ html:has([data-sheet-open]) {
   letter-spacing: -0.015em;
   line-height: 1.25;
   margin: 2.75rem 0 0.875rem;
-  scroll-margin-top: 6rem;
+  scroll-margin-top: 1.25rem;
 }
 .prose h3 {
   color: var(--text-primary);
   font-size: 1.1875rem;
   font-weight: 600;
   margin: 2rem 0 0.625rem;
-  scroll-margin-top: 6rem;
+  scroll-margin-top: 1.25rem;
 }
 .prose h2 a,
 .prose h3 a {

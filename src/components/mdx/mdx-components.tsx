@@ -6,6 +6,7 @@ import { MetricRow, Metric } from './metric-row';
 import { FloatingImage } from './floating-image';
 import { DiagramBlock } from './diagram-block';
 import Image from 'next/image';
+import { Zoomable } from '@/components/zoomable';
 
 export const mdxComponents: MDXComponents = {
   // Custom components available in MDX files
@@ -20,14 +21,16 @@ export const mdxComponents: MDXComponents = {
 
   // Override default HTML elements
   img: (props) => (
-    <Image
-      src={props.src || ''}
-      alt={props.alt || ''}
-      width={800}
-      height={500}
-      unoptimized={props.src?.endsWith('.gif')}
-      className="rounded-lg border border-border my-4 w-full h-auto"
-    />
+    <Zoomable src={props.src || ''} alt={props.alt || ''}>
+      <Image
+        src={props.src || ''}
+        alt={props.alt || ''}
+        width={800}
+        height={500}
+        unoptimized={props.src?.endsWith('.gif')}
+        className="my-4 h-auto w-full rounded-lg border border-border"
+      />
+    </Zoomable>
   ),
   a: (props) => (
     <a

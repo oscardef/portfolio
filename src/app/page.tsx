@@ -252,7 +252,7 @@ export default async function HomePage() {
           <ul className="mt-8 grid gap-3 sm:mt-12 sm:grid-cols-3 sm:gap-5">
             {interests.map(({ title, text, photo }) => (
               <li key={title}>
-                <figure className="relative aspect-[5/2] overflow-hidden rounded-2xl border border-border bg-bg-card sm:aspect-[4/3]">
+                <figure className="relative aspect-[5/2] overflow-hidden rounded-2xl border border-border bg-bg-card sm:aspect-square lg:aspect-[4/3]">
                   <Image
                     src={photo.src}
                     alt={photo.alt}
@@ -262,8 +262,8 @@ export default async function HomePage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent sm:via-black/25" />
                   <figcaption className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
-                    <h3 className="place-name text-[1.875rem] leading-none text-white sm:text-[2.25rem]">{title}</h3>
-                    <p className="mt-1.5 max-w-[36ch] text-sm leading-snug text-white/85 sm:mt-2 sm:text-[0.9375rem]">
+                    <h3 className="place-name text-[1.875rem] leading-none text-white lg:text-[2.25rem]">{title}</h3>
+                    <p className="mt-1.5 max-w-[36ch] text-sm leading-snug text-white/85 lg:mt-2 lg:text-[0.9375rem]">
                       {text}
                     </p>
                   </figcaption>

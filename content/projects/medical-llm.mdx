@@ -36,9 +36,9 @@ This was an EPFL semester project completed with Ali Ridha Mrad and split into t
 
 The code is split across two repos: [the base LLM implementation](https://github.com/oscardef/my-llm) and [the medical fine-tuning pipeline](https://github.com/oscardef/llm-medical-finetune).
 
-## What I Built
+## What I built
 
-**1. GPT-2 Architecture from Scratch**
+**1. GPT-2 architecture from scratch**
 
 <FloatingImage src="/images/projects/llm/architecture.png" alt="GPT-2 decoder-only transformer architecture" caption="The transformer architecture I implemented from scratch, showing multi-head attention, feed-forward layers with GELU, and layer normalization." side="right" width={500} height={600} />
 
@@ -53,7 +53,7 @@ Tokenization uses OpenAI's `tiktoken` BPE tokenizer. The model supports loading 
 
 I then fine-tuned this for two downstream tasks: spam classification (with a linear classification head) and instruction following (using structured prompt formatting with loss computed only on response tokens).
 
-**2. Medical Fine-tuning with LoRA**
+**2. Medical fine-tuning with LoRA**
 
 For the medical domain, I fine-tuned Mistral-7B and TinyMistral-248M using parameter-efficient LoRA adapters rather than updating all weights:
 
@@ -63,7 +63,7 @@ For the medical domain, I fine-tuned Mistral-7B and TinyMistral-248M using param
 - **Prompt format:** `<s>[INST] instruction [/INST] response </s>` with loss computed only on the response tokens (instruction tokens masked out)
 - **Infrastructure:** Dockerized on NVIDIA PyTorch base image (CUDA 12.6), deployed to EPFL's Run:AI cluster with multi-GPU support via DeepSpeed
 
-## Technical Details
+## Technical details
 
 **Base model (from-scratch implementation):**
 - **Architecture:** Decoder-only transformer (GPT-2)
@@ -78,7 +78,7 @@ For the medical domain, I fine-tuned Mistral-7B and TinyMistral-248M using param
 - **Training data:** 105,488 medical conversations (instruction-response pairs) + 182,822 multiple-choice examples (MedMCQA)
 - **Compute:** EPFL's Run:AI cluster (NVIDIA GPUs), with gradient accumulation and configurable hyperparameters
 
-## Challenges & Tradeoffs
+## Challenges and trade-offs
 
 - **Full fine-tuning vs. LoRA:** With limited cluster compute, LoRA made it feasible to fine-tune 7B-parameter models by only training a small number of adapter parameters
 - **Quantization trade-offs:** 8-bit quantization reduced memory requirements significantly but required careful handling (Flash Attention 2 caused instability on A100s, so standard attention was used)
@@ -92,7 +92,7 @@ The fine-tuned models produce coherent medical responses to patient queries, han
 
 ![A patient describes back pain, the model asks follow-up questions and suggests treatment steps](/images/projects/llm/example2.jpg)
 
-## What I Learned
+## What I learned
 
 - Implementing attention from scratch gave me a mechanical understanding of transformers that using a library does not
 - LoRA is effective: adapting a 7B model's behavior only requires training less than 1% of its parameters

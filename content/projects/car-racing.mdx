@@ -38,7 +38,7 @@ We implemented a **Deep Q-Network (DQN)** for the [CarRacing-v2](https://gymnasi
 
 The DQN discretizes the action space and uses a convolutional neural network to map raw pixel frames to Q-values for each possible action. The agent learns which actions maximize cumulative reward (staying on track, maintaining speed) through experience replay and temporal difference learning.
 
-## Technical Details
+## Technical details
 
 - **State representation:** Raw pixel observations from the environment (96x96 RGB), preprocessed and stacked for temporal context
 - **Network architecture:** CNN processing visual input → fully connected layers mapping to discrete action Q-values
@@ -51,7 +51,7 @@ The repository includes trained checkpoints and visualizations showing how diffe
 
 ![Trained DQN agent autonomously navigating the CarRacing-v2 track](/images/projects/car-racing/agent-demo.gif)
 
-## What I Learned
+## What I learned
 
 - Visual RL is a fundamentally different challenge from state-based RL: the representation learning problem dominates
 - Experience replay and target networks are central to stabilizing value estimates during training

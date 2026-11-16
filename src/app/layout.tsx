@@ -5,7 +5,9 @@ import './globals.css';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { SectionLinks } from '@/components/section-links';
-import { siteConfig } from '@/lib/constants';
+import { CommandPalette, type PaletteItem } from '@/components/command-palette';
+import { navItems, siteConfig } from '@/lib/constants';
+import { getExperienceItems, getProjectItems } from '@/lib/journey';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -71,7 +73,31 @@ export const viewport: Viewport = {
   themeColor: '#0c1220',
 };
 
-export default function RootLayout({ children, sheet }: { children: ReactNode; sheet: ReactNode }) {
+export default async function RootLayout({ children, sheet }: { children: ReactNode; sheet: ReactNode }) {
+  // Everything the search palette can jump to: sections, projects and roles
+  const [projects, roles] = await Promise.all([getProjectItems(), getExperienceItems()]);
+  // Projects in the order /projects shows them: selected first, this site last
+  const rank = (slug: string, featured: boolean) => (slug === 'portfolio' ? 2 : featured ? 0 : 1);
+  projects.sort((a, b) => rank(a.slug, a.featured) - rank(b.slug, b.featured) || b.sortKey - a.sortKey);
+  const paletteItems: PaletteItem[] = [
+    ...navItems.map((item) => ({ group: 'Go to', label: item.label, href: item.href })),
+    { group: 'Go to', label: 'Contact', href: '/#contact', keywords: 'email get in touch' },
+    ...projects.map((p) => ({
+      group: 'Projects',
+      label: p.name,
+      hint: p.detail || p.blurb,
+      href: p.href!,
+      keywords: [...p.stack, p.place, p.period, p.blurb].join(' '),
+    })),
+    ...roles.map((r) => ({
+      group: 'Experience',
+      label: `${r.detail}, ${r.name}`,
+      hint: `${r.place}, ${r.period}`,
+      href: r.href!,
+      keywords: [...r.stack, r.blurb].join(' '),
+    })),
+  ];
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -164,6 +190,7 @@ export default function RootLayout({ children, sheet }: { children: ReactNode; s
         </div>
         {sheet}
         <SectionLinks />
+        <CommandPalette items={paletteItems} />
         <Analytics />
         <SpeedInsights />
       </body>

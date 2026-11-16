@@ -36,7 +36,7 @@ export function Stack({ items, max = 5 }: { items: string[]; max?: number }) {
 }
 
 // On the home page: a row with a thumbnail on phones, a small card from tablet width up
-function CompactProjectCard({ item }: { item: JourneyItem }) {
+function CompactProjectCard({ item, heading: Heading }: { item: JourneyItem; heading: 'h2' | 'h3' }) {
   return (
     <Link
       href={item.href!}
@@ -56,7 +56,7 @@ function CompactProjectCard({ item }: { item: JourneyItem }) {
       )}
       <div className="flex min-w-0 flex-1 flex-col p-3.5 sm:p-5">
         <Where item={item} />
-        <h3 className="mt-1 font-semibold leading-snug tracking-tight sm:mt-2 sm:text-lg">{item.name}</h3>
+        <Heading className="mt-1 font-semibold leading-snug tracking-tight sm:mt-2 sm:text-lg">{item.name}</Heading>
         {item.detail && <p className="hidden truncate text-sm text-text-muted sm:block">{item.detail}</p>}
         <p className="mt-1 line-clamp-2 text-sm leading-snug text-text-secondary sm:mt-2.5 sm:line-clamp-3 sm:text-[0.9375rem] sm:leading-relaxed">
           {item.blurb}
@@ -73,12 +73,15 @@ export function ProjectCard({
   item,
   priority = false,
   compact = false,
+  heading = 'h3',
 }: {
   item: JourneyItem;
   priority?: boolean;
   compact?: boolean;
+  // h3 under a section's heading; h2 where the cards sit directly under the page's title
+  heading?: 'h2' | 'h3';
 }) {
-  if (compact) return <CompactProjectCard item={item} />;
+  if (compact) return <CompactProjectCard item={item} heading={heading} />;
   return (
     <Link href={item.href!} scroll={false} className={cn(surface, 'group flex h-full flex-col overflow-hidden rounded-3xl')}>
       {item.image && (

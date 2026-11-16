@@ -25,11 +25,11 @@ links:
 
 ASML builds the lithography machines that every major chipmaker uses to produce semiconductors. I worked there for seven months as part of a collaboration between ASML and the University of Groningen, on a four-person team of computer science students. I was the Project Lead and the Communications Officer, so I owned both the technical direction and the interface with ASML.
 
-## The Problem
+## The problem
 
 ASML's build system runs configuration checkers that catch invalid or inconsistent settings before they reach a production build. Writing a new checker was a manual, hard-coded exercise: each one repeated a lot of the same boilerplate, so adding checks was slow and the code was hard to maintain.
 
-## What I Built
+## What we built
 
 We designed and implemented a reusable Python framework that unified checker construction around a small set of shared abstractions. Instead of hand-writing each checker end to end, a developer describes the check against those abstractions and the framework handles the repetitive machinery around it.
 
@@ -41,6 +41,6 @@ The results were concrete:
 
 Architecture, testing, and documentation were treated as first-class deliverables rather than afterthoughts, which is a large part of why a later team was able to pick up the framework, reuse it, and extend it.
 
-## What I Learned
+## What I learned
 
 This was my first time leading a team on a project with a real external stakeholder. The technical work mattered, but so did keeping ASML and the team aligned on scope and milestones. The habit that stuck with me is that a framework is only reusable if the tests and documentation make it safe for the next person to build on. That is exactly what let a later team pick it up.

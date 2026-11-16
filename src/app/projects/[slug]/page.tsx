@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { getProjectBySlug, getProjectSlugs } from '@/lib/content';
-import { ProjectDetail } from '@/components/detail';
-import { siteConfig } from '@/lib/constants';
+import { AuthorStrip, ProjectDetail } from '@/components/detail';
+import { pageMetadata } from '@/lib/metadata';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -22,19 +22,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!data) return {};
 
   const { frontmatter } = data;
-  return {
+  return pageMetadata({
     title: frontmatter.title,
     description: `${frontmatter.summary} A project by Oscar de Francesca.`,
-    alternates: { canonical: `${siteConfig.url}/projects/${slug}` },
-    openGraph: {
-      title: `${frontmatter.title} · Oscar de Francesca`,
-      description: frontmatter.summary,
-      type: 'article',
-      publishedTime: frontmatter.date,
-      authors: ['Oscar de Francesca'],
-      ...(frontmatter.heroImage && { images: [{ url: frontmatter.heroImage.src }] }),
-    },
-  };
+    path: `/projects/${slug}`,
+    type: 'article',
+    published: frontmatter.date,
+    image: false, // drawn by opengraph-image.tsx beside this file
+  });
 }
 
 export default async function ProjectPage({ params }: PageProps) {
@@ -52,6 +47,7 @@ export default async function ProjectPage({ params }: PageProps) {
           All projects
         </Link>
         <ProjectDetail slug={slug} page />
+        <AuthorStrip />
       </div>
     </div>
   );

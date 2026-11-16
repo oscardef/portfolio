@@ -52,12 +52,12 @@ export function ProjectsBrowser({ items }: { items: JourneyItem[] }) {
               className={cn(
                 'rounded-full border px-4 py-1.5 text-sm transition-colors',
                 kind === f.kind
-                  ? 'border-accent bg-accent text-white'
+                  ? 'border-accent bg-accent font-medium text-white'
                   : 'border-border text-text-secondary hover:border-border-hover hover:text-text-primary'
               )}
             >
               {f.label}
-              <span className={cn('tnum ml-1.5', kind === f.kind ? 'text-white/75' : 'text-text-muted')}>{count}</span>
+              <span className={cn('tnum ml-1.5', kind === f.kind ? 'font-normal text-white' : 'text-text-muted')}>{count}</span>
             </button>
           );
         })}
@@ -66,7 +66,7 @@ export function ProjectsBrowser({ items }: { items: JourneyItem[] }) {
       <ul className="mt-8 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
         {shown.map((item) => (
           <li key={item.id}>
-            <ProjectCard item={item} compact />
+            <ProjectCard item={item} compact heading="h2" />
           </li>
         ))}
       </ul>

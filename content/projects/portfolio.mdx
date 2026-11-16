@@ -6,7 +6,7 @@ blurb: "This site."
 date: "2026-10-31"
 type: "personal"
 featured: false
-summary: "This site: one dark scrolling page built around a globe of the places I've lived, with each project and role attached to the place it happened. Statically generated, with the globe drawn on a canvas and loaded only when needed."
+summary: "This site: one dark scrolling page built around a globe of the places I've lived, with each project and role attached to the place it happened. Statically generated, with the globe drawn on a canvas and loaded only when needed, and searchable from the keyboard."
 tags: ["web"]
 stack: ["Next.js", "TypeScript", "Tailwind CSS", "MDX", "d3-geo", "Vercel"]
 links:
@@ -17,7 +17,9 @@ heroImage:
 highlights:
   - "A scroll-driven route: the globe flies to each place, draws the leg from the previous home and lights the countries lived in"
   - "A canvas globe built on d3-geo's orthographic projection, about 50 KB gzipped and loaded only near its section"
-  - "Projects and roles open as sheets over the page via intercepting routes, with their own URLs for sharing"
+  - "A second globe of places visited that you can drag, point at and click: countries and US states light up, and choosing one flies there"
+  - "Projects and roles open as sheets over the page via intercepting routes, with their own URLs and their own link-preview cards"
+  - "A search palette (press / or Ctrl/Cmd+K) that jumps to any section, project or role"
   - "Content in MDX with Zod-validated frontmatter; dark and light themes from one set of tokens"
 role: "Solo developer"
 teamSize: 1
@@ -30,12 +32,15 @@ status: "shipped"
 
 The site you're looking at. Instead of separate pages for experience and projects, it tells the story by place: every city I've lived in, in order, with what I did there attached to it.
 
-## How It Works
+## How it works
 
 - **The globe** is drawn on a canvas with d3-geo's orthographic projection and Natural Earth country shapes. Each leg of the route is a great-circle arc lifted off the surface; the camera follows each new place on a spring, so changing direction mid-flight stays smooth, and zooms in on Europe, where the stops are close together.
 - **Scrolling drives it.** Each chapter reports when it crosses the middle of the screen, and the globe flies there. Side trips, like a summer in Abu Dhabi during my Groningen years, get their own detour when you pause on them.
 - **Performance:** the globe's code and map data load only as you approach the section, it stops drawing when off screen, and it holds still for anyone who prefers reduced motion.
+- **The places globe** is the same component in another mode. Pointing at a country finds it by inverting the projection and testing which shape contains that point; choosing one flies to a frame computed at build time from the country's largest landmass and the places visited there.
 - **Sheets:** projects and roles open over the page through Next.js intercepting routes. The URL changes, the page keeps its place, and the same URL renders a full page when visited directly.
+- **Search:** a small command palette lists every section, project and role, built from the same content files, so nothing has to be kept in sync by hand.
+- **Link previews:** each project and role gets its own card image, drawn at build time.
 - **Content** lives in MDX files with frontmatter validated by Zod at build time; a `chapter` field attaches each project or role to a place.
 
 ## Stack

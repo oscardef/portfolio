@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { ChevronDown, Minimize2, Search } from 'lucide-react';
 import type { GlobeData, GlobePlace } from '@/lib/globe-data';
 import { cn } from '@/lib/utils';
@@ -64,6 +64,33 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
       .sort((a, b) => b.places.length - a.places.length || a.country.localeCompare(b.country));
   }, [globe.places]);
 
+  // For the globe itself: what to say beside the pointer for each country on
+  // it, and which country in the list a shape belongs to
+  const { labels, countryOf } = useMemo(() => {
+    const labels: Record<string, string> = {};
+    const countryOf: Record<string, string> = {};
+    for (const g of groups) {
+      const id = globe.frames[g.country]?.id;
+      if (!id) continue;
+      labels[id] = `${g.country} · ${g.places.length} ${g.places.length === 1 ? 'place' : 'places'}`;
+      countryOf[id] = g.country;
+    }
+    return { labels, countryOf };
+  }, [groups, globe.frames]);
+
+  // A country picked on the globe: choose it, which flies in on it exactly as
+  // choosing it from the list does. The page itself stays where it is; the
+  // country's name and places show on the globe. Picking the country already
+  // chosen keeps it; "Whole world" zooms back out.
+  const pick = useCallback(
+    (id: string) => {
+      const country = countryOf[id];
+      if (country) setChosen(country);
+    },
+    [countryOf]
+  );
+  const chosenGroup = groups.find((g) => g.country === chosen);
+
   const q = normalise(query.trim());
   const visible = groups
     .map((g) => ({
@@ -87,8 +114,8 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
         </h2>
         <p className="mt-4 max-w-[56ch] text-lg text-text-secondary">
           {globe.places.length} places in {groups.length} countries so far, the ones I’ve lived in included
-          {globe.states.length > 0 && `, and ${inWords(globe.states.length)} US states`}. Drag the globe, or
-          pick a country to fly there.
+          {globe.states.length > 0 && `, and ${inWords(globe.states.length)} US states`}. Drag the globe, and
+          pick a country on it or in the list to fly there.
         </p>
 
         <div className="mt-6 grid gap-6 lg:mt-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14">
@@ -108,7 +135,27 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
                 />
               )}
               {near && (
-                <Globe data={globe} mode="travel" focus={frame} highlight={frame?.id ?? null} className="absolute inset-0" />
+                <Globe
+                  data={globe}
+                  mode="travel"
+                  focus={frame}
+                  highlight={frame?.id ?? null}
+                  labels={labels}
+                  onPick={pick}
+                  className="absolute inset-0"
+                />
+              )}
+              {/* The country in view, named on the globe so the list needn't be in sight */}
+              {chosenGroup && (
+                <div
+                  aria-live="polite"
+                  className="pointer-events-none absolute left-2 top-2 max-w-[min(22rem,85%)] rounded-2xl border border-border bg-bg/85 px-3.5 py-2 backdrop-blur"
+                >
+                  <p className="place-name text-xl leading-tight text-text-primary">{chosenGroup.country}</p>
+                  <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-text-secondary">
+                    {chosenGroup.places.map((p) => p.place).join(', ')}
+                  </p>
+                </div>
               )}
               {chosen && (
                 <button

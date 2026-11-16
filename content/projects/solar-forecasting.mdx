@@ -94,7 +94,7 @@ The comparison below shows the effect of meteorological data on quantile regress
 - BNNs tended to over-estimate uncertainty with wider intervals; the images-only BNN reaches the highest coverage (96.55%) but the lowest certainty (0.5432), since over-wide intervals inflate coverage, likely from weight over-regularization
 - Preliminary experiments with a pretrained ResNet18 backbone showed promise (certainty 0.8197, MSE 0.0223 after only 14 epochs)
 
-## What I Learned
+## What I learned
 
 - The distinction between aleatoric and epistemic uncertainty isn't just theoretical; it directly determines which modeling approach works better
 - Quantile regression is surprisingly effective for well-calibrated intervals with minimal computational overhead compared to full Bayesian approaches

@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ChevronRight, Menu, X } from 'lucide-react';
+import { ChevronRight, Menu, Search, X } from 'lucide-react';
 import { navItems, siteConfig } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import { openPalette } from './command-palette';
 import { ThemeToggle } from './theme-toggle';
 
 type NavItem = { label: string; href: string; section: string; page?: string };
@@ -93,6 +94,16 @@ export function Navbar() {
                 )}
               </Link>
             ))}
+            <button
+              type="button"
+              onClick={openPalette}
+              aria-label="Search the site"
+              className="inline-flex h-9 items-center gap-2 rounded-full border border-border px-3 text-sm text-text-muted transition-colors hover:border-border-hover hover:text-text-primary"
+            >
+              <Search size={15} aria-hidden="true" />
+              <span className="hidden xl:inline">Search</span>
+              <kbd className="hidden rounded border border-border px-1 text-xs xl:inline">/</kbd>
+            </button>
             <ThemeToggle />
             <Link
               href="/#contact"
@@ -103,6 +114,14 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-1 lg:hidden">
+            <button
+              type="button"
+              onClick={openPalette}
+              aria-label="Search the site"
+              className="inline-flex size-9 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-bg-card hover:text-text-primary"
+            >
+              <Search size={17} aria-hidden="true" />
+            </button>
             <ThemeToggle />
             <button
               type="button"

@@ -36,7 +36,7 @@ A semester-long project for Decathlon addressing a core retail problem: recorded
 
 OptiFlow turns routine employee movement into a continuous sensing layer, with no cameras and no manual scanning rounds. Decathlon was interested in exploring it further after the course.
 
-## How It Works
+## How it works
 
 Sales associates wear a small custom device while doing their normal tasks. As they walk through the store, the device passively scans RFID-tagged products and tracks its own position via UWB, building a real-time picture of what's on which shelf.
 
@@ -52,7 +52,7 @@ We built a custom wearable platform combining:
 - A network of stationary UWB anchors deployed throughout the store
 - Custom 3D-printed enclosures for the control box, anchors, and wristband
 
-The multi-tasking firmware orchestrates concurrent sensor polling, data collection, and wireless communication via MQTT, running concurrently without blocking on a resource-constrained device.
+The multi-tasking firmware runs sensor polling, data collection, and wireless communication over MQTT concurrently, without blocking, on a resource-constrained device.
 
 I was responsible for a large part of the firmware development, alongside all of the software. I also contributed to hardware design and assembly, including soldering and prototype iteration.
 
@@ -88,7 +88,7 @@ The analytics engine goes beyond basic inventory tracking. It identifies sales a
 
 <FloatingImage src="/images/projects/optiflow/ai-insights.png" alt="AI-powered anomaly detection and forecasting" caption="AI Insights: anomaly detection with surge alerts and demand forecasting" side="left" width={600} height={375} />
 
-### Business Viability
+### Business viability
 
 The team also developed financial modeling across three deployment scenarios:
 - **Pilot:** 1 wearable + 7 anchors
@@ -97,7 +97,7 @@ The team also developed financial modeling across three deployment scenarios:
 
 Analysis confirmed commercially viable returns through a hybrid hardware + SaaS revenue model, with sustainability evaluation and IP cost assessment included.
 
-## Technical Details
+## Technical details
 
 <FloatingImage src="/images/projects/optiflow/kpis.png" alt="Analytics KPI dashboard" caption="KPI dashboard: stock coverage, turnover rate, and sales metrics at a glance" side="right" width={500} height={350} />
 
@@ -107,7 +107,7 @@ Analysis confirmed commercially viable returns through a hybrid hardware + SaaS 
 
 **Scalability consideration:** The prototype uses DS-TWR (Double-Sided Two-Way Ranging) which limits the number of concurrent tags. For production, the report proposes UL-TDOA (Uplink Time Difference of Arrival) which scales to many more simultaneous devices.
 
-## My Role
+## My role
 
 - Designed and implemented the entire software platform (backend, frontend, simulation, MQTT bridge, database schema, deployment)
 - Developed a large portion of the ESP32 firmware (sensor orchestration, MQTT communication)
@@ -127,7 +127,7 @@ We field-tested the system at Decathlon Bussigny across four site visits. In pro
 
 These are prototype figures under test conditions, not production guarantees; the DS-TWR scalability limit above is why the tag count is what it is. The project received the top grade (6/6) and a course performance prize.
 
-## What I Learned
+## What I learned
 
 - Building a full system from hardware through firmware to web dashboard taught me how each layer constrains the others: firmware buffer sizes dictate packet formats, which dictate backend parsing, which dictates frontend update rates
 - MQTT is excellent glue between embedded devices and web services, especially with topic-based routing for mode separation

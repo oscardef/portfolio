@@ -149,3 +149,49 @@ Oscar: "any other polish you deem good", with full freedom.
   a tap outside or Escape.
 - `/projects` uses the same compact cards as the home page.
 - The places globe shows a placeholder disc while its code loads.
+
+## Sixth pass (16 Nov 2026)
+
+Oscar: a deep analysis of everything, "make it incredible, be innovative".
+
+Found and fixed:
+
+- **Link previews were wrong.** `/projects` and `/experience` carried the home
+  page's title and address; project pages had the home page's Twitter title;
+  role pages had no picture at all. Every page now has its own tags, and each
+  project and role has its own card image.
+- **Phones:** project pages with a "More from" list were wider than the
+  screen; At a glance overflowed at 320 px. Every page is now checked at 320,
+  360 and 390 px.
+- **Tablets:** "What I work on" was three unreadable columns in half a row;
+  the interest photos' captions collided with their titles.
+- **Dead links:** the ETH lab's site (`sysbio.ethz.ch` no longer resolves) and
+  Securrency's (acquired by DTCC in 2023; the write-up says so now).
+- **Accessibility:** heading order on `/projects`, a nested landmark on detail
+  pages, and the count in the chosen filter. axe is clean on eight kinds of
+  page, a sheet and the palette, in both themes.
+- Write-up headings are in sentence case like the rest of the site; callouts
+  use the site's accent instead of four stock colours; the web manifest had
+  the old site's colours; standard response headers added.
+
+New:
+
+- **Search palette** (`/` or Ctrl/Cmd+K, and a button in the menu): sections,
+  projects, roles, and a few actions.
+- **The places globe can be pointed at and clicked.** It names the country
+  under the pointer and stops turning while the pointer is over it. A click
+  zooms in on the country exactly as choosing it from the list does; the
+  page stays where it is, and the country's name and places show on the
+  globe.
+- **The route's timeline** replaces the dots: one segment per home, as wide as
+  the years lived there.
+- **Write-ups:** images open large on a click; a page outline beside long
+  ones; "More from Lausanne" and "Next project" at the end, which swap the
+  sheet's content in place; a short author strip for visitors arriving from a
+  CV link.
+- **Small live details:** a bar showing how far through the thesis today
+  is, and the month the site was last built in the footer.
+- **Work rights:** "Free to work in the EU, Switzerland and the US" under
+  citizenship (Oscar's go-ahead, 16 Nov 2026). No CV download (his call).
+- "Systems" in At a glance opens the Bloomberg role, the strongest systems
+  work, instead of a filter with one coursework project.

@@ -36,7 +36,7 @@ My Bachelor's thesis at the University of Groningen, built in collaboration with
 
 LLACE (named after Ada Lovelace) addresses this by providing a centralized platform for the entire AI model lifecycle in healthcare research: project organization, model versioning and metadata, deployment, and cross-team discovery.
 
-## Requirements & Process
+## Requirements and process
 
 The design was driven by interviews with eight UMCG researchers to understand their actual workflows and pain points. I used MoSCoW prioritization to scope requirements into must-have, should-have, could-have, and won't-have categories, essential given the fixed thesis timeline.
 
@@ -47,30 +47,30 @@ Key requirements that emerged:
 - The platform must comply with healthcare data security and privacy standards
 - Integration with existing infrastructure (Habrok HPC, institutional repositories like Pure)
 
-## What I Built
+## What I built
 
 <FloatingImage src="/images/projects/ai-research-platform/dashboard.png" alt="LLACE dashboard showing research projects and AI models" caption="Dashboard: researchers manage their projects and AI models from a single interface" side="right" width={450} height={280} />
 
-**User & Project Management**
+**User and project management**
 - Account creation with role-based permissions (researchers, administrators)
 - Research project organization with collaborators, descriptions, and linked resources
 - Profile management for researcher discovery
 
-**AI Model Management**
+**AI model management**
 - Version control and metadata tracking for AI models
 - Model upload and configuration interface
 - Deployment to UbiOps directly from the platform: researchers deploy models without managing infrastructure themselves
 
 <FloatingImage src="/images/projects/ai-research-platform/model-deployment.png" alt="Model deployment interface with UbiOps integration" caption="One-click model deployment to UbiOps with version selection" side="left" width={450} height={300} />
 
-**Advanced Search**
+**Advanced search**
 - Multi-faceted search across projects, models, researcher profiles, and publications
 - Filter by type (models, projects, profiles, publications) with tag-based categorization
 - Enables cross-team discovery of relevant work within the institution
 
 <FloatingImage src="/images/projects/ai-research-platform/search.png" alt="Advanced search interface with filtering" caption="Search across all platform entities with tag and type filtering" side="right" width={450} height={280} />
 
-**Project Pages**
+**Project pages**
 - Detailed project views with description, metadata, collaborators, and linked models/publications
 - Related projects and models surfaced automatically for cross-team discovery
 
@@ -98,7 +98,7 @@ I designed two architectures: an **ideal production system** and a **feasible MV
 
 This separation keeps the MVP lean while the ideal architecture serves as a roadmap for production scaling.
 
-## Challenges & Tradeoffs
+## Challenges and trade-offs
 
 - **Scope vs. ambition:** The ideal architecture is significantly more complex than what's feasible in a thesis. Choosing PocketBase over Django + PostgreSQL meant sacrificing some flexibility but enabled a working prototype within the timeline
 - **Healthcare compliance:** Even for an MVP, data security considerations had to be baked in from the start, not bolted on later
@@ -111,7 +111,7 @@ The MVP delivers a functional platform covering user management, project and mod
 
 The thesis documents both the platform implementation and the full ideal architecture as a blueprint, positioning LLACE as a foundation that UMCG can build upon.
 
-## What I Learned
+## What I learned
 
 - Interviewing actual users before building anything pays off: the gap between what you assume researchers need and what they actually need is significant
 - Designing both an ideal and constrained architecture forces you to understand which abstractions actually matter vs. which are premature

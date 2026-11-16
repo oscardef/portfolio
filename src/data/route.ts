@@ -83,7 +83,7 @@ const photos: Record<string, PlacePhoto> = {
 
 export const route: RouteStop[] = [
   { id: 'bangkok', place: 'Bangkok', country: 'Thailand', start: 2003, end: 2006, note: 'Born in Bangkok to a Swedish-American family.', photo: photos.bangkok },
-  { id: 'stockholm-1', place: 'Stockholm', country: 'Sweden', start: 2006, end: 2007, note: 'First move back to Scandinavia.', photo: photos.stockholm },
+  { id: 'stockholm-1', place: 'Stockholm', country: 'Sweden', start: 2006, end: 2007, note: 'A first year in Sweden.', photo: photos.stockholm },
   { id: 'al-ain', place: 'Al Ain', country: 'UAE', start: 2007, end: 2010, note: 'Childhood years in an oasis city in the Emirates.', photo: photos['al-ain'] },
   { id: 'egham', place: 'Egham', country: 'United Kingdom', start: 2010, end: 2012, note: 'Primary school in the English countryside.', photo: photos.egham },
   { id: 'dubai', place: 'Dubai', country: 'UAE', start: 2012, end: 2018, note: 'Middle school and the start of high school. The longest stretch in one place.', photo: photos.dubai },

@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import { RoleCard, StudyCard } from '@/components/cards';
 import { getExperienceItems, getStudyItems, type JourneyItem } from '@/lib/journey';
-import { siteConfig } from '@/lib/constants';
+import { pageMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Experience',
   description:
     'Oscar de Francesca’s experience: software engineering at Bloomberg and ASML, research at ETH Zurich, data science, teaching, and degrees from EPFL and the University of Groningen.',
-  alternates: { canonical: `${siteConfig.url}/experience` },
-};
+  path: '/experience',
+});
 
 function Group({ title, items, children }: { title: string; items: JourneyItem[]; children?: React.ReactNode }) {
   if (items.length === 0 && !children) return null;

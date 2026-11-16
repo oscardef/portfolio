@@ -12,6 +12,7 @@ import {
   Wrench,
   type LucideIcon,
 } from 'lucide-react';
+import { Progress } from '@/components/live';
 import { cn } from '@/lib/utils';
 
 /**
@@ -91,7 +92,7 @@ const focus = [
   {
     title: 'Systems',
     text: 'Low-latency C++, real-time messaging, and the infrastructure and testing around them.',
-    href: '/projects#systems',
+    href: '/experience/bloomberg',
   },
   {
     title: 'Machine learning',
@@ -155,8 +156,9 @@ export function AtAGlance() {
           At a glance
         </h2>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Card label="Now" className="lg:col-span-2" aside={<Org logo="/images/logos/eth.svg" name="ETH Zurich" />}>
+        {/* Two columns on tablets, where the wide cards take a full row and the rest fill in around them */}
+        <div className="mt-8 grid grid-flow-dense gap-4 sm:mt-10 md:grid-cols-2 lg:grid-cols-3">
+          <Card label="Now" className="md:col-span-2" aside={<Org logo="/images/logos/eth.svg" name="ETH Zurich" />}>
             <div className="grid flex-1 gap-x-10 gap-y-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]">
               <div className="flex flex-col">
                 <h4 className="text-2xl font-semibold tracking-tight">Master’s thesis at ETH Zurich</h4>
@@ -165,7 +167,15 @@ export function AtAGlance() {
                   Synthetic Immunology in Basel. It’s the final part of my MSc in Computer Science at EPFL,
                   supervised there by Prof. Maria Brbic.
                 </p>
-                <p className="tnum mt-auto pt-4 text-sm text-text-muted">Basel, October 2026 to April 2027</p>
+                <div className="mt-auto pt-4">
+                  <p className="tnum text-sm text-text-muted">Basel, October 2026 to April 2027</p>
+                  {/* How far along the 26 weeks are today */}
+                  <Progress
+                    from="2026-10-05"
+                    to="2027-04-05"
+                    className="mt-2.5 block h-1 w-full max-w-[15rem] overflow-hidden rounded-full bg-border"
+                  />
+                </div>
               </div>
               <figure className="self-center border-l-2 border-accent/60 pl-5">
                 <figcaption className="text-sm text-text-muted">The question it asks</figcaption>
@@ -186,11 +196,11 @@ export function AtAGlance() {
             <p className="tnum mt-auto pt-4 text-sm text-text-muted">London, March to October 2026</p>
           </Card>
 
-          <Card label="What I work on" icon={Layers} className="lg:col-span-2">
+          <Card label="What I work on" icon={Layers} className="md:col-span-2">
             <ul className="grid gap-5 sm:grid-cols-3">
               {focus.map((f) => (
                 <li key={f.title}>
-                  <Link href={f.href} className="group block">
+                  <Link href={f.href} scroll={false} className="group block">
                     <h4 className="font-semibold">
                       {f.title}
                       <ArrowUpRight
@@ -245,8 +255,8 @@ export function AtAGlance() {
             </ul>
           </Card>
 
-          <Card label="Languages and citizenship" icon={Languages}>
-            <dl className="grid grid-cols-[auto_auto] justify-between gap-x-4 whitespace-nowrap sm:justify-start sm:gap-x-12">
+          <Card label="Languages and citizenship" icon={Languages} className="md:col-span-2 lg:col-span-1">
+            <dl className="flex flex-wrap justify-between gap-x-4 gap-y-4 whitespace-nowrap sm:justify-start sm:gap-x-12">
               <div>
                 <dt className={groupLabel}>Languages</dt>
                 <dd className="mt-2">
@@ -274,6 +284,9 @@ export function AtAGlance() {
                 </dd>
               </div>
             </dl>
+            <p className="mt-auto pt-5 text-[0.9375rem] leading-snug text-text-secondary">
+              Free to work in the EU, Switzerland and the US.
+            </p>
           </Card>
 
           <Card label="Toolbox" icon={Wrench} className="md:col-span-2 lg:col-span-3">

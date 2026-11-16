@@ -39,6 +39,27 @@ async function compileMDXContent(source: string): Promise<ReactElement> {
   return content;
 }
 
+// ── Headings ────────────────────────────────────────────────────────────────
+export interface Heading {
+  id: string;
+  text: string;
+}
+
+// The write-up's main (##) headings, with the ids rehype-slug gives them
+function headingsOf(source: string): Heading[] {
+  return source
+    .split('\n')
+    .filter((line) => line.startsWith('## '))
+    .map((line) => {
+      const text = line.slice(3).trim();
+      const id = text
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s-]/gu, '')
+        .replace(/\s/g, '-');
+      return { id, text };
+    });
+}
+
 // ── Read & validate MDX files ───────────────────────────────────────────────
 function readMDXFile(filePath: string): { data: Record<string, unknown>; content: string } {
   const raw = fs.readFileSync(filePath, 'utf-8');
@@ -64,7 +85,7 @@ export async function getAllProjects(): Promise<Project[]> {
 
 export async function getProjectBySlug(
   slug: string
-): Promise<{ frontmatter: Project; content: ReactElement } | null> {
+): Promise<{ frontmatter: Project; content: ReactElement; headings: Heading[] } | null> {
   const filePath = path.join(PROJECTS_DIR, `${slug}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
@@ -72,7 +93,7 @@ export async function getProjectBySlug(
   const frontmatter = projectSchema.parse(data);
   const content = await compileMDXContent(rawContent);
 
-  return { frontmatter, content };
+  return { frontmatter, content, headings: headingsOf(rawContent) };
 }
 
 export async function getProjectSlugs(): Promise<string[]> {
@@ -103,7 +124,7 @@ export async function getAllExperiences(): Promise<Experience[]> {
 
 export async function getExperienceBySlug(
   slug: string
-): Promise<{ frontmatter: Experience; content: ReactElement } | null> {
+): Promise<{ frontmatter: Experience; content: ReactElement; headings: Heading[] } | null> {
   const filePath = path.join(EXPERIENCE_DIR, `${slug}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
@@ -111,7 +132,7 @@ export async function getExperienceBySlug(
   const frontmatter = experienceSchema.parse(data);
   const content = await compileMDXContent(rawContent);
 
-  return { frontmatter, content };
+  return { frontmatter, content, headings: headingsOf(rawContent) };
 }
 
 export async function getExperienceSlugs(): Promise<string[]> {

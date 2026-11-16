@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import {
+  geoContains,
   geoDistance,
   geoGraticule10,
   geoInterpolate,
@@ -57,6 +58,10 @@ export interface GlobeProps {
   detour?: number | null;
   // Travel mode: a country (by id) to outline as the one chosen
   highlight?: string | null;
+  // Travel mode: the countries that can be pointed at and picked on the globe
+  // itself (id to the text shown beside the pointer), and what picking one does
+  labels?: Record<string, string>;
+  onPick?: (id: string) => void;
   className?: string;
 }
 
@@ -178,11 +183,20 @@ export function Globe({
   focus = null,
   detour = null,
   highlight = null,
+  labels,
+  onPick,
   className,
 }: GlobeProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
+  const tipRef = useRef<HTMLDivElement>(null);
+
+  // The latest labels and pick handler, for the pointer handlers set up once below
+  const picking = useRef({ labels, onPick });
+  useEffect(() => {
+    picking.current = { labels, onPick };
+  });
 
   // Everything the animation loop mutates lives here, outside React state
   const engine = useRef({
@@ -193,6 +207,9 @@ export function Globe({
     trips: data.trips.map(() => 0),
     // The country outlined as chosen, fading in and out
     lit: { id: null as string | null, alpha: 0, on: false },
+    // The country under the pointer, and whether the pointer is over the globe at all
+    hover: null as string | null,
+    pointerOver: false,
     raf: 0,
     wake: 0,
     last: 0,
@@ -323,10 +340,9 @@ export function Globe({
       return moving;
     }
 
-    function draw() {
+    // The globe as it stands: its centre and radius on the canvas, and the projection
+    function scene() {
       const { w, h, dpr } = e.size;
-      if (!w || !h || !e.palette) return;
-      const p = e.palette;
       const cx = (w / 2) * dpr;
       const cy = (h / 2) * dpr;
       const R = (Math.min(w, h) / 2) * 0.8 * e.view.zoom * (1 + e.boost) * dpr;
@@ -336,6 +352,32 @@ export function Globe({
         .rotate([-e.view.lng, -e.view.lat])
         .clipAngle(90)
         .precision(0.6);
+      return { cx, cy, R, projection };
+    }
+
+    // The pickable country under a point of the page, if any
+    function countryAt(clientX: number, clientY: number): string | null {
+      const ids = picking.current.labels;
+      if (!ids || !e.size.w) return null;
+      const rect = canvas.getBoundingClientRect();
+      const { cx, cy, R, projection } = scene();
+      const x = (clientX - rect.left) * e.size.dpr;
+      const y = (clientY - rect.top) * e.size.dpr;
+      if (Math.hypot(x - cx, y - cy) > R) return null;
+      const point = projection.invert?.([x, y]);
+      if (!point || !Number.isFinite(point[0]) || !Number.isFinite(point[1])) return null;
+      for (const id of Object.keys(ids)) {
+        const shape = countryById.get(id);
+        if (shape && geoContains(shape, point)) return id;
+      }
+      return null;
+    }
+
+    function draw() {
+      const { w, h, dpr } = e.size;
+      if (!w || !h || !e.palette) return;
+      const p = e.palette;
+      const { cx, cy, R, projection } = scene();
       const path = geoPath(projection, ctx);
       const rotate = geoRotation([-e.view.lng, -e.view.lat]);
 
@@ -429,6 +471,21 @@ export function Globe({
           ctx.stroke();
           ctx.strokeStyle = p.selected;
           ctx.lineWidth = 1.5 * dpr;
+          ctx.stroke();
+          ctx.restore();
+        }
+        // The country under the pointer: a lighter version of the same
+        const pointed = e.hover && !(chosen && e.hover === e.lit.id) ? countryById.get(e.hover) : undefined;
+        if (pointed) {
+          ctx.save();
+          ctx.beginPath();
+          path(pointed);
+          ctx.globalAlpha = 0.7;
+          ctx.fillStyle = p.selectedFill;
+          ctx.fill();
+          ctx.globalAlpha = 0.6;
+          ctx.strokeStyle = p.selected;
+          ctx.lineWidth = dpr;
           ctx.stroke();
           ctx.restore();
         }
@@ -572,7 +629,7 @@ export function Globe({
 
       // Left alone and zoomed out, the travel globe turns slowly
       const { mode } = e.props;
-      if (mode === 'travel' && !e.reduced && !e.dragging && !moving && e.goal.zoom < 1.2) {
+      if (mode === 'travel' && !e.reduced && !e.dragging && !e.pointerOver && !moving && e.goal.zoom < 1.2) {
         if (now > e.idleUntil) {
           const turn = dt * 4;
           e.view = { ...e.view, lng: e.view.lng + turn };
@@ -632,11 +689,49 @@ export function Globe({
     };
     motion.addEventListener('change', onMotion);
 
-    // Dragging spins the globe in travel mode
+    // Pointing at a country names it beside the pointer and lights it a little;
+    // the globe stops turning while the pointer is over it, so it can be aimed at
+    const tip = tipRef.current;
+    let hoverFrame = 0;
+    const point = (id: string | null, ev?: PointerEvent) => {
+      if (tip) {
+        const text = id ? picking.current.labels?.[id] : undefined;
+        tip.style.display = text ? 'block' : 'none';
+        if (text && ev) {
+          const rect = wrapper.getBoundingClientRect();
+          tip.textContent = text;
+          tip.style.left = `${ev.clientX - rect.left}px`;
+          tip.style.top = `${ev.clientY - rect.top}px`;
+        }
+      }
+      if (id === e.hover) return;
+      e.hover = id;
+      if (!dragFrom) canvas.style.cursor = id ? 'pointer' : 'grab';
+      if (!e.raf) draw();
+    };
+    const onHover = (ev: PointerEvent) => {
+      if (e.props.mode !== 'travel' || ev.pointerType !== 'mouse' || dragFrom || hoverFrame) return;
+      hoverFrame = requestAnimationFrame(() => {
+        hoverFrame = 0;
+        point(countryAt(ev.clientX, ev.clientY), ev);
+      });
+    };
+    const onEnter = (ev: PointerEvent) => {
+      if (ev.pointerType === 'mouse') e.pointerOver = true;
+    };
+    const onLeave = () => {
+      e.pointerOver = false;
+      point(null);
+      e.kick();
+    };
+
+    // Dragging spins the globe in travel mode; a click or tap that doesn't move picks a country
     let dragFrom: { x: number; y: number; view: View } | null = null;
     let dragFrame = 0;
+    let dragged = false;
     const onDown = (ev: PointerEvent) => {
       if (e.props.mode !== 'travel') return;
+      dragged = false;
       dragFrom = { x: ev.clientX, y: ev.clientY, view: e.view };
       e.dragging = true;
       e.speed = { lng: 0, lat: 0, zoom: 0 };
@@ -644,7 +739,10 @@ export function Globe({
       canvas.style.cursor = 'grabbing';
     };
     const onMove = (ev: PointerEvent) => {
-      if (!dragFrom) return;
+      if (!dragFrom) return onHover(ev);
+      if (!dragged && Math.hypot(ev.clientX - dragFrom.x, ev.clientY - dragFrom.y) < 5) return;
+      if (!dragged) point(null);
+      dragged = true;
       const k = 0.3 / e.view.zoom;
       e.view = {
         ...e.view,
@@ -660,24 +758,35 @@ export function Globe({
         });
       }
     };
-    const onUp = () => {
+    const onUp = (ev: PointerEvent) => {
       if (!dragFrom) return;
       dragFrom = null;
       e.dragging = false;
       e.idleUntil = performance.now() + 4000;
-      canvas.style.cursor = 'grab';
+      canvas.style.cursor = e.hover ? 'pointer' : 'grab';
+      if (!dragged && ev.type === 'pointerup') {
+        const id = countryAt(ev.clientX, ev.clientY);
+        if (id) {
+          // The globe is about to move under the pointer, so the name beside it goes
+          point(null);
+          picking.current.onPick?.(id);
+        }
+      }
       e.kick();
     };
     canvas.addEventListener('pointerdown', onDown);
     canvas.addEventListener('pointermove', onMove);
     canvas.addEventListener('pointerup', onUp);
     canvas.addEventListener('pointercancel', onUp);
+    canvas.addEventListener('pointerenter', onEnter);
+    canvas.addEventListener('pointerleave', onLeave);
 
     resize();
     return () => {
       cancelAnimationFrame(e.raf);
       cancelAnimationFrame(scrollFrame);
       cancelAnimationFrame(dragFrame);
+      cancelAnimationFrame(hoverFrame);
       window.clearTimeout(e.wake);
       e.raf = 0;
       e.wake = 0;
@@ -690,6 +799,8 @@ export function Globe({
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerup', onUp);
       canvas.removeEventListener('pointercancel', onUp);
+      canvas.removeEventListener('pointerenter', onEnter);
+      canvas.removeEventListener('pointerleave', onLeave);
     };
   }, [data]);
 
@@ -739,6 +850,12 @@ export function Globe({
           </>
         )}
       </div>
+      {/* Names the country under the pointer */}
+      <div
+        ref={tipRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute z-10 hidden -translate-x-1/2 -translate-y-[calc(100%+0.75rem)] whitespace-nowrap rounded-full border border-border bg-bg/90 px-3 py-1 text-sm text-text-primary backdrop-blur"
+      />
     </div>
   );
 }

@@ -1,5 +1,4 @@
-import { Info, AlertTriangle, CheckCircle, Lightbulb } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { AlertTriangle, CheckCircle, Info, Lightbulb } from 'lucide-react';
 import { type ReactNode } from 'react';
 
 interface CalloutProps {
@@ -8,51 +7,18 @@ interface CalloutProps {
   children: ReactNode;
 }
 
-const calloutConfig = {
-  info: {
-    icon: Info,
-    borderColor: 'border-l-blue-500',
-    bgColor: 'bg-blue-500/5',
-    iconColor: 'text-blue-400',
-  },
-  warning: {
-    icon: AlertTriangle,
-    borderColor: 'border-l-amber-500',
-    bgColor: 'bg-amber-500/5',
-    iconColor: 'text-amber-400',
-  },
-  success: {
-    icon: CheckCircle,
-    borderColor: 'border-l-green-500',
-    bgColor: 'bg-green-500/5',
-    iconColor: 'text-green-400',
-  },
-  tip: {
-    icon: Lightbulb,
-    borderColor: 'border-l-purple-500',
-    bgColor: 'bg-purple-500/5',
-    iconColor: 'text-purple-400',
-  },
-};
+// One look for every kind of note, in the site's accent; the icon says which kind it is
+const icons = { info: Info, warning: AlertTriangle, success: CheckCircle, tip: Lightbulb };
 
 export function Callout({ type = 'info', title, children }: CalloutProps) {
-  const config = calloutConfig[type];
-  const Icon = config.icon;
-
+  const Icon = icons[type];
   return (
-    <div
-      className={cn(
-        'my-6 rounded-r-lg border-l-4 p-4',
-        config.borderColor,
-        config.bgColor
-      )}
-      role="note"
-    >
+    <div className="not-prose my-6 rounded-2xl border border-accent/25 bg-accent-muted p-4" role="note">
       <div className="flex items-start gap-3">
-        <Icon size={20} className={cn('mt-0.5 shrink-0', config.iconColor)} />
+        <Icon size={19} aria-hidden="true" className="mt-0.5 shrink-0 text-accent-light" />
         <div className="min-w-0">
-          {title && <p className="font-semibold text-text-primary mb-1">{title}</p>}
-          <div className="text-text-secondary text-sm [&>p]:mb-0">{children}</div>
+          {title && <p className="mb-1 font-semibold text-text-primary">{title}</p>}
+          <div className="text-[0.9375rem] leading-relaxed text-text-secondary [&>p]:mb-0">{children}</div>
         </div>
       </div>
     </div>

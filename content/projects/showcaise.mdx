@@ -35,7 +35,7 @@ Built in under 48 hours at LauzHack, EPFL's annual hackathon. I led a team of 4 
 
 The presentation itself was part of the demo. We deliberately started poorly (lots of "ums", "uhs", awkward pauses), then stopped and said: "We can tell we're presenting badly... if only there was some tool that could help us do better." From there we showed showcAIse analyzing our own bad delivery in real-time and suggesting improvements.
 
-## How It Works
+## How it works
 
 Upload a presentation video and the platform delivers:
 
@@ -47,7 +47,7 @@ Upload a presentation video and the platform delivers:
 6. **Voice Cloning**: generates an improved version of your presentation in your own voice, with filler words removed and uncertain language replaced with confident phrasing
 7. **Transcript View**: full text with highlighted filler words and hedge phrases
 
-## Voice Cloning Pipeline
+## Voice cloning pipeline
 
 The standout feature. The pipeline:
 1. Extracts audio from the uploaded video (MoviePy + FFmpeg)
@@ -58,7 +58,7 @@ The standout feature. The pipeline:
 
 Processing takes 1–2 minutes after the initial model download.
 
-## Confidence Scoring
+## Confidence scoring
 
 The scoring algorithm starts at a base of 50 and adjusts across five dimensions:
 
@@ -68,7 +68,7 @@ The scoring algorithm starts at a base of 50 and adjusts across five dimensions:
 - **Language Quality** (±15): hedge word detection via regex patterns
 - **Final score:** 0–100, with 70+ classified as strong delivery
 
-## Technical Stack
+## Technical stack
 
 **Backend:** FastAPI (Python 3.11.6), Together AI Whisper for transcription, Coqui TTS XTTS v2 for voice synthesis, DistilBERT for sentiment analysis, MoviePy + FFmpeg for media processing
 
@@ -76,7 +76,7 @@ The scoring algorithm starts at a base of 50 and adjusts across five dimensions:
 
 **Deployment:** Docker Compose multi-container architecture with hot reload for development
 
-## What I Learned
+## What I learned
 
 - Hackathons force you to prioritize ruthlessly. The voice cloning feature was the "wow factor" that made us stand out, so we built that first and polished the dashboard second
 - Presentation is half the battle at hackathons. Our deliberately bad opening got the judges' attention more than any slide could

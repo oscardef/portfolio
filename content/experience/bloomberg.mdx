@@ -28,12 +28,12 @@ Bloomberg's messaging infrastructure moves events between services in real time,
 
 Originally, the logic for deciding which events to forward lived in hard-coded application code. Adjusting it meant a manual, code-driven process for what was really a configuration change.
 
-## What I Built
+## What I built
 
 I designed and built a new service in C++23, from the ground up, that treats those decisions as data instead of code. Rules are expressed in a composable, configurable form and evaluated by a single engine, so routine changes can be made without touching application code.
 
 The two hard constraints were latency and correctness. The service sits on the real-time hot path, so it is built for low, predictable latency and for keeping up under production load, and the performance tests are written against tail latency rather than averages: rule evaluation runs at single-digit-microsecond p99 latency without building up a message backlog. Because it changes behavior that already exists, I treated correctness as something to demonstrate rather than assume: it is covered by unit, integration, and performance tests, and it ran in QC on live traffic for three months with zero mismatches against the existing behavior before going into production.
 
-## What I Owned
+## What I owned
 
 I owned the architecture and the implementation: the rule model, the evaluation engine, the messaging integration, and the tests around them. The clearest lesson was writing systems code that has to be both fast and provably correct, on infrastructure where regressions are costly and hard to reverse. The placement ended in October 2026 with a return offer.

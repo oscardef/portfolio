@@ -30,6 +30,11 @@ npm run dev
   `src/data/us-states-110m.json`, from Natural Earth).
 - The menu links scroll to sections of the home page (`src/components/section-links.tsx` makes them work
   on every click and keeps hashes out of the address).
+- A search palette (`/` or Ctrl/Cmd+K, `src/components/command-palette.tsx`) jumps to any section,
+  project or role; its list is built from the content files in `src/app/layout.tsx`.
+- Each project and role has its own link-preview card, drawn at build time (`src/lib/og.tsx`), and its
+  own title and description in the preview tags (`src/lib/metadata.ts`).
+- Images in a write-up open large on a click (`src/components/zoomable.tsx`).
 - `/projects` and `/experience` list everything. Projects and roles open as sheets over whichever page
   you're on (intercepting routes in `src/app/@sheet`) and render as full pages when visited directly.
 

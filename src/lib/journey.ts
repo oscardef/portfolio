@@ -36,6 +36,8 @@ export interface JourneyChapter {
   place: string;
   country: string;
   years: string;
+  // Years lived there (at least one), which sizes its part of the route's timeline
+  span: number;
   // "aged 4 to 7", for the chapters before university
   ages?: string;
   note: string;
@@ -168,6 +170,7 @@ export async function getJourney(): Promise<{ chapters: JourneyChapter[] }> {
     place: stop.place,
     country: stop.country,
     years: formatYears(stop.start, stop.end),
+    span: Math.max(1, (stop.end ?? stop.start) - stop.start),
     ages: stop.end !== undefined && stop.end <= 2021 ? agesAt(stop.start, stop.end) : undefined,
     note: stop.note,
     photo: stop.photo,

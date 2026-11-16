@@ -38,7 +38,7 @@ A modular stock-market simulation built in Java 17 with Konstantinos Chasiotis f
   <Metric value="3" label="Design patterns" />
 </MetricRow>
 
-## What I Built
+## What I built
 
 - Client-server networking with a separate handler for each connected client
 - A thread-safe `BlockingQueue` for passing buy and sell commands between applications
@@ -46,10 +46,10 @@ A modular stock-market simulation built in Java 17 with Konstantinos Chasiotis f
 - A browser dashboard for live trader, portfolio, stock-price, and market-performance views
 - Docker Compose configuration for running the exchange and trader applications together
 
-## Technical Details
+## Technical details
 
 The system uses Command, Observer, and Factory patterns to keep the modules independent. A property-change listener wakes the stock exchange when the thread-safe message queue receives an order, avoiding continuous polling. The repository's evaluation also records an important limitation: orders are processed sequentially, and parallel extraction plus explicit locking was identified as future work rather than implemented functionality.
 
-## What I Learned
+## What I learned
 
 This project made modular design concrete: shared interfaces and domain objects can connect independently deployable applications without making them depend on each other's implementations. It also showed the difference between using a thread-safe communication primitive and making an entire processing pipeline concurrent: the queue supports concurrent access, while order execution remains deliberately sequential.

@@ -11,6 +11,8 @@ const socialLinks = [
 const footerLink = 'underline decoration-border-hover underline-offset-4 transition-colors hover:text-text-primary';
 
 export function Footer() {
+  // The month of the last build, which is the last time anything changed
+  const updated = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' }).format(new Date());
   return (
     <footer className="border-t border-border">
       <div className="container-page py-10">
@@ -19,6 +21,7 @@ export function Footer() {
             <span>
               © {new Date().getFullYear()} {siteConfig.name}
             </span>
+            <span>Updated {updated}</span>
             <Link href="/projects/portfolio" scroll={false} className={footerLink}>
               How this site is built
             </Link>
