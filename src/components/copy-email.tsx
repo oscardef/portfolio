@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { Check, Copy } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-// Copies the address for anyone who would rather paste it than open a mail app
-export function CopyEmailButton({ address }: { address: string }) {
+// Copies the address for anyone who would rather paste it than open a mail app.
+// Small enough to sit in the corner of the email row on the contact card.
+export function CopyEmailButton({ address, className }: { address: string; className?: string }) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -21,14 +23,17 @@ export function CopyEmailButton({ address }: { address: string }) {
     <button
       type="button"
       onClick={copy}
-      className="inline-flex items-center gap-2 rounded-full border border-border bg-bg/60 px-5 py-3 font-medium text-text-primary transition-colors hover:border-border-hover hover:bg-bg-card-hover"
-    >
-      {copied ? (
-        <Check size={17} aria-hidden="true" className="text-accent-light" />
-      ) : (
-        <Copy size={17} aria-hidden="true" className="text-text-muted" />
+      className={cn(
+        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors',
+        copied
+          ? 'border-accent/40 bg-accent-muted text-accent-light'
+          : 'border-border bg-bg-card text-text-secondary hover:border-border-hover hover:text-text-primary',
+        className
       )}
-      <span aria-live="polite">{copied ? 'Copied' : 'Copy address'}</span>
+    >
+      {copied ? <Check size={13} aria-hidden="true" /> : <Copy size={13} aria-hidden="true" />}
+      <span aria-live="polite">{copied ? 'Copied' : 'Copy'}</span>
+      <span className="sr-only"> email address</span>
     </button>
   );
 }

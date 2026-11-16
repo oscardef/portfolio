@@ -212,3 +212,28 @@ being scrolled away.
   could sit far outside its box, which made the whole page wider than a
   phone's screen for a moment and threw the trigger off. The label is now
   clipped to the globe's box.
+
+## Seventh pass (17 Nov 2026)
+
+Oscar: make the logos playable on a phone, fix the contact card on a phone,
+and anything else worth doing.
+
+- **The logo row does something.** Each logo opens what was done there: a
+  role as a sheet, a university as its chapter on the route. Pointing at a
+  logo, focusing it or touching it lights it with a glow and names the role
+  underneath; on a phone a finger can slide along the row to move the light.
+  The first time a phone shows the row, the light runs along it once. On
+  phones the logos sit in a two-column grid instead of a ragged stack.
+- **Contact card:** the main button is full width on phones; the copy
+  button moved into the corner of the email row, so it no longer hangs
+  under the button on its own.
+- **Phone header** names the section in view ("oscar. / The route").
+- **Write-ups:** a Share button (the phone's share sheet, or Copy link),
+  a reading time beside the date, and the facts in two columns on phones.
+- **The thesis bar** says which week it is ("Week 7 of 26").
+- **The route** says how far the moves add up to (about 32,000 km).
+- **Fixes:** the places search was 15 px, so iPhones zoomed the page when it
+  got focus (now 16 px on phones); cards and rows give way slightly when
+  pressed, since touch screens get no hover feedback; a long press on a logo
+  no longer opens iOS's image preview; the 404 page offers the search.
+- Structured data now lists languages and citizenship.

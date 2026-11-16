@@ -4,6 +4,7 @@ import { Fragment, type ReactNode } from 'react';
 import { ArrowRight, ArrowUpRight, Github, Linkedin, Mail, MapPin, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CopyEmailButton } from '@/components/copy-email';
+import { OrgStrip, type Org } from '@/components/org-strip';
 import { AtAGlance } from '@/components/at-a-glance';
 import { ProjectCard, RoleRow } from '@/components/cards';
 import { RouteSection } from '@/components/route-section';
@@ -11,13 +12,16 @@ import { PlacesSection } from '@/components/places-section';
 import { getExperienceItems, getJourney, getProjectItems } from '@/lib/journey';
 import { getGlobeData } from '@/lib/globe-data';
 import { siteConfig } from '@/lib/constants';
+import { route, studyItems } from '@/data/route';
 
-const organizations = [
+// The logos under the hero. A company opens its role; a university, whose
+// degree has no page of its own, scrolls to its chapter on the route.
+const organizations: (Omit<Org, 'href' | 'note'> & { study?: string })[] = [
   { name: 'ETH Zurich', logo: '/images/logos/eth.svg', width: 120, height: 20 },
   { name: 'Bloomberg', logo: '/images/logos/bloomberg.svg', width: 130, height: 28 },
-  { name: 'EPFL', logo: '/images/logos/epfl.svg', width: 80, height: 28 },
+  { name: 'EPFL', logo: '/images/logos/epfl.svg', width: 80, height: 28, study: 'msc' },
   { name: 'ASML', logo: '/images/logos/asml.svg', width: 100, height: 28 },
-  { name: 'University of Groningen', logo: '/images/logos/ugroningen.svg', width: 160, height: 36 },
+  { name: 'University of Groningen', logo: '/images/logos/ugroningen.svg', width: 160, height: 36, study: 'bsc' },
   { name: 'Researchable', logo: '/images/logos/researchable.svg', width: 130, height: 28 },
   { name: 'Securrency', logo: '/images/logos/securrency.png', width: 150, height: 52 },
 ];
@@ -98,6 +102,17 @@ export default async function HomePage() {
   const featured = projects.filter((p) => p.featured);
   const globe = getGlobeData();
 
+  // What each logo opens, and the line shown for it
+  const orgs: Org[] = organizations.map(({ study, ...org }) => {
+    const degree = studyItems.find((s) => s.id === study);
+    if (degree) {
+      const place = route.find((stop) => stop.id === degree.chapter)!.place;
+      return { ...org, href: `/#place-${degree.chapter}`, note: `${degree.title}, ${place}, ${degree.period}` };
+    }
+    const role = roles.find((r) => r.name === org.name)!;
+    return { ...org, href: role.href!, note: `${role.detail}, ${role.place}, ${role.period}` };
+  });
+
   return (
     <>
       {/* ── Hero ── */}
@@ -173,20 +188,7 @@ export default async function HomePage() {
         {/* Logos */}
         <div className="container-page relative mt-16 md:mt-24">
           <p className="text-center text-sm text-text-muted">Where I’ve worked and studied</p>
-          <ul className="mt-7 flex flex-wrap items-center justify-center gap-x-10 gap-y-7 sm:gap-x-14">
-            {organizations.map((org) => (
-              <li key={org.name} title={org.name}>
-                <Image
-                  src={org.logo}
-                  alt={org.name}
-                  width={org.width}
-                  height={org.height}
-                  className="object-contain opacity-60 brightness-0 invert transition-opacity hover:opacity-100 [[data-theme=light]_&]:invert-0"
-                  style={{ height: org.height * 0.85, width: 'auto' }}
-                />
-              </li>
-            ))}
-          </ul>
+          <OrgStrip items={orgs} />
         </div>
       </section>
 
@@ -304,51 +306,56 @@ export default async function HomePage() {
                   I’m always happy to hear from people, whether it’s about something on this page, an idea, or
                   an opportunity worth talking about. Email is the best way to reach me.
                 </p>
-                <div className="mt-8 flex flex-wrap items-center gap-3">
-                  <a
-                    href={siteConfig.links.email}
-                    className="group inline-flex items-center gap-2.5 rounded-full bg-accent px-6 py-3 font-medium text-white transition-colors hover:bg-accent-hover"
-                  >
-                    <Mail size={18} aria-hidden="true" />
-                    Send me an email
-                    <ArrowRight size={16} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />
-                  </a>
-                  <CopyEmailButton address={siteConfig.email} />
-                </div>
+                <a
+                  href={siteConfig.links.email}
+                  className="group mt-8 flex w-full items-center justify-center gap-2.5 rounded-full bg-accent px-6 py-3.5 font-medium text-white transition-colors hover:bg-accent-hover sm:inline-flex sm:w-auto sm:py-3"
+                >
+                  <Mail size={18} aria-hidden="true" />
+                  Send me an email
+                  <ArrowRight size={16} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />
+                </a>
               </div>
 
               <ul className="space-y-3">
                 {contacts.map(({ label, value, href, icon: Icon }) => {
-                  const external = !href.startsWith('mailto:');
+                  const email = href.startsWith('mailto:');
                   return (
-                    <li key={label}>
-                      <a
-                        href={href}
-                        target={external ? '_blank' : undefined}
-                        rel={external ? 'noopener noreferrer' : undefined}
-                        className="group flex items-center gap-3.5 rounded-2xl border border-border bg-bg/60 p-3.5 transition-colors hover:border-border-hover hover:bg-bg-card-hover sm:gap-4 sm:p-5"
-                      >
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-muted text-accent-light sm:size-11">
-                          <Icon size={20} aria-hidden="true" />
+                    // The whole row is the link (its ::after covers the row); the
+                    // email row also has a copy button, which sits above that
+                    <li
+                      key={label}
+                      className="press group relative flex items-center gap-3.5 rounded-2xl border border-border bg-bg/60 p-3.5 transition-colors has-[a:focus-visible]:outline has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-accent-hover hover:border-border-hover hover:bg-bg-card-hover sm:gap-4 sm:p-5"
+                    >
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-muted text-accent-light sm:size-11">
+                        <Icon size={20} aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-3">
+                          <span className="text-sm text-text-muted">{label}</span>
+                          {email && <CopyEmailButton address={value} className="relative z-10 -my-1" />}
                         </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-sm text-text-muted">{label}</span>
-                          {/* If it has to wrap, it wraps after the @ or a slash */}
-                          <span className="block text-sm font-semibold [overflow-wrap:anywhere] sm:text-[1.0625rem]">
-                            {value.split(/(?<=[@/])/).map((part, i) => (
-                              <Fragment key={part}>
-                                {i > 0 && <wbr />}
-                                {part}
-                              </Fragment>
-                            ))}
-                          </span>
-                        </span>
+                        {/* If it has to wrap, it wraps after the @ or a slash */}
+                        <a
+                          href={href}
+                          target={email ? undefined : '_blank'}
+                          rel={email ? undefined : 'noopener noreferrer'}
+                          className="block text-sm font-semibold outline-none [overflow-wrap:anywhere] after:absolute after:inset-0 after:rounded-2xl min-[400px]:text-[0.9375rem] sm:text-[1.0625rem]"
+                        >
+                          {value.split(/(?<=[@/])/).map((part, i) => (
+                            <Fragment key={part}>
+                              {i > 0 && <wbr />}
+                              {part}
+                            </Fragment>
+                          ))}
+                        </a>
+                      </span>
+                      {!email && (
                         <ArrowUpRight
                           size={18}
                           aria-hidden="true"
                           className="hidden shrink-0 text-text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-text-primary sm:block"
                         />
-                      </a>
+                      )}
                     </li>
                   );
                 })}
@@ -384,7 +391,7 @@ function MoreLink({ href, children }: { href: string; children: ReactNode }) {
   return (
     <Link
       href={href}
-      className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-border bg-bg-card py-3 text-[0.9375rem] font-medium transition-colors hover:border-border-hover hover:bg-bg-card-hover sm:hidden"
+      className="press mt-3 flex items-center justify-center gap-2 rounded-2xl border border-border bg-bg-card py-3 text-[0.9375rem] font-medium transition-colors hover:border-border-hover hover:bg-bg-card-hover sm:hidden"
     >
       {children}
       <ArrowRight size={16} aria-hidden="true" />

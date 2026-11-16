@@ -75,6 +75,8 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
   const detour = trip !== null && globe.trips[trip]?.from === active ? trip : null;
 
   const cities = new Set(chapters.map((c) => c.place)).size;
+  // The moves between homes, to the nearest thousand km
+  const km = Math.round(globe.moved / 1000) * 1000;
   const countries = new Set(chapters.map((c) => c.country)).size;
 
   // Load the globe a screen before it's needed
@@ -197,8 +199,9 @@ export function RouteSection({ chapters, globe }: { chapters: JourneyChapter[]; 
           The route
         </h2>
         <p className="mt-4 max-w-[56ch] text-lg text-text-secondary lg:mx-auto">
-          Everywhere I’ve lived: {inWords(cities)} cities in {inWords(countries)} countries so far. Scroll to
-          follow it from one home to the next, with what I studied, built and worked on in each.
+          Everywhere I’ve lived: {inWords(cities)} cities in {inWords(countries)} countries so far, and about{' '}
+          <span className="tnum whitespace-nowrap">{km.toLocaleString('en-GB')} km</span> of moving between them.
+          Scroll to follow it from one home to the next, with what I studied, built and worked on in each.
         </p>
       </div>
 
@@ -407,7 +410,7 @@ function Chapter({ chapter, last, trips, onTrip, ref }: ChapterProps) {
 }
 
 const rowClass =
-  'group flex items-center gap-4 rounded-2xl border border-border bg-bg-card p-3.5 pr-4 transition-colors duration-300 hover:border-border-hover hover:bg-bg-card-hover sm:p-4';
+  'press group flex items-center gap-4 rounded-2xl border border-border bg-bg-card p-3.5 pr-4 transition-colors duration-300 hover:border-border-hover hover:bg-bg-card-hover sm:p-4';
 
 function RoleRow({
   item,
@@ -571,7 +574,7 @@ function ProjectStrip({ items, place }: { items: JourneyItem[]; place: string })
             <Link
               href={item.href!}
               scroll={false}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg-card transition-colors duration-300 hover:border-border-hover hover:bg-bg-card-hover"
+              className="press group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg-card transition-colors duration-300 hover:border-border-hover hover:bg-bg-card-hover"
             >
               {item.image && (
                 <div className="relative aspect-[16/10] overflow-hidden border-b border-border bg-bg-secondary">

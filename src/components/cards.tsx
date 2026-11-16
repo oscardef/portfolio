@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 
 // Hover states ease in slowly, so cards passing under the cursor while scrolling don't flash
 const surface =
-  'border border-border bg-bg-card transition-colors duration-300 hover:border-border-hover hover:bg-bg-card-hover';
+  'press border border-border bg-bg-card transition-colors duration-300 hover:border-border-hover hover:bg-bg-card-hover';
 
 function Where({ item }: { item: JourneyItem }) {
   return (

@@ -170,11 +170,7 @@ export function AtAGlance() {
                 <div className="mt-auto pt-4">
                   <p className="tnum text-sm text-text-muted">Basel, October 2026 to April 2027</p>
                   {/* How far along the 26 weeks are today */}
-                  <Progress
-                    from="2026-10-05"
-                    to="2027-04-05"
-                    className="mt-2.5 block h-1 w-full max-w-[15rem] overflow-hidden rounded-full bg-border"
-                  />
+                  <Progress from="2026-10-05" to="2027-04-05" className="mt-2.5" />
                 </div>
               </div>
               <figure className="self-center border-l-2 border-accent/60 pl-5">

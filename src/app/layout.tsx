@@ -137,6 +137,11 @@ export default async function RootLayout({ children, sheet }: { children: ReactN
       'C++',
       'Python',
     ],
+    knowsLanguage: ['English', 'Swedish'],
+    nationality: [
+      { '@type': 'Country', name: 'Sweden' },
+      { '@type': 'Country', name: 'United States' },
+    ],
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Basel',

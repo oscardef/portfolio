@@ -51,6 +51,7 @@ export interface GlobeData {
   trips: GlobeTrip[];
   places: GlobePlace[];
   frames: Record<string, GlobeFrame>; // by country name as written in travel.ts
+  moved: number; // km between homes, along the great circles the route draws
   lived: string[]; // country ids
   visited: string[]; // country ids
   states: string[]; // US states visited, by name as in us-states-110m.json
@@ -66,6 +67,7 @@ type CountriesTopology = Topology<{ countries: GeometryCollection<{ name: string
 type StatesTopology = Topology<{ states: GeometryCollection<{ name: string }> }>;
 
 const DEGREES = Math.PI / 180;
+const EARTH_RADIUS_KM = 6371;
 
 // A circle around a country: its largest landmass (so the United States is
 // framed without Alaska, France without Guiana), widened to take in any
@@ -161,5 +163,10 @@ export function getGlobeData(): GlobeData {
     if (!stateNames.has(s)) throw new Error(`[globe] "${s}" in travel.ts is not a US state on the map`);
   }
 
-  return { stops, trips, places, frames, lived, visited, states };
+  const moved = stops.slice(1).reduce((sum, s, i) => {
+    const a = stops[i];
+    return sum + geoDistance([a.lng, a.lat], [s.lng, s.lat]) * EARTH_RADIUS_KM;
+  }, 0);
+
+  return { stops, trips, places, frames, moved, lived, visited, states };
 }

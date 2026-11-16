@@ -256,6 +256,38 @@ html:has([data-lightbox-open]) {
   animation: globe-pulse 1.8s var(--ease-out) infinite;
 }
 
+/* Cards and rows that open something give way a little when pressed, which
+   is the only feedback a touch screen gets (hover styles need a mouse) */
+.press {
+  -webkit-tap-highlight-color: transparent;
+  transition-property: color, background-color, border-color, transform;
+}
+.press:active {
+  transform: scale(0.985);
+  transition-duration: 80ms;
+}
+
+/* The logo row under the hero: every logo in one colour (white, or ink in the
+   light theme), and the one pointed at, tapped or focused glows. Lit and unlit
+   use the same list of filters, so the glow fades rather than jumps. */
+.org-logo {
+  filter: brightness(0) invert(1) drop-shadow(0 0 0 rgb(255 255 255 / 0)) drop-shadow(0 0 0 rgb(255 255 255 / 0));
+}
+.org-logo-lit {
+  filter: brightness(0) invert(1) drop-shadow(0 0 10px rgb(255 255 255 / 0.55))
+    drop-shadow(0 0 2px rgb(255 255 255 / 0.7));
+}
+[data-theme='light'] .org-logo {
+  filter: brightness(0) drop-shadow(0 0 0 rgb(81 87 232 / 0));
+}
+[data-theme='light'] .org-logo-lit {
+  filter: brightness(0) drop-shadow(0 0 10px rgb(81 87 232 / 0.45));
+}
+/* Text that changes in place (the logo row's note, the phone header's section) fades in */
+.fade-in {
+  animation: fade 220ms ease-out;
+}
+
 /* The "now" marker: a dot with a slow ping behind it */
 @keyframes ping-soft {
   75%,

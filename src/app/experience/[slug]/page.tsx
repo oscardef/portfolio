@@ -5,6 +5,7 @@ import { ChevronLeft } from 'lucide-react';
 import { getExperienceBySlug, getExperienceSlugs } from '@/lib/content';
 import { AuthorStrip, ExperienceDetail } from '@/components/detail';
 import { pageMetadata } from '@/lib/metadata';
+import { ShareButton } from '@/components/share-button';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -33,18 +34,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ExperiencePage({ params }: PageProps) {
   const { slug } = await params;
-  if (!(await getExperienceBySlug(slug))) notFound();
+  const data = await getExperienceBySlug(slug);
+  if (!data) notFound();
 
   return (
     <div className="container-page pb-20 pt-24 md:pb-24 md:pt-28">
       <div className="mx-auto max-w-[68rem]">
-        <Link
-          href="/experience"
-          className="mb-8 inline-flex items-center gap-1 text-sm text-ink-2 transition-colors hover:text-ink"
-        >
-          <ChevronLeft size={16} aria-hidden="true" />
-          All experience
-        </Link>
+        <div className="mb-8 flex items-center justify-between gap-4">
+          <Link
+            href="/experience"
+            className="inline-flex items-center gap-1 text-sm text-ink-2 transition-colors hover:text-ink"
+          >
+            <ChevronLeft size={16} aria-hidden="true" />
+            All experience
+          </Link>
+          <ShareButton
+            title={`${data.frontmatter.title}, ${data.frontmatter.organization}`}
+            path={`/experience/${slug}`}
+          />
+        </div>
         <ExperienceDetail slug={slug} page />
         <AuthorStrip />
       </div>

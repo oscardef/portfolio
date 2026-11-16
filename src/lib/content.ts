@@ -60,6 +60,16 @@ function headingsOf(source: string): Heading[] {
     });
 }
 
+// Minutes to read the write-up, at about 230 words a minute
+function minutesOf(source: string): number {
+  const text = source
+    .replace(/<[^>]+>/g, ' ') // MDX components
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ') // images
+    .replace(/[#*_`>|-]/g, ' ');
+  const words = text.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 230));
+}
+
 // ── Read & validate MDX files ───────────────────────────────────────────────
 function readMDXFile(filePath: string): { data: Record<string, unknown>; content: string } {
   const raw = fs.readFileSync(filePath, 'utf-8');
@@ -85,7 +95,7 @@ export async function getAllProjects(): Promise<Project[]> {
 
 export async function getProjectBySlug(
   slug: string
-): Promise<{ frontmatter: Project; content: ReactElement; headings: Heading[] } | null> {
+): Promise<{ frontmatter: Project; content: ReactElement; headings: Heading[]; minutes: number } | null> {
   const filePath = path.join(PROJECTS_DIR, `${slug}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
@@ -93,7 +103,7 @@ export async function getProjectBySlug(
   const frontmatter = projectSchema.parse(data);
   const content = await compileMDXContent(rawContent);
 
-  return { frontmatter, content, headings: headingsOf(rawContent) };
+  return { frontmatter, content, headings: headingsOf(rawContent), minutes: minutesOf(rawContent) };
 }
 
 export async function getProjectSlugs(): Promise<string[]> {
@@ -124,7 +134,7 @@ export async function getAllExperiences(): Promise<Experience[]> {
 
 export async function getExperienceBySlug(
   slug: string
-): Promise<{ frontmatter: Experience; content: ReactElement; headings: Heading[] } | null> {
+): Promise<{ frontmatter: Experience; content: ReactElement; headings: Heading[]; minutes: number } | null> {
   const filePath = path.join(EXPERIENCE_DIR, `${slug}.mdx`);
   if (!fs.existsSync(filePath)) return null;
 
@@ -132,7 +142,7 @@ export async function getExperienceBySlug(
   const frontmatter = experienceSchema.parse(data);
   const content = await compileMDXContent(rawContent);
 
-  return { frontmatter, content, headings: headingsOf(rawContent) };
+  return { frontmatter, content, headings: headingsOf(rawContent), minutes: minutesOf(rawContent) };
 }
 
 export async function getExperienceSlugs(): Promise<string[]> {

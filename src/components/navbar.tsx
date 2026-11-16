@@ -11,6 +11,17 @@ import { ThemeToggle } from './theme-toggle';
 
 type NavItem = { label: string; href: string; section: string; page?: string };
 
+// What the phone header calls the section in view (the menu's names)
+const SECTION_NAMES: Record<string, string> = {
+  glance: 'At a glance',
+  work: 'Projects',
+  experience: 'Experience',
+  route: 'The route',
+  places: 'Places',
+  about: 'About',
+  contact: 'Contact',
+};
+
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [section, setSection] = useState<string | null>(null);
@@ -67,13 +78,26 @@ export function Navbar() {
           className="container-page flex h-16 items-center justify-between"
           aria-label="Main navigation"
         >
-          <Link
-            href="/"
-            className="text-lg font-semibold tracking-tight text-text-primary transition-colors hover:text-accent-light"
-          >
-            {siteConfig.name.split(' ')[0].toLowerCase()}
-            <span className="text-accent">.</span>
-          </Link>
+          <div className="flex min-w-0 items-baseline gap-2">
+            <Link
+              href="/"
+              className="shrink-0 text-lg font-semibold tracking-tight text-text-primary transition-colors hover:text-accent-light"
+            >
+              {siteConfig.name.split(' ')[0].toLowerCase()}
+              <span className="text-accent">.</span>
+            </Link>
+            {/* On a phone, where the menu is folded away: which part of the page this is */}
+            {pathname === '/' && section && SECTION_NAMES[section] && (
+              <span
+                key={section}
+                aria-hidden="true"
+                className="fade-in min-w-0 truncate text-sm text-text-muted lg:hidden"
+              >
+                <span className="mr-2 text-border-hover">/</span>
+                {SECTION_NAMES[section]}
+              </span>
+            )}
+          </div>
 
           <div className="hidden items-center gap-6 lg:flex">
             {navItems.map((item) => (

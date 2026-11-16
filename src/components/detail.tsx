@@ -68,7 +68,7 @@ interface Onward {
 export async function ProjectDetail({ slug, headingLevel = 1, page = false }: DetailProps) {
   const data = await getProjectBySlug(slug);
   if (!data) return null;
-  const { frontmatter: p, content, headings } = data;
+  const { frontmatter: p, content, headings, minutes } = data;
 
   const facts: [string, ReactNode][] = [];
   if (p.role) facts.push(['Role', p.role]);
@@ -89,6 +89,7 @@ export async function ProjectDetail({ slug, headingLevel = 1, page = false }: De
       highlights={p.highlights}
       links={Object.entries(p.links).filter(([, url]) => url) as [string, string][]}
       headings={headings}
+      minutes={minutes}
       onward={await onward('project', slug, p.chapter)}
     >
       {content}
@@ -99,7 +100,7 @@ export async function ProjectDetail({ slug, headingLevel = 1, page = false }: De
 export async function ExperienceDetail({ slug, headingLevel = 1, page = false }: DetailProps) {
   const data = await getExperienceBySlug(slug);
   if (!data) return null;
-  const { frontmatter: e, content, headings } = data;
+  const { frontmatter: e, content, headings, minutes } = data;
 
   return (
     <DetailLayout
@@ -114,6 +115,7 @@ export async function ExperienceDetail({ slug, headingLevel = 1, page = false }:
       highlights={e.highlights}
       links={Object.entries(e.links).filter(([, url]) => url) as [string, string][]}
       headings={headings}
+      minutes={minutes}
       onward={await onward('experience', slug, e.chapter)}
     >
       {content}
@@ -150,6 +152,7 @@ interface DetailLayoutProps {
   highlights: string[];
   links: [string, string][];
   headings: Heading[];
+  minutes: number;
   onward: Onward;
   children: ReactNode;
 }
@@ -167,6 +170,7 @@ function DetailLayout({
   highlights,
   links,
   headings,
+  minutes,
   onward,
   children,
 }: DetailLayoutProps) {
@@ -197,7 +201,10 @@ function DetailLayout({
             <Image src={logo.src} alt={logo.alt} width={72} height={40} className="h-auto max-h-9 w-full object-contain" />
           </div>
         )}
-        <p className="tnum text-sm text-ink-2">{meta}</p>
+        <p className="tnum text-sm text-ink-2">
+          {meta}
+          <span className="whitespace-nowrap"> · {minutes} min read</span>
+        </p>
         <Heading
           className={cn(
             'mt-3 text-balance font-semibold leading-[1.1] tracking-tight',
@@ -214,17 +221,17 @@ function DetailLayout({
           {(facts.length > 0 || stack.length > 0 || links.length > 0) && (
             <div className="@4xl:sticky @4xl:top-24 @4xl:col-start-2 @4xl:row-start-1 @4xl:self-start">
               {(facts.length > 0 || stack.length > 0) && (
-                <dl className="mt-8 grid grid-cols-1 gap-x-8 gap-y-4 border-t border-rule pt-6 text-[0.9375rem] @xl:grid-cols-[auto_1fr] @4xl:mt-0 @4xl:grid-cols-1">
+                <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-rule pt-6 text-[0.9375rem] @xl:grid-cols-[auto_1fr] @xl:gap-x-8 @4xl:mt-0 @4xl:grid-cols-1">
                   {facts.map(([label, value]) => (
-                    <div key={label} className="contents">
+                    <div key={label} className="min-w-0 @xl:contents">
                       <dt className="text-ink-2">{label}</dt>
-                      <dd className="-mt-3 @xl:mt-0 @4xl:-mt-3">{value}</dd>
+                      <dd className="mt-0.5 @xl:mt-0 @4xl:-mt-3">{value}</dd>
                     </div>
                   ))}
                   {stack.length > 0 && (
-                    <div className="contents">
+                    <div className="col-span-2 @xl:contents">
                       <dt className="text-ink-2">Built with</dt>
-                      <dd className="-mt-3 @xl:mt-0 @4xl:-mt-3">{stack.join(', ')}</dd>
+                      <dd className="mt-0.5 @xl:mt-0 @4xl:-mt-3">{stack.join(', ')}</dd>
                     </div>
                   )}
                 </dl>

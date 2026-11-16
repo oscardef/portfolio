@@ -207,7 +207,7 @@ export function PlacesSection({ globe }: { globe: GlobeData }) {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Find a city, country or US state"
-                className="w-full rounded-full border border-border bg-bg-card py-2.5 pl-10 pr-4 text-[0.9375rem] placeholder:text-text-muted focus-visible:border-border-hover"
+                className="w-full rounded-full border border-border bg-bg-card py-2.5 pl-10 pr-4 text-base placeholder:text-text-muted focus-visible:border-border-hover sm:text-[0.9375rem]"
               />
             </div>
             <p className="mt-3 h-5 text-sm text-text-muted" aria-live="polite">
