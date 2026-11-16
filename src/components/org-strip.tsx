@@ -6,8 +6,9 @@ import { cn } from '@/lib/utils';
 
 /**
  * The row of logos under the hero: where I've worked and studied. With a
- * mouse, the logo pointed at brightens; on a phone, a tap does the same
- * (and a second tap, or a tap on another logo, lets it go).
+ * mouse, the logo pointed at brightens (hover only; a click does nothing).
+ * On a touch screen, a tap does the same, and a second tap, or a tap on
+ * another logo, lets it go.
  */
 
 export interface Org {
@@ -26,7 +27,7 @@ export function OrgStrip({ items }: { items: Org[] }) {
         <li
           key={org.name}
           title={org.name}
-          onClick={() => setLit(lit === i ? null : i)}
+          onPointerUp={(event) => event.pointerType !== 'mouse' && setLit(lit === i ? null : i)}
           className={cn(
             'flex h-12 items-center justify-center [-webkit-tap-highlight-color:transparent] [-webkit-touch-callout:none] sm:h-auto',
             // On a phone's two-column grid, the odd one out sits in the middle

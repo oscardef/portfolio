@@ -247,3 +247,6 @@ tap-to-open with hold-to-glow felt strange; the simple brightening was enough.
   at with a mouse. On a phone a tap does the same (a second tap, or a tap on
   another logo, moves it). No glow, no captions, no links, no animation.
 - The two-column grid on phones stays.
+- Follow-up (Oscar): on a desktop a click made a logo stay bright, which felt
+  like the logos were meant to be clicked. Mouse clicks are now ignored;
+  only touch taps light a logo.

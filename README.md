@@ -36,7 +36,7 @@ npm run dev
   own title and description in the preview tags (`src/lib/metadata.ts`).
 - Images in a write-up open large on a click (`src/components/zoomable.tsx`).
 - The logos under the hero (`src/components/org-strip.tsx`, list in `src/app/page.tsx`) brighten when
-  pointed at with a mouse or tapped on a phone; nothing more.
+  pointed at with a mouse or tapped on a touch screen; a mouse click does nothing.
 - `/projects` and `/experience` list everything. Projects and roles open as sheets over whichever page
   you're on (intercepting routes in `src/app/@sheet`) and render as full pages when visited directly.
 
