@@ -1,39 +1,21 @@
-import { getProjectSlugs, getExperienceSlugs } from '@/lib/content';
+import { getAllExperiences, getAllProjects } from '@/lib/content';
 import { siteConfig } from '@/lib/constants';
 import type { MetadataRoute } from 'next';
 
+// Google ignores priority and change frequency and only trusts a last-modified date that is
+// right, so only the home page (rebuilt with every change) carries one. Images help image search.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const projectSlugs = await getProjectSlugs();
-  const experienceSlugs = await getExperienceSlugs();
-
-  const projectEntries = projectSlugs.map((slug) => ({
-    url: `${siteConfig.url}/projects/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.8,
-  }));
-
-  const experienceEntries = experienceSlugs.map((slug) => ({
-    url: `${siteConfig.url}/experience/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }));
+  const [projects, experiences] = await Promise.all([getAllProjects(), getAllExperiences()]);
+  const url = (path: string) => `${siteConfig.url}${path}`;
 
   return [
-    {
-      url: siteConfig.url,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 1,
-    },
-    ...['projects', 'experience'].map((page) => ({
-      url: `${siteConfig.url}/${page}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.9,
+    { url: siteConfig.url, lastModified: new Date(), images: [url('/images/portrait.jpg')] },
+    { url: url('/projects') },
+    { url: url('/experience') },
+    ...projects.map((p) => ({
+      url: url(`/projects/${p.slug}`),
+      ...(p.heroImage && { images: [url(p.heroImage.src)] }),
     })),
-    ...projectEntries,
-    ...experienceEntries,
+    ...experiences.map((e) => ({ url: url(`/experience/${e.slug}`) })),
   ];
 }

@@ -1,5 +1,13 @@
+import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import { SearchButton } from '@/components/search-button';
+
+// Not a page to index, and not a copy of the home page
+export const metadata: Metadata = {
+  title: 'Page not found',
+  robots: { index: false, follow: true },
+  alternates: { canonical: null },
+};
 
 export default function NotFound() {
   return (

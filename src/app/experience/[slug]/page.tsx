@@ -6,6 +6,8 @@ import { getExperienceBySlug, getExperienceSlugs } from '@/lib/content';
 import { AuthorStrip, ExperienceDetail } from '@/components/detail';
 import { pageMetadata } from '@/lib/metadata';
 import { ShareButton } from '@/components/share-button';
+import { JsonLd } from '@/components/json-ld';
+import { breadcrumbs, graph } from '@/lib/structured-data';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -39,6 +41,17 @@ export default async function ExperiencePage({ params }: PageProps) {
 
   return (
     <div className="container-page pb-20 pt-24 md:pb-24 md:pt-28">
+      <JsonLd
+        data={graph(
+          breadcrumbs([
+            { name: 'Experience', path: '/experience' },
+            {
+              name: `${data.frontmatter.title}, ${data.frontmatter.organization}`,
+              path: `/experience/${slug}`,
+            },
+          ])
+        )}
+      />
       <div className="mx-auto max-w-[68rem]">
         <div className="mb-8 flex items-center justify-between gap-4">
           <Link

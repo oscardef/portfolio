@@ -10,6 +10,9 @@ import { navItems, siteConfig } from '@/lib/constants';
 import { getExperienceItems, getProjectItems } from '@/lib/journey';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { SiteAnalytics } from '@/components/site-analytics';
+import { JsonLd } from '@/components/json-ld';
+import { graph, person, website } from '@/lib/structured-data';
 
 const instrumentSans = Instrument_Sans({
   subsets: ['latin'],
@@ -98,69 +101,6 @@ export default async function RootLayout({ children, sheet }: { children: ReactN
     })),
   ];
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: 'Oscar de Francesca',
-    url: siteConfig.url,
-    image: `${siteConfig.url}/images/portrait.jpg`,
-    jobTitle: 'Software Engineer',
-    affiliation: {
-      '@type': 'CollegeOrUniversity',
-      name: 'ETH Zurich',
-      url: 'https://ethz.ch',
-    },
-    alumniOf: [
-      {
-        '@type': 'EducationalOrganization',
-        name: 'EPFL',
-        url: 'https://www.epfl.ch',
-      },
-      {
-        '@type': 'EducationalOrganization',
-        name: 'University of Groningen',
-        url: 'https://www.rug.nl',
-      },
-    ],
-    sameAs: [
-      siteConfig.links.github,
-      siteConfig.links.linkedin,
-    ],
-    knowsAbout: [
-      'Software Engineering',
-      'Systems Programming',
-      'Low-Latency Systems',
-      'Distributed Systems',
-      'Real-Time Systems',
-      'Machine Learning',
-      'Language Models',
-      'C++',
-      'Python',
-    ],
-    knowsLanguage: ['English', 'Swedish'],
-    nationality: [
-      { '@type': 'Country', name: 'Sweden' },
-      { '@type': 'Country', name: 'United States' },
-    ],
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Basel',
-      addressCountry: 'CH',
-    },
-  };
-
-  const websiteJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: siteConfig.name,
-    url: siteConfig.url,
-    description: siteConfig.description,
-    author: {
-      '@type': 'Person',
-      name: 'Oscar de Francesca',
-    },
-  };
-
   return (
     <html
       lang="en"
@@ -170,14 +110,7 @@ export default async function RootLayout({ children, sheet }: { children: ReactN
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
+        <JsonLd data={graph(person, website)} />
       </head>
       <body>
         <div id="page" className="flex min-h-screen flex-col">
@@ -198,6 +131,8 @@ export default async function RootLayout({ children, sheet }: { children: ReactN
         <CommandPalette items={paletteItems} />
         <Analytics />
         <SpeedInsights />
+        {/* Visitor analytics only on the live site, not previews or local builds */}
+        {process.env.VERCEL_ENV === 'production' && <SiteAnalytics />}
       </body>
     </html>
   );

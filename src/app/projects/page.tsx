@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { ProjectsBrowser } from '@/components/projects-browser';
 import { getProjectItems } from '@/lib/journey';
 import { pageMetadata } from '@/lib/metadata';
+import { JsonLd } from '@/components/json-ld';
+import { breadcrumbs, graph } from '@/lib/structured-data';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Projects',
@@ -19,6 +21,7 @@ export default async function ProjectsPage() {
 
   return (
     <div className="container-page pb-20 pt-24 md:pb-24 md:pt-28">
+      <JsonLd data={graph(breadcrumbs([{ name: 'Projects', path: '/projects' }]))} />
       <h1 className="text-5xl font-semibold tracking-tight sm:text-6xl">Projects</h1>
       <p className="mt-5 max-w-[58ch] text-lg leading-relaxed text-text-secondary">
         Everything I’ve built, from coursework and research to hackathons and my own products, with the main

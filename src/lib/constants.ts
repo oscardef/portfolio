@@ -1,8 +1,9 @@
 export const siteConfig = {
   name: 'Oscar de Francesca',
   title: 'Oscar de Francesca · Software Engineer',
+  // About 150 characters, so search results show it whole
   description:
-    'Oscar de Francesca: software engineer, Swedish and American, raised across Asia, the Middle East and Europe. Systems and machine learning, from real-time C++ at Bloomberg to language models and a Master\'s thesis at ETH Zurich.',
+    'Oscar de Francesca, software engineer in systems and machine learning: real-time C++ at Bloomberg, language models, and a Master\'s thesis at ETH Zurich.',
   url: 'https://oscar.defrancesca.com',
   email: 'oscar.defrancesca@gmail.com',
   links: {
@@ -23,6 +24,13 @@ export const siteConfig = {
     'EPFL computer science',
     'Oscar de Francesca ETH Zurich',
   ],
+} as const;
+
+// Visitor analytics: Umami on Oscar's server (stack /opt/stacks/umami on m70q), reached
+// through this site's own /v/ path. Only production builds on the real domain count.
+export const analytics = {
+  websiteId: 'daf44701-b8a7-461f-9ec5-c5745129aea7',
+  domain: 'oscar.defrancesca.com',
 } as const;
 
 // Navigation: every link scrolls to a section of the home page, in page order.

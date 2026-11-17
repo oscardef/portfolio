@@ -12,6 +12,8 @@ import { PlacesSection } from '@/components/places-section';
 import { getExperienceItems, getJourney, getProjectItems } from '@/lib/journey';
 import { getGlobeData } from '@/lib/globe-data';
 import { siteConfig } from '@/lib/constants';
+import { JsonLd } from '@/components/json-ld';
+import { WEBSITE_ID, graph, person } from '@/lib/structured-data';
 
 // The logos under the hero
 const organizations: Org[] = [
@@ -102,6 +104,17 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd
+        data={graph({
+          '@type': 'ProfilePage',
+          '@id': `${siteConfig.url}/#profile`,
+          url: siteConfig.url,
+          name: siteConfig.title,
+          inLanguage: 'en',
+          isPartOf: { '@id': WEBSITE_ID },
+          mainEntity: person,
+        })}
+      />
       {/* ── Hero ── */}
       <section id="top" aria-label="Introduction" className="relative overflow-hidden pt-28 md:pt-36">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
@@ -145,7 +158,7 @@ export default async function HomePage() {
                     key={label}
                     href={href}
                     target={href.startsWith('mailto:') ? undefined : '_blank'}
-                    rel={href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+                    rel={href.startsWith('mailto:') ? undefined : 'me noopener noreferrer'}
                     aria-label={label}
                     className="p-2 text-text-muted transition-colors hover:text-text-primary"
                   >
@@ -325,7 +338,7 @@ export default async function HomePage() {
                         <a
                           href={href}
                           target={email ? undefined : '_blank'}
-                          rel={email ? undefined : 'noopener noreferrer'}
+                          rel={email ? undefined : 'me noopener noreferrer'}
                           className="block text-sm font-semibold outline-none [overflow-wrap:anywhere] after:absolute after:inset-0 after:rounded-2xl min-[400px]:text-[0.9375rem] sm:text-[1.0625rem]"
                         >
                           {value.split(/(?<=[@/])/).map((part, i) => (

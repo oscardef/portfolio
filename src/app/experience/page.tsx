@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { RoleCard, StudyCard } from '@/components/cards';
 import { getExperienceItems, getStudyItems, type JourneyItem } from '@/lib/journey';
 import { pageMetadata } from '@/lib/metadata';
+import { JsonLd } from '@/components/json-ld';
+import { breadcrumbs, graph } from '@/lib/structured-data';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Experience',
@@ -36,6 +38,7 @@ export default async function ExperiencePage() {
 
   return (
     <div className="container-page pb-20 pt-24 md:pb-24 md:pt-28">
+      <JsonLd data={graph(breadcrumbs([{ name: 'Experience', path: '/experience' }]))} />
       <h1 className="text-5xl font-semibold tracking-tight sm:text-6xl">Experience</h1>
       <p className="mt-5 max-w-[58ch] text-lg leading-relaxed text-text-secondary">
         Where I’ve worked, researched, taught and studied, newest first. Open any role for the full story.

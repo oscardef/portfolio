@@ -51,6 +51,8 @@ export function ShareButton({
     <button
       type="button"
       onClick={go}
+      data-umami-event="Share"
+      data-umami-event-page={path}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full border border-rule px-3 py-1.5 text-sm transition-colors hover:border-ink-3',
         copied && 'border-accent/40 text-accent-light',
