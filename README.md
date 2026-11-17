@@ -40,6 +40,23 @@ npm run dev
 - `/projects` and `/experience` list everything. Projects and roles open as sheets over whichever page
   you're on (intercepting routes in `src/app/@sheet`) and render as full pages when visited directly.
 
+## Analytics and search
+
+- **Visitor analytics:** Umami (cookieless) on Oscar's server, stack `/opt/stacks/umami` on m70q. The site
+  serves the tracker itself (`public/v/s.js`, refreshed with `scripts/update-tracker.sh`) and posts to its own
+  `/v/e` (`src/app/v/e/route.ts`), which passes visits on with Vercel's location headers. Only production
+  builds on oscar.defrancesca.com count (`src/components/site-analytics.tsx`).
+  - Recorded besides page views: contact clicks (`Contact`), links out (`Outbound`), home sections reached
+    (`Section`), the share button (`Share`).
+  - Add `?ref=<name>` to a link you send (e.g. `?ref=acme`) to see when that link is opened.
+  - Open any page with `?notrack` once on your own devices to stop counting them (`?track` undoes it).
+  - Vercel Web Analytics and Speed Insights stay on as well.
+- **Search:** each page has its own title, description, canonical address and preview card; structured data
+  (`src/lib/structured-data.ts`) describes the person, the site, the home page as a profile page and a
+  breadcrumb trail on every other page. `sitemap.xml` lists every page with images, `llms.txt` summarises the
+  site for AI assistants, and `.github/workflows/indexnow.yml` tells Bing after each production deploy. The
+  production build redirects `*.vercel.app` to the real domain.
+
 ## Adding Content
 
 Projects go in `content/projects/<slug>.mdx`, experiences in `content/experience/<slug>.mdx`. See existing files for the expected frontmatter format. Hero images go in `public/images/projects/<slug>/hero.jpg`.

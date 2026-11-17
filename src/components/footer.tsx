@@ -32,7 +32,7 @@ export function Footer() {
                 key={label}
                 href={href}
                 target={href.startsWith('mailto:') ? undefined : '_blank'}
-                rel={href.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+                rel={href.startsWith('mailto:') ? undefined : 'me noopener noreferrer'}
                 className="p-2 text-text-muted transition-colors hover:text-text-primary"
                 aria-label={label}
               >

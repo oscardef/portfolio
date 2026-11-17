@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // .next is a symlink to this folder, which iCloud Drive skips
     ".next.nosync/**",
+    // Umami's minified tracker, copied in by scripts/update-tracker.sh
+    "public/v/**",
   ]),
 ]);
 

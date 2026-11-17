@@ -20,6 +20,18 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // The production build is also served at *.vercel.app; send those visits (and search
+      // engines) to the real address. Previews keep their own URLs.
+      ...(process.env.VERCEL_ENV === 'production'
+        ? [
+            {
+              source: '/:path*',
+              has: [{ type: 'host' as const, value: '(?<deployment>.+)\\.vercel\\.app' }],
+              destination: 'https://oscar.defrancesca.com/:path*',
+              permanent: true,
+            },
+          ]
+        : []),
       { source: '/projects/tutorassist', destination: '/projects/mathium', permanent: true },
       // About is a section of the home page now
       { source: '/about', destination: '/#about', permanent: true },

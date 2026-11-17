@@ -1,0 +1,25 @@
+name: IndexNow
+
+# After each production deploy, tells Bing (and through it DuckDuckGo, Copilot and ChatGPT
+# search) and the other IndexNow engines that the site's pages may have changed.
+# Google doesn't take part; it reads the sitemap. Key file: public/b3f89e2d9992104edc73c1709dc7340d.txt
+
+on: deployment_status
+
+permissions: {}
+
+jobs:
+  ping:
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Submit the sitemap's pages
+        env:
+          KEY: b3f89e2d9992104edc73c1709dc7340d
+        run: |
+          sleep 30
+          urls=$(curl -fsS https://oscar.defrancesca.com/sitemap.xml | grep -o '<loc>[^<]*' | sed 's/<loc>//' | jq -R . | jq -sc .)
+          echo "$urls" | jq -r '.[]'
+          curl -fsS -o /dev/null -w 'IndexNow answered %{http_code}\n' -X POST https://api.indexnow.org/indexnow \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            -d "{\"host\":\"oscar.defrancesca.com\",\"key\":\"$KEY\",\"keyLocation\":\"https://oscar.defrancesca.com/$KEY.txt\",\"urlList\":$urls}"
