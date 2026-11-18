@@ -115,14 +115,18 @@ export default async function HomePage() {
           mainEntity: person,
         })}
       />
-      {/* ── Hero ── */}
-      <section id="top" aria-label="Introduction" className="relative overflow-hidden pt-28 md:pt-36">
+      {/* ── Hero: exactly the first screen, logos at its foot, nothing of the next section showing ── */}
+      <section
+        id="top"
+        aria-label="Introduction"
+        className="relative flex min-h-svh flex-col overflow-hidden pt-28 md:pt-32 md:pb-8 lg:pb-10 short:pt-24 short:pb-7 shorter:pt-[4.75rem] shorter:pb-4"
+      >
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div className="absolute -top-40 left-1/2 h-[640px] w-[640px] -translate-x-1/3 rounded-full bg-accent/[0.08] blur-3xl" />
           <div className="absolute right-0 top-40 h-[420px] w-[420px] rounded-full bg-accent/[0.05] blur-3xl" />
         </div>
 
-        <div className="container-page relative grid items-center gap-14 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] lg:gap-16">
+        <div className="container-page relative grid flex-1 content-center items-center gap-14 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] lg:gap-16">
           <div>
             <div className="relative mb-8 size-24 overflow-hidden rounded-full bg-bg-card ring-1 ring-border-hover lg:hidden">
               <Image src="/images/portrait.jpg" alt="Oscar de Francesca" fill priority sizes="96px" className="object-cover" />
@@ -131,21 +135,21 @@ export default async function HomePage() {
               <MapPin size={15} aria-hidden="true" />
               Basel, Switzerland
             </p>
-            <h1 className="text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl xl:text-[5.5rem]">
+            <h1 className="text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl xl:text-[5.5rem] short:text-6xl xl:short:text-[4.25rem]">
               Oscar
               <br />
               de Francesca
             </h1>
-            <p className="mt-7 max-w-[30ch] text-xl leading-snug text-text-primary sm:text-2xl">
+            <p className="mt-7 max-w-[30ch] text-xl leading-snug text-text-primary sm:text-2xl short:mt-5">
               Software engineer, Swedish and American, born in Bangkok and raised across Asia, the
               Middle East and Europe.
             </p>
-            <p className="mt-5 max-w-[54ch] text-lg leading-relaxed text-text-secondary">
+            <p className="mt-5 max-w-[54ch] text-lg leading-relaxed text-text-secondary short:mt-4">
               I’ve built low-latency C++ at Bloomberg, firmware for RFID wristbands and language models
               from scratch, and taught hundreds of students as a teaching assistant and mathematics tutor.
               Right now I’m in Basel, writing my master’s thesis at ETH Zurich.
             </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+            <div className="mt-9 flex flex-wrap items-center gap-3 short:mt-7">
               <Button href="/#work" icon="arrow">
                 See my work
               </Button>
@@ -169,7 +173,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="hidden w-full max-w-[22rem] lg:block lg:justify-self-end xl:max-w-[26rem]">
+          <div className="hidden w-full max-w-[22rem] lg:block lg:justify-self-end xl:max-w-[26rem] short:max-w-[19rem] xl:short:max-w-[21rem]">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-bg-card shadow-[0_30px_80px_-30px_rgb(109_114_246_/_0.5)]">
               <Image
                 src="/images/portrait.jpg"
@@ -186,7 +190,7 @@ export default async function HomePage() {
         </div>
 
         {/* Logos */}
-        <div className="container-page relative mt-16 md:mt-24">
+        <div className="container-page relative mt-16 md:mt-20 short:mt-10 shorter:mt-6">
           <p className="text-center text-sm text-text-muted">Where I’ve worked and studied</p>
           <OrgStrip items={organizations} />
         </div>

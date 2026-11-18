@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+/* Side-by-side layout on a short screen (a 13-14" laptop): the hero tightens so it fits one screen */
+@custom-variant short (@media (min-width: 64rem) and (max-height: 56rem));
+@custom-variant shorter (@media (min-width: 64rem) and (max-height: 47.5rem));
 
 /* ── Tokens ────────────────────────────────────────────────────────────
    Dark (night navy) is the default; light is the alternative theme.
